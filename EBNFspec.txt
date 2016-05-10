@@ -1,0 +1,27 @@
+
+specfile = devices connections monitors
+
+devicelist = 'DEVICES' '{' device ';' {device ';'} '}'
+connectionlist = 'CONNECTIONS' '{' {connection ';'} '}' 
+monitorlist = 'MONITORS' '{' {monitor ';'} '}'
+
+device = clock|switch|gate|dtype|xor
+clock = 'CLOCK' devicename':'digit{digit}
+switch = 'SWITCH' devicename':'('0'|'1')
+gate = ('AND'|'NAND'|'OR'|'NOR') devicename':'('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|
+	'9'|'10'|'11'|'12'|'13'|'14'|'15'|'16')
+dtype = 'DTYPE' devicename
+xor = 'XOR' devicename
+
+
+connection = devicename['.'output] '->' devicename'.'input {',' devicename'.'input}
+monitor = devicename['.'output]
+
+
+input = 'I'('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|
+	'10'|'11'|'12'|'13'|'14'|'15'|'16')|'DATA'|'CLK'|'SET'|'CLEAR'
+output = 'Q'['BAR']
+
+
+
+devicename = letter {'-'|'_'|letter|digit}
