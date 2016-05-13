@@ -2,6 +2,7 @@
 #define names_h
 
 #include <string>
+#include <boost/bimap.hpp>
 
 using namespace std;
 
@@ -13,7 +14,8 @@ typedef int name;
 typedef string namestring;
 
 class names{
-
+	name counter;
+	boost::bimap<namestring, name> map;
   /* put stuff that the class uses internally here */
 
 
