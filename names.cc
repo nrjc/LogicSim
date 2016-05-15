@@ -12,8 +12,6 @@ using namespace std;
 names::names(void)  /* the constructor */
 {
 	counter=0;
-	
-  /* over to you */
 }
 
 name names::lookup (namestring str)
@@ -44,16 +42,24 @@ name names::cvtname (namestring str)
 
 void names::writename (name id)
 {
-	//There might be a problem here if you try to pull a nameid that doesn't exist. Will sort out later.
-	cout << map.right.find(id)->second << endl;
+	cout << getnamefromtable(id) << endl;
 	
+}
+
+namestring getnamefromtable(name index){
+	//There might be a problem here if you try to pull a nameid that doesn't exist. Will sort out later.
+	auto search=map.right.find(index);
+	if (search!=map.right.end()){
+		return search->second;
+	}
+	else{
+		cout << "Error, name with index: "<< index <<" not found."<<endl;
+		return "";
+	}
 }
 
 int names::namelength (name id)
 {
-	//There might be a problem here if you try to pull a nameid that doesn't exist. Will sort out later. 
 	//In this case, might also cause error because of type reassignment from namestring to string. Once again, will check again.
-  string tablestring = map.right.find(id)->second;
-  return tablestring.length();
-  
+  return getnamefromtable(id).length();
 }
