@@ -83,7 +83,7 @@ void names::writename (name id)
 	
 }
 
-namestring getnamefromtable(name index){
+namestring names::getnamefromtable(name index){
 	//There might be a problem here if you try to pull a nameid that doesn't exist. Will sort out later.
 	auto search=map.right.find(index);
 	if (search!=map.right.end()){
