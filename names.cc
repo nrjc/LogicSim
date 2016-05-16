@@ -11,7 +11,7 @@ using namespace std;
 
 names::names(void)  /* the constructor */
 {
-	counter=0;
+	counter=1;
 	this->lookup("DEVICES"); //1
 	this->lookup("CONNECTIONS"); //2
 	this->lookup("MONITORS"); //3
