@@ -25,10 +25,15 @@ void scanner::getsymbol(symbol &s, name &id, int &num)
 				s=namesym; //not a keyword
 			}
 			else{
+				//Need a get symbol function.
 				switch(curch){
-					case '=': s = equals; break;
-					case ';': s=semicol;break;
+					case ':': s = colon; break;
+					case '.': s = stop;break;
 					case ',': s = comma; break;
+					case ';': s= semicol; break;
+					case '{': s=opencurly; break;
+					case '}': s=closecurly; break;
+					case '->': s=arrow; break;
 					default: s=badsym; break;
 				}
 				getch();
