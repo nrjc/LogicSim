@@ -11,7 +11,7 @@ scanner::scanner(names* names_mod, const char* defname)
 	inf.open(defname);	//Open file
 	if (!inf)
 	{
-		cout << "Error: cannot open file for reading" << endl;
+		cout << "Error: file cannot be opened" << endl;
 	}
 	eofile = !(inf.get(curch));	//Get first character
 }
