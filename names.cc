@@ -50,13 +50,16 @@ names::names(void)  /* the constructor */
 
 name names::lookup (namestring str)
 {
-	// Maybe I should add in logic that stops adding things to the bimap when we've exceeded maxnames. 
-	// Also need some logic to cut strings that are too long, and prevent them from being added to the table. 
 	auto search=map.left.find(str);
 	if (search!=map.left.end()){
 		return search->second;
 	}
 	else{
+		//truncates name if larger than maxlength. 
+		if (str.length() > maxlength){
+			str = str.substr(0,maxlength);	
+			cout << "Warning: name `"<<str<<"' was truncated." <<endl;
+		}
 		map.insert({str,counter});
 		counter++;
 		return (counter-1);
