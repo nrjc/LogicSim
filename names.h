@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const int maxnames  = 200;  /* max number of distinct names */
+//const int maxnames  = 200;  /* max number of distinct names */
 const int maxlength = 8;    /* max chars in a name string   */
 const int blankname = -1;   /* special name                 */
 
@@ -16,7 +16,6 @@ typedef string namestring;
 class names{
 	name counter;
 	boost::bimap<namestring, name> map;
-  /* put stuff that the class uses internally here */
 
 
 public:
