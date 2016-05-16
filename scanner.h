@@ -27,8 +27,8 @@ class scanner
 		name getname(ifstream *infp, char &curch, bool &eofile);
 		int getnumber(ifstream *infp, char &curch, bool &eofile);
 		void skipspaces(ifstream *infp,char &curch,bool &eofile);
-		string getpunct(ifstream *infp,char &curch,bool &eofile);
-		//need to create something that skips all comments. 
+		string getpunct(ifstream *infp,char &curch,bool &eofile); 
+		void skipcomment(ifstream *infp,char &curch,bool &eofile); //this function skips characters until it sees an ending block /*/
 
 };
 

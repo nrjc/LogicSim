@@ -44,6 +44,7 @@ void scanner::getsymbol(symbol &s, name &id, int &num)
 					case '{': s=opencurly; break;
 					case '}': s=closecurly; break;
 					case '->': s=arrow; break;
+					case '/*': skipcomment(&inf,curch,eofile);break;
 					default: s=badsym; break;
 				}
 			}
@@ -96,4 +97,17 @@ string scanner::getpunct(ifstream *infp,char &curch,bool &eofile){
 		eofile = !(infp->get(curch));
 	}
 	return punct;
+}
+void scanner::skipcomment(ifstream *infp,char &curch,bool &eofile){
+	char prev="";
+	char cur="";
+	while(!eofile){
+		prev=cur;
+		cur=curch;
+		if (prev=="*" && cur=="/"){
+			return;
+		}
+		eofile = !(infp->get(curch));
+	}
+	return;
 }
