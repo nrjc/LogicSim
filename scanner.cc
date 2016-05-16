@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <string>
 #include <cctype>
+#include "names.h"
+#include "scanner.h"
+
 using namespace std;
 
 scanner::scanner(names* names_mod, const char* defname)
@@ -15,11 +18,12 @@ scanner::scanner(names* names_mod, const char* defname)
 	}
 	eofile = !(inf.get(curch));	//Get first character
 }
-void scanner::getsymbol(symbol &s, name &id, int &num)
+void scanner::getsymbol(symbol& s, name& id, int& num)
 {
-	skipspaces();
+	skipspaces(&inf, curch, eofile);
 	if (eofile){
 		s=eofsym;
+		inf.close();
 	}
 	else{
 		if(isdigit(curch)){
@@ -35,6 +39,7 @@ void scanner::getsymbol(symbol &s, name &id, int &num)
 				s=namesym; //not a keyword
 			}
 			else{
+				//This operation is invalid because a switch can only operate on an integer. Need rewrite. 
 				punct=getpunct(&inf,curch, eofile);
 				switch(punct){
 					case ':': s = colon; break;
@@ -56,7 +61,7 @@ name scanner::getname(ifstream *infp, char &curch, bool &eofile){
 	bool checkflag=false;
 	namestring str="";
 	
-	while (!eofile&&(isalpha(curch)||curch="-"||curch="_")) { //Continues as long as curch is -, _, or an alphabet.
+	while (!eofile&&(isalpha(curch)||curch=='-'||curch=='_')) { //Continues as long as curch is -, _, or an alphabet.
 		str+=curch;
 		eofile = !(infp->get(curch));
 	}
@@ -88,7 +93,7 @@ void scanner::skipspaces(ifstream *infp,char &curch,bool &eofile){
 }
 
 string scanner::getpunct(ifstream *infp,char &curch,bool &eofile){
-	string punct=""
+	string punct="";
 	//Maybe I should return once the punctuation string is longer than 2 symbols. 
 	while(!eofile){
 		if(isdigit(curch)||isalpha(curch)||isspace(curch)){
@@ -100,13 +105,13 @@ string scanner::getpunct(ifstream *infp,char &curch,bool &eofile){
 	return punct;
 }
 void scanner::skipcomment(ifstream *infp,char &curch,bool &eofile){
-	char prev="";
-	char cur="";
+	char prev=' ';
+	char cur=' ';
 	while(!eofile){
 		prev=cur;
 		cur=curch;
 		eofile = !(infp->get(curch));
-		if (prev=="*" && cur=="/"){
+		if (prev=='*' && cur=='/'){
 			return;
 		}	
 	}

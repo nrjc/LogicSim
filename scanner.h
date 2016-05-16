@@ -13,15 +13,17 @@ typedef enum{namesym, numsym, devsym, consym, monsym, endsym, colon, stop, comma
 class scanner
 {
 	public:
-		scanner(names* names_mod, const char* defname);
+		scanner(names* names_mod, //Pointer to names class
+		const char* defname); //Name of file read
+		
 		~scanner();						
-		void getsymbol(symbol &s, name &id, int &num);
+		void getsymbol(symbol& s, name& id, int& num);
 
 	private:
 		ifstream inf; //Input file
 		bool eofile; //This is true if it is the end of file
 		char curch; //This is the current character
-		names Namestore; //This is a local, synchronised copy of the name table that is passed into the scanner.  
+		names* Namestore; //This is a local, synchronised copy of the name table that is passed into the scanner.  
 		string punct; //This will contain the current punctuation line
 		
 		name getname(ifstream *infp, char &curch, bool &eofile); 
