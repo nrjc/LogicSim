@@ -104,10 +104,10 @@ void scanner::skipcomment(ifstream *infp,char &curch,bool &eofile){
 	while(!eofile){
 		prev=cur;
 		cur=curch;
+		eofile = !(infp->get(curch));
 		if (prev=="*" && cur=="/"){
 			return;
-		}
-		eofile = !(infp->get(curch));
+		}	
 	}
 	return;
 }
