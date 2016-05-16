@@ -24,7 +24,7 @@ class scanner
 		names Namestore; //This is a local, synchronised copy of the name table that is passed into the scanner.  
 		string punct; //This will contain the current punctuation line
 		
-		name getname(ifstream *infp, char &curch, bool &eofile);
+		name getname(ifstream *infp, char &curch, bool &eofile); 
 		int getnumber(ifstream *infp, char &curch, bool &eofile);
 		void skipspaces(ifstream *infp,char &curch,bool &eofile);
 		string getpunct(ifstream *infp,char &curch,bool &eofile); 

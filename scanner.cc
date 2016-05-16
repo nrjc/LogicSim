@@ -53,6 +53,7 @@ void scanner::getsymbol(symbol &s, name &id, int &num)
 }
 
 name scanner::getname(ifstream *infp, char &curch, bool &eofile){
+	//Names must be able to include - and _. Make edits for next time.
 	bool checkflag=false;
 	namestring str="";
 	while (!eofile&&isalpha(curch)) {
