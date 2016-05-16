@@ -5,19 +5,15 @@
 #include <cctype>
 using namespace std;
 
-scanner::scanner(names* names_mod, const char* defname, bool& ok)
+scanner::scanner(names* names_mod, const char* defname)
 {
-	nmz = names_mod;
-	ok = 1;
+	Namestore = names_mod;
 	inf.open(defname);	//Open file
 	if (!inf)
 	{
 		cout << "Error: cannot open file for reading" << endl;
-		ok = 0;
 	}
-	eofile = (inf.get(curch) == 0);	//Get first character
-	linenum = 1;
-	s = badsym;//in case getline is called before getsymbol
+	eofile = !(inf.get(curch));	//Get first character
 }
 void scanner::getsymbol(symbol &s, name &id, int &num)
 {
@@ -28,18 +24,18 @@ void scanner::getsymbol(symbol &s, name &id, int &num)
 	else{
 		if(isdigit(curch)){
 			s=numsym;
-			getnumber(num);	
+			num=getnumber(&inf, curch, eofile);	
 		}
 		else{
 			if(isalpha(curch)){
-				id=getname(&inf, curch, eofile, namestr);
+				id=getname(&inf, curch, eofile);
 				if (id==1) s=devsym; else
 				if(id==2) s=consym; else
 				if (id==3) s=monsym; else 
 				s=namesym; //not a keyword
 			}
 			else{
-				punct=getpunct(&inf,curch,eofile);
+				punct=getpunct(&inf,curch, eofile);
 				switch(punct){
 					case ':': s = colon; break;
 					case '.': s = stop;break;
@@ -55,23 +51,19 @@ void scanner::getsymbol(symbol &s, name &id, int &num)
 	}
 }
 
-name scanner::getname(ifstream *infp, char &curch, bool &eofile, namestring &str){
+name scanner::getname(ifstream *infp, char &curch, bool &eofile){
 	bool checkflag=false;
-	str="";
+	namestring str="";
 	while (!eofile&&isalpha(curch)) {
 		str+=curch;
 		eofile = !(infp->get(curch));
 	}
-	if (str.length() > maxlength){
-		cout << "Warning: name `"<<str<<"' was truncated." <<endl;
-	}
-	str = str.substr(0,maxlength);	
-	return Namestore.lookup(str);	
+	return Namestore->lookup(str);	
 }
 
-int scanner::getnumber(ifstream *infp, char &curch, bool &eofile, int &number){
+int scanner::getnumber(ifstream *infp, char &curch, bool &eofile){
 	int placeholder = 0;
-	number=0;
+	int number=0;
 	while (!eofile) {
 		if (!isdigit(curch)){
 			return number;

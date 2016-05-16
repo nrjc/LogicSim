@@ -15,21 +15,20 @@ class scanner
 	public:
 		scanner(names* names_mod, const char* defname);
 		~scanner();						
-		void getsymbol(symbol& s, name& id, int& num);
+		void getsymbol(symbol &s, name &id, int &num);
 
 	private:
-		symbol s; // The symbol
 		ifstream inf; //Input file
 		bool eofile; //This is true if it is the end of file
 		char curch; //This is the current character
-		names Namestore; //This is an initialisation of the names class, and contains all names.  
+		names Namestore; //This is a local, synchronised copy of the name table that is passed into the scanner.  
 		string punct; //This will contain the current punctuation line
-		string namestr; //String that is used to contain current names
 		
-		name getname(ifstream *infp, char &curch, bool &eofile, namestring &str);
-		int getnumber(ifstream *infp, char &curch, bool &eofile, int &number);
+		name getname(ifstream *infp, char &curch, bool &eofile);
+		int getnumber(ifstream *infp, char &curch, bool &eofile);
 		void skipspaces(ifstream *infp,char &curch,bool &eofile);
 		string getpunct(ifstream *infp,char &curch,bool &eofile);
+		//need to create something that skips all comments. 
 
 };
 
