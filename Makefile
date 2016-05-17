@@ -26,7 +26,7 @@ guitest: $(G_OBJECTS)
 testnames: names.o testnames.cc
 	$(CXX) -std=c++11 -o testnames names.o testnames.cc  
 
-testscanner: names.o scanner.o
+testscanner: names.o scanner.o testscanner.cc
 	$(CXX) -std=c++11 -o testscanner names.o scanner.o testscanner.cc
 
 clean: 

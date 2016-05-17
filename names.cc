@@ -11,7 +11,9 @@ using namespace std;
 
 names::names(void)  /* the constructor */
 {
-	counter=1;
+	counter=0;
+	//Populating the names class with reserved names and punctuation. 
+	this->lookup(";"); //0
 	this->lookup("DEVICES"); //1
 	this->lookup("CONNECTIONS"); //2
 	this->lookup("MONITORS"); //3
@@ -45,6 +47,13 @@ names::names(void)  /* the constructor */
 	this->lookup("CLEAR");//31
 	this->lookup("Q");//32
 	this->lookup("QBAR");//33
+	this->lookup(":");//34
+	this->lookup(".");//35
+	this->lookup(",");//36
+	this->lookup("{");//37
+	this->lookup("}");//38
+	this->lookup("->");//39
+	this->lookup("/*");//40
 	
 }
 

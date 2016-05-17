@@ -11,6 +11,7 @@ using namespace std;
 scanner::scanner(names* names_mod, const char* defname)
 {
 	Namestore = names_mod;
+	
 	inf.open(defname);	//Open file
 	if (!inf)
 	{
@@ -18,8 +19,13 @@ scanner::scanner(names* names_mod, const char* defname)
 	}
 	eofile = !(inf.get(curch));	//Get first character
 }
+
+scanner::~scanner(){
+	cout << "scanner has been destroyed" <<endl;
+}
 void scanner::getsymbol(symbol& s, name& id, int& num)
 {
+	start:
 	skipspaces(&inf, curch, eofile);
 	if (eofile){
 		s=eofsym;
@@ -40,16 +46,17 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 			}
 			else{
 				//This operation is invalid because a switch can only operate on an integer. Need rewrite. 
+				//Slap all these into names table????
 				punct=getpunct(&inf,curch, eofile);
-				switch(punct){
-					case ':': s = colon; break;
-					case '.': s = stop;break;
-					case ',': s = comma; break;
-					case ';': s= semicol; break;
-					case '{': s=opencurly; break;
-					case '}': s=closecurly; break;
-					case '->': s=arrow; break;
-					case '/*': skipcomment(&inf,curch,eofile);break;
+				switch(Namestore->cvtname(punct)){
+					case 34: s = colon; break;
+					case 35: s = stop;break;
+					case 36: s = comma; break;
+					case 0: s=semicol; break;
+					case 37: s=opencurly; break;
+					case 38: s=closecurly; break;
+					case 39: s=arrow; break;
+					case 40: skipcomment(&inf,curch,eofile);goto start;break;
 					default: s=badsym; break;
 				}
 			}
@@ -61,7 +68,7 @@ name scanner::getname(ifstream *infp, char &curch, bool &eofile){
 	bool checkflag=false;
 	namestring str="";
 	
-	while (!eofile&&(isalpha(curch)||curch=='-'||curch=='_')) { //Continues as long as curch is -, _, or an alphabet.
+	while (!eofile&&(isdigit(curch)||isalpha(curch)||curch=='_')) { //Continues as long as curch is _, or an alphabet / number.
 		str+=curch;
 		eofile = !(infp->get(curch));
 	}
@@ -94,7 +101,7 @@ void scanner::skipspaces(ifstream *infp,char &curch,bool &eofile){
 
 string scanner::getpunct(ifstream *infp,char &curch,bool &eofile){
 	string punct="";
-	//Maybe I should return once the punctuation string is longer than 2 symbols. 
+	//Maybe I should return once the punctuation string is longer than 2 symbols. Additionally, maybe some restructuring has to be done to eliminate the problem of the goto. As Andrew says, maybe add to the start of the loops???/
 	while(!eofile){
 		if(isdigit(curch)||isalpha(curch)||isspace(curch)){
 			return punct;
@@ -105,8 +112,8 @@ string scanner::getpunct(ifstream *infp,char &curch,bool &eofile){
 	return punct;
 }
 void scanner::skipcomment(ifstream *infp,char &curch,bool &eofile){
-	char prev=' ';
-	char cur=' ';
+	char prev='.';
+	char cur='.';
 	while(!eofile){
 		prev=cur;
 		cur=curch;
