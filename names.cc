@@ -94,7 +94,6 @@ void names::writename (name id)
 }
 
 namestring names::getnamefromtable(name index){
-	//There might be a problem here if you try to pull a nameid that doesn't exist. Will sort out later.
 	auto search=map.right.find(index);
 	if (search!=map.right.end()){
 		return search->second;
@@ -107,6 +106,5 @@ namestring names::getnamefromtable(name index){
 
 int names::namelength (name id)
 {
-	//In this case, might also cause error because of type reassignment from namestring to string. Once again, will check again.
   return getnamefromtable(id).length();
 }

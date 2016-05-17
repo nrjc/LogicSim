@@ -100,7 +100,6 @@ void scanner::skipspaces(ifstream *infp,char &curch,bool &eofile){
 
 string scanner::getpunct(ifstream *infp,char &curch,bool &eofile){
 	string punct="";
-	//Maybe I should return once the punctuation string is longer than 2 symbols. Additionally, maybe some restructuring has to be done to eliminate the problem of the goto. As Andrew says, maybe add to the start of the loops???
 	while(!eofile){
 		if(isdigit(curch)||isalpha(curch)||isspace(curch)){
 			return punct;
