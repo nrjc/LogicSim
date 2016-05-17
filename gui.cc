@@ -2,6 +2,12 @@
 #include <GL/glut.h>
 #include "wx_icon.xpm"
 #include <iostream>
+//wxSize
+#include <wx/gdicmn.h>
+#include <wx/spinctrl.h>
+// tabs
+#include <wx/notebook.h>
+//#include <wx/menuitem.h>
 
 using namespace std;
 
@@ -14,6 +20,17 @@ BEGIN_EVENT_TABLE(MyGLCanvas, wxGLCanvas)
 END_EVENT_TABLE()
   
 int wxglcanvas_attrib_list[5] = {WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE, 16, 0};
+
+const int boxheight = 25;
+const wxColour BcColour(0x11350E0E);
+
+const wxSize MinTabSize = *(new wxSize(160, 250));
+const wxSize RunSize = *(new wxSize(65, boxheight));
+const wxSize ContSize = *(new wxSize(100, 
+boxheight));
+const wxSize CyclesSize = *(new wxSize(160, boxheight));
+const wxSize CommandSize = *(new wxSize(160, boxheight));
+
 
 MyGLCanvas::MyGLCanvas(wxWindow *parent, wxWindowID id, monitor* monitor_mod, names* names_mod, const wxPoint& pos, 
 		       const wxSize& size, long style, const wxString& name, const wxPalette& palette):
@@ -138,22 +155,24 @@ void MyGLCanvas::OnMouse(wxMouseEvent& event)
     text.Printf("Mouse button %d pressed at %d %d", event.GetButton(), event.m_x, h-event.m_y);
   }
   if (event.ButtonUp()) text.Printf("Mouse button %d released at %d %d", event.GetButton(), event.m_x, h-event.m_y);
-  if (event.Dragging()) {
+  /*if (event.Dragging()) {
     pan_x += event.m_x - last_x;
     pan_y -= event.m_y - last_y;
     last_x = event.m_x;
     last_y = event.m_y;
     init = false;
     text.Printf("Mouse dragged to %d %d, pan now %d %d", event.m_x, h-event.m_y, pan_x, pan_y);
-  }
+  }*/
   if (event.Leaving()) text.Printf("Mouse left window at %d %d", event.m_x, h-event.m_y);
   if (event.GetWheelRotation() < 0) {
-    zoom = zoom * (1.0 - (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
+    pan_y += (int)5*event.GetWheelRotation()/(event.GetWheelDelta());
+    //zoom = zoom * (1.0 - (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
     init = false;
     text.Printf("Negative mouse wheel rotation, zoom now %f", zoom);
   }
   if (event.GetWheelRotation() > 0) {
-    zoom = zoom / (1.0 + (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
+    pan_y += (int)5*event.GetWheelRotation()/(event.GetWheelDelta());
+    //zoom = zoom / (1.0 + (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
     init = false;
     text.Printf("Positive mouse wheel rotation, zoom now %f", zoom);
   }
@@ -168,7 +187,8 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(wxID_EXIT, MyFrame::OnExit)
   EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
   EVT_MENU(wxID_OPEN, MyFrame::OnOpen)
-  EVT_BUTTON(MY_BUTTON_ID, MyFrame::OnButton)
+  EVT_BUTTON(MY_BUTTONRUN_ID, MyFrame::OnButtonRun)
+  EVT_BUTTON(MY_BUTTONCONT_ID, MyFrame::OnButtonCont)
   EVT_SPINCTRL(MY_SPINCNTRL_ID, MyFrame::OnSpin)
   EVT_TEXT_ENTER(MY_TEXTCTRL_ID, MyFrame::OnText)
 END_EVENT_TABLE()
@@ -189,28 +209,77 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
     cout << "Cannot operate GUI without names, devices and monitor classes" << endl;
     exit(1);
   }
-
+  
+  SetBackgroundColour(BcColour);
+  SetForegroundColour(*wxWHITE);
+  
   wxMenu *fileMenu = new wxMenu;
-  fileMenu->Append(wxID_OPEN, "&Open");
+  //SetColours(fileMenu->Append(wxID_OPEN, "&Open"));
+  wxMenuItem* openMenu = fileMenu->Append(wxID_OPEN, "&Open");
+  //openMenu->SetBackgroundColour(BcColour);
   fileMenu->Append(wxID_ABOUT, "&About");
   fileMenu->Append(wxID_EXIT, "&Quit");
   wxMenuBar *menuBar = new wxMenuBar;
   menuBar->Append(fileMenu, "&File");
   SetMenuBar(menuBar);
-
+  
   wxBoxSizer *topsizer = new wxBoxSizer(wxHORIZONTAL);
   canvas = new MyGLCanvas(this, wxID_ANY, monitor_mod, names_mod);
   topsizer->Add(canvas, 1, wxEXPAND | wxALL, 10);
 
-  wxBoxSizer *button_sizer = new wxBoxSizer(wxVERTICAL);
-  button_sizer->Add(new wxButton(this, MY_BUTTON_ID, "Run"), 0, wxALL, 10);
-  button_sizer->Add(new wxStaticText(this, wxID_ANY, "Cycles"), 0, wxTOP|wxLEFT|wxRIGHT, 10);
-  spin = new wxSpinCtrl(this, MY_SPINCNTRL_ID, wxString("10"));
-  button_sizer->Add(spin, 0 , wxALL, 10);
 
-  button_sizer->Add(new wxTextCtrl(this, MY_TEXTCTRL_ID, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER), 0 , wxALL, 10);
-  topsizer->Add(button_sizer, 0, wxALIGN_CENTER);
-
+  // To resize items: will probably need to create named ones or also specify the position
+  // wxSize(int width, int height)
+  wxBoxSizer *control_sizer = new wxBoxSizer(wxVERTICAL);
+                             
+  wxStaticBoxSizer *sim_sizer = new wxStaticBoxSizer(wxVERTICAL, this, "Simulation");
+  // Sizer to horizontally align  Run and Continue buttons.
+  wxBoxSizer *button_sizer = new wxBoxSizer(wxHORIZONTAL);
+  button_sizer->Add(new wxButton(this, MY_BUTTONRUN_ID, "Run", wxDefaultPosition, RunSize), 0, wxALL, 5);
+  button_sizer->Add(new wxButton(this, MY_BUTTONCONT_ID, "Continue", wxDefaultPosition, ContSize), 0, wxALL, 5);
+  sim_sizer->Add(button_sizer);
+  
+  //wxBoxSizer *cycles_sizer = new wxBoxSizer(wxHORIZONTAL);
+  sim_sizer->Add(new wxStaticText(this, wxID_ANY, "Cycles"), 0, wxTOP|wxLEFT|wxRIGHT, 5);
+  spin = new wxSpinCtrl(this, MY_SPINCNTRL_ID, wxString("10"), wxDefaultPosition, wxDefaultSize);
+  sim_sizer->Add(spin, 0 , wxALL, 5);
+  //sim_sizer->Add(cycles_sizer);
+  
+  sim_sizer->Add(new wxStaticText(this, wxID_ANY, "Text Commands"), 0, wxTOP|wxLEFT|wxRIGHT, 5);
+  sim_sizer->Add(new wxTextCtrl(this, MY_TEXTCTRL_ID, "", wxDefaultPosition, CommandSize, wxTE_PROCESS_ENTER), 0 , wxALL, 5);
+  control_sizer->Add(sim_sizer);
+  
+  // Set up buttons dirrecting to item selection
+  wxStaticBoxSizer *options_sizer = new wxStaticBoxSizer(wxVERTICAL, this, "Configure simulation");
+  options_sizer->Add(new wxButton(this, MY_BUTTONSETMON_ID, "Add/remove monitors"), 0, wxALL, 5);
+  control_sizer->Add(options_sizer);
+  
+  // TABBED CONTROL WINDOWS //
+  wxNotebook *note_ctrl = new wxNotebook(this, MY_NOTEBOOK_ID);
+  
+  note_ctrl->SetMinSize(MinTabSize);
+  note_ctrl->SetForegroundColour(*wxBLACK);
+  
+  wxScrolledWindow* switchwin = new wxScrolledWindow(note_ctrl, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxHSCROLL|wxVSCROLL);
+  
+  switchwin->SetBackgroundColour(*wxWHITE);
+  wxWindow *monwin = new wxWindow(note_ctrl, wxID_ANY);
+  monwin->SetBackgroundColour(*wxWHITE);
+  
+  // Later replace this with a separate function that initialises the window and all its contents uppon loading a new circuit.
+  wxBoxSizer *switch_sizer = new wxBoxSizer(wxVERTICAL);
+  switch_sizer->Add(new wxCheckBox(switchwin, wxID_ANY, "TestCheck"), 0, wxALL, 5);
+  
+  wxBoxSizer *mon_sizer = new wxBoxSizer(wxVERTICAL);
+  //mon_sizer->
+  
+  note_ctrl->AddPage(switchwin,"Switch");
+  note_ctrl->AddPage(monwin, "Monitors");
+  switchwin->SetSizer(switch_sizer);
+  
+  control_sizer->Add(note_ctrl, 1, wxEXPAND | wxALL, 5);
+  
+  topsizer->Add(control_sizer, 0, wxALIGN_TOP);
   SetSizeHints(400, 400);
   SetSizer(topsizer);
 }
@@ -257,7 +326,7 @@ void MyFrame::OnOpen(wxCommandEvent &event)
     else canvas->Render("File opened");
 }
 
-void MyFrame::OnButton(wxCommandEvent &event)
+void MyFrame::OnButtonRun(wxCommandEvent &event)
   // Event handler for the push button
 {
   int n, ncycles;
@@ -267,6 +336,16 @@ void MyFrame::OnButton(wxCommandEvent &event)
   runnetwork(spin->GetValue());
   canvas->Render("Run button pressed", cyclescompleted);
 }
+
+void MyFrame::OnButtonCont(wxCommandEvent &event)
+  // Event handler for the push button
+{
+  int n, ncycles;
+  
+  runnetwork(spin->GetValue());
+  canvas->Render("Continue button pressed", cyclescompleted);
+}
+
 
 void MyFrame::OnSpin(wxSpinEvent &event)
   // Event handler for the spin control
@@ -303,3 +382,12 @@ void MyFrame::runnetwork(int ncycles)
   if (ok) cyclescompleted = cyclescompleted + ncycles;
   else cyclescompleted = 0;
 }
+
+/*
+void MyFrame::SetColours(wxMenuItem* item)
+
+{
+  item->SetBackgroundColour(BcColour);
+  item->SetForegroundColour(*wxWHITE);
+}*/
+

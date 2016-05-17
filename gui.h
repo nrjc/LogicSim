@@ -6,6 +6,7 @@
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
 #include <wx/wfstream.h>
+//#include <wx/menuitem.h>
 #include "names.h"
 #include "devices.h"
 #include "monitor.h"
@@ -13,7 +14,11 @@
 enum { 
   MY_SPINCNTRL_ID = wxID_HIGHEST + 1,
   MY_TEXTCTRL_ID,
-  MY_BUTTON_ID,
+  MY_BUTTONRUN_ID,
+  MY_BUTTONCONT_ID,
+  MY_BUTTONSETMON_ID,
+  MY_CHECK_ID,
+  MY_NOTEBOOK_ID,
 }; // widget identifiers
 
 class MyGLCanvas;
@@ -35,9 +40,13 @@ class MyFrame: public wxFrame
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
   void OnAbout(wxCommandEvent& event);    // event handler for about menu item
   void OnOpen(wxCommandEvent& event);	  // event handler for open menu item
-  void OnButton(wxCommandEvent& event);   // event handler for push button
+  void OnButtonRun(wxCommandEvent& event);   // event handler for Run button
+  void OnButtonCont(wxCommandEvent& event);   // event handler for Continue button
   void OnSpin(wxSpinEvent& event);        // event handler for spin control
   void OnText(wxCommandEvent& event);     // event handler for text entry field
+  
+  //void SetColours(wxMenuItem* item);
+  //void SetColours(wxWindow* item);
   DECLARE_EVENT_TABLE()
 };
     
