@@ -31,6 +31,7 @@ class scanner
 		void skipspaces(ifstream *infp,char &curch,bool &eofile);
 		string getpunct(ifstream *infp,char &curch,bool &eofile); 
 		void skipcomment(ifstream *infp,char &curch,bool &eofile); //this function skips characters until it sees an ending block /*/
+		void skipcommentline(ifstream *infp,char &curch,bool &eofile); //This function skips characters until it sees an endline symbol.
 
 };
 

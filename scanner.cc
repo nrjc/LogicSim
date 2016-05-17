@@ -56,6 +56,7 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 					case 38: s=closecurly; break;
 					case 39: s=arrow; break;
 					case 40: skipcomment(&inf,curch,eofile);getsymbol(s,id,num);break;
+					case 41: skipcommentline(&inf,curch,eofile);getsymbol(s,id,num);break;
 					default: s=badsym; break;
 				}
 			}
@@ -119,6 +120,16 @@ void scanner::skipcomment(ifstream *infp,char &curch,bool &eofile){
 		if (prev=='*' && cur=='/'){
 			return;
 		}	
+	}
+	return;
+}
+
+void scanner::skipcommentline(ifstream *infp,char &curch,bool &eofile){
+	while(!eofile){
+		if (curch=='\n'){
+			return;
+		}
+		eofile = !(infp->get(curch));
 	}
 	return;
 }
