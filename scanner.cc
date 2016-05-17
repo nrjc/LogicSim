@@ -25,7 +25,6 @@ scanner::~scanner(){
 }
 void scanner::getsymbol(symbol& s, name& id, int& num)
 {
-	start:
 	skipspaces(&inf, curch, eofile);
 	if (eofile){
 		s=eofsym;
@@ -56,7 +55,7 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 					case 37: s=opencurly; break;
 					case 38: s=closecurly; break;
 					case 39: s=arrow; break;
-					case 40: skipcomment(&inf,curch,eofile);goto start;break;
+					case 40: skipcomment(&inf,curch,eofile);getsymbol(s,id,num);break;
 					default: s=badsym; break;
 				}
 			}
@@ -96,12 +95,11 @@ void scanner::skipspaces(ifstream *infp,char &curch,bool &eofile){
 	}
 	eofile = !(infp->get(curch));
   }	
-  return;
 }
 
 string scanner::getpunct(ifstream *infp,char &curch,bool &eofile){
 	string punct="";
-	//Maybe I should return once the punctuation string is longer than 2 symbols. Additionally, maybe some restructuring has to be done to eliminate the problem of the goto. As Andrew says, maybe add to the start of the loops???/
+	//Maybe I should return once the punctuation string is longer than 2 symbols. Additionally, maybe some restructuring has to be done to eliminate the problem of the goto. As Andrew says, maybe add to the start of the loops???
 	while(!eofile){
 		if(isdigit(curch)||isalpha(curch)||isspace(curch)){
 			return punct;
