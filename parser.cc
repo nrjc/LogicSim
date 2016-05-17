@@ -16,7 +16,7 @@ parser::parser(network* network_mod, devices* devices_mod, monitor* monitor_mod,
 }
 
 bool parser::readin (void){	
-	symbol cursym=0;
+	symbol cursym;
 	name curid=0;
 	int curnum=0;
 	smz->getsymbol(cursym,curid,curnum); //get the first symbol
@@ -68,7 +68,7 @@ void parser::device(void){
 				if (cursym==numsym){
 					// pass number to network class
 				}
-				else error; // num expected error
+				else error(); // num expected error
 			}
 			else error(); // no colon error
 		}
@@ -314,10 +314,10 @@ void parser::parmonitor(void){
 
 void parser::error(/*int errn, symbol stop*/) {
 	//add in more here!
-	cout<<'error'<<endl;
+	cout<<"error"<<endl;
 	/*
 	while ((cursym!=stop)&&(cursym!=eofsym)){
 		smz->getsymbol(cursym,curid,curnum);
 	}
-	* /
+	*/
 }
