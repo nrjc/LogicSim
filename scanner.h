@@ -8,35 +8,36 @@
 
 using namespace std;
 
-typedef enum{semicol,//0
-devsym,//1
-consym,//2
-monsym,//3
-namesym,
-numsym,
-sclock,//4
-sswitch,//5
-sdtype,//6
-sxor,//7
-sand,//8
-snand,//9
-sor,//10
-snor,//11
-inputsym,//12
-idata,//13
-iclk, //14
-iset, //15
-iclear, //16
-oq, //17
-oqbar, //18
-comma, //19
-stop, //20
-colon,//21
-opencurly, //22
-closecurly, //23
-arrow, //24
-badsym, //25
-eofsym //26
+typedef enum{
+semicol,// ;
+devsym,// DEVICE
+consym,// CONNECTION
+monsym,// MONITORS
+namesym, // Defines name. 
+numsym, // Defines a number
+sclock, // CLOCK 
+sswitch, // SWITCH
+sdtype, // DTYPE
+sxor, // XOR
+sand, // AND
+snand, // NAND
+sor,  //OR
+snor, //NOR
+inputsym,//For I1-I16, the type will be inputsymbol, and the integer will be in num.
+idata, //Input Type - DATA
+iclk,  //Input Type - CLK
+iset,  //Input Type -SET
+iclear, //Input Type - Clear
+oq,  //Output Type -Q
+oqbar, //Output Type -QBAR
+comma,  // ,
+stop, // .
+colon, // :
+opencurly, // {
+closecurly, // }
+arrow,  //  ->
+badsym, // symbol cannot be identified
+eofsym // End of file symbol
 } symbol;
 
 class scanner
