@@ -8,7 +8,36 @@
 
 using namespace std;
 
-typedef enum{namesym, numsym, devsym, consym, monsym, endsym, colon, stop, comma, semicol, opencurly, closecurly, arrow, badsym, eofsym} symbol;
+typedef enum{semicol,//0
+devsym,//1
+consym,//2
+monsym,//3
+namesym,
+numsym,
+sclock,//4
+sswitch,//5
+sdtype,//6
+sxor,//7
+sand,//8
+snand,//9
+sor,//10
+snor,//11
+inputsym,//12
+idata,//13
+iclk, //14
+iset, //15
+iclear, //16
+oq, //17
+oqbar, //18
+comma, //19
+stop, //20
+colon,//21
+opencurly, //22
+closecurly, //23
+arrow, //24
+badsym, //25
+eofsym //26
+} symbol;
 
 class scanner
 {

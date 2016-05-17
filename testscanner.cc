@@ -5,11 +5,11 @@
 #include <map>
 string enumtypes[] =
 {
-   "namesym", "numsym", "devsym", "consym", "monsym", "endsym", "colon", "stop", "comma", "semicol", "opencurly", "closecurly", "arrow", "badsym", "eofsym"
+   "semicol","devsym","consym","monsym","namesym","numsym","sclock","sswitch","sdtype","sxor","sand","snand","sor","snor","inputsym","idata","clk","iset","iclear","oq"," oqbar","comma","stop","colon","opencurly","closecurly","arrow","badsym","eofsym" 
 };
 int main(int argc, char **argv)
 // If this program is put in a file called small.cc, it can
-// be compiled with the command  g++ -g -o small small.cc
+// be compiled with the command  g++ -g -o small small.cc. 
 {
 	
   if (argc != 2) {

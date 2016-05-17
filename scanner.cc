@@ -41,6 +41,25 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 				if (id==1) s=devsym; else
 				if(id==2) s=consym; else
 				if (id==3) s=monsym; else 
+				if (id==4) s=sclock; else
+				if (id==5) s=sswitch; else
+				if(id==6) s=sdtype; else
+				if(id==7) s=sxor; else
+				if(id==8) s=sand; else
+				if(id==9) s=snand; else
+				if(id==10) s=sor; else
+				if(id==11) s=snor; else
+				if(id>=12&&id<=27)
+				{
+					s=inputsym;
+					num=stoi((Namestore->getnamefromtable(id)).substr(1,2));
+				} else 
+				if(id==28) s=idata; else
+				if(id==29) s=iclk; else
+				if(id==30) s=iset; else
+				if(id==31) s=iclear; else
+				if(id==32) s=oq; else
+				if(id==33) s=oqbar; else
 				s=namesym; //not a keyword
 			}
 			else{

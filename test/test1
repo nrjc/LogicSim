@@ -3,6 +3,6 @@
 CONNECTION {
 
 //Ignore this
-a->a.k;
+a->a.I1,b.I2,c.I3;
 }
  /*  asdasdasdasd */
