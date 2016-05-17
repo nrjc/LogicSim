@@ -14,15 +14,15 @@ class parser {
 		devices* dmz; 
 		monitor* mmz;
 		scanner* smz;
-		symbol cursym();
-		name curid();
-		int curnum();
-		void devicelist();
-		void connectionlist();
-		void monitorlist();
-		void device(int s);
-		void connection();
-		void monitor();
+		symbol cursym;
+		name curid;
+		int curnum;
+		void devicelist(void);
+		void connectionlist(void);
+		void monitorlist(void);
+		void device(void);
+		void connection(void);
+		void parmonitor();
 	
 	public:
 		bool readin();
@@ -32,7 +32,7 @@ class parser {
     /* corresponding internal representation via calls to the 'Network'    */
     /* module and the 'Devices' module.                                    */
 
-		parser (network* network_mod, devices* devices_mod,
+		parser(network* network_mod, devices* devices_mod,
 		monitor* monitor_mod, scanner* scanner_mod);
     /* the constructor takes pointers to various other classes as parameters */
 };

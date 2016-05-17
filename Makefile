@@ -28,6 +28,9 @@ testnames: names.o testnames.cc
 
 testscanner: names.o scanner.o testscanner.cc
 	$(CXX) -std=c++11 -o testscanner names.o scanner.o testscanner.cc
+	
+testparser: names.o scanner.o network.o monitor.o devices.o parser.o parsertest.cc
+	$(CXX) -std=c++11 -o testparser names.o scanner.o network.o monitor.o devices.o parser.o parsertest.cc
 
 clean: 
 	rm -f *.o logsim guitest
