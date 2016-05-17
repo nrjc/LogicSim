@@ -5,6 +5,7 @@
 #include <wx/glcanvas.h>
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
+#include <wx/wfstream.h>
 #include "names.h"
 #include "devices.h"
 #include "monitor.h"
@@ -23,7 +24,7 @@ class MyFrame: public wxFrame
   MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, const wxSize& size, 
 	  names *names_mod = NULL, devices *devices_mod = NULL, monitor *monitor_mod = NULL, 
 	  long style = wxDEFAULT_FRAME_STYLE); // constructor
- private:
+ private: 
   MyGLCanvas *canvas;                     // OpenGL drawing area widget to draw traces
   wxSpinCtrl *spin;                       // control widget to select the number of cycles
   names *nmz;                             // pointer to names class
@@ -33,6 +34,7 @@ class MyFrame: public wxFrame
   void runnetwork(int ncycles);           // function to run the logic network
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
   void OnAbout(wxCommandEvent& event);    // event handler for about menu item
+  void OnOpen(wxCommandEvent& event);	  // event handler for open menu item
   void OnButton(wxCommandEvent& event);   // event handler for push button
   void OnSpin(wxSpinEvent& event);        // event handler for spin control
   void OnText(wxCommandEvent& event);     // event handler for text entry field

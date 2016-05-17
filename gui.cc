@@ -167,6 +167,7 @@ void MyGLCanvas::OnMouse(wxMouseEvent& event)
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(wxID_EXIT, MyFrame::OnExit)
   EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
+  EVT_MENU(wxID_OPEN, MyFrame::OnOpen)
   EVT_BUTTON(MY_BUTTON_ID, MyFrame::OnButton)
   EVT_SPINCTRL(MY_SPINCNTRL_ID, MyFrame::OnSpin)
   EVT_TEXT_ENTER(MY_TEXTCTRL_ID, MyFrame::OnText)
@@ -190,6 +191,7 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   }
 
   wxMenu *fileMenu = new wxMenu;
+  fileMenu->Append(wxID_OPEN, "&Open");
   fileMenu->Append(wxID_ABOUT, "&About");
   fileMenu->Append(wxID_EXIT, "&Quit");
   wxMenuBar *menuBar = new wxMenuBar;
@@ -224,6 +226,35 @@ void MyFrame::OnAbout(wxCommandEvent &event)
 {
   wxMessageDialog about(this, "Example wxWidgets GUI\nAndrew Gee\nJune 2014", "About Logsim", wxICON_INFORMATION | wxOK);
   about.ShowModal();
+}
+
+void MyFrame::OnOpen(wxCommandEvent &event)
+  // Event handler for the open menu item
+{
+    // Check out http://docs.wxwidgets.org/trunk/classwx_file_dialog.html
+    // Create and Open file dialog
+    /*  if (...current content has not been saved...)
+    {
+        if (wxMessageBox(_("Current content has not been saved! Proceed?"), _("Please confirm"),
+                         wxICON_QUESTION | wxYES_NO, this) == wxNO )
+            return;
+        //else: proceed asking to the user the new file to open
+    }*/
+    
+    wxFileDialog openFileDialog(this, _("Open logge file"), "", "",
+                       "logge files (*.ge)|*.ge|text files (*.txt)|*.txt", wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+    if (openFileDialog.ShowModal() == wxID_CANCEL)
+        return;     // the user changed idea...
+    
+    // proceed loading the file chosen by the user;
+    // this can be done with e.g. wxWidgets input streams:
+    wxFileInputStream input_stream(openFileDialog.GetPath());
+    if (!input_stream.IsOk())
+    {
+        wxLogError("Cannot open file '%s'.", openFileDialog.GetPath());
+        return;
+    }
+    else canvas->Render("File opened");
 }
 
 void MyFrame::OnButton(wxCommandEvent &event)
