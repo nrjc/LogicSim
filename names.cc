@@ -54,6 +54,7 @@ names::names(void)  /* the constructor */
 	this->lookup("}");//38
 	this->lookup("->");//39
 	this->lookup("/*");//40
+	this->lookup("//");//41
 	
 }
 
