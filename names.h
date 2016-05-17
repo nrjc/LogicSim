@@ -37,6 +37,9 @@ public:
     
   namestring getnamefromtable(name id);
   /* Returns the namestring for a given mane. */
+  
+  void dumptablecontents();
+  /* dumps the entire contents of the table for debugging purposes */
 
   names (void);
     /* names initialises the name table.  This procedure is called at      */

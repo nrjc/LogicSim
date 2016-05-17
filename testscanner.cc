@@ -27,4 +27,5 @@ int main(int argc, char **argv)
 	  cout << enumtypes[s] <<":"<< Nametable.getnamefromtable(id)<<":" <<num1 <<endl;
 	  id=0;num1=-1;
   }
+  Nametable.dumptablecontents();
 }

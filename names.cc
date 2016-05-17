@@ -104,6 +104,13 @@ namestring names::getnamefromtable(name index){
 	}
 }
 
+ void names::dumptablecontents(){
+	 for( const auto& n : map.left ) {
+				std::cout << "Key:[" << n.first << "] Value:[" << n.second << "]\n";
+			}
+ }
+
+
 int names::namelength (name id)
 {
   return getnamefromtable(id).length();
