@@ -21,6 +21,7 @@ int main(int argc, char **argv)
   devices* newdevice;
   network* newnetwork;
   parser newparser(newnetwork,newdevice,newmonitor,&newscanner);
+  newparser.readin();
   
 
 }
