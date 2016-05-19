@@ -11,7 +11,8 @@ using namespace std;
 scanner::scanner(names* names_mod, const char* defname)
 {
 	Namestore = names_mod;
-	
+	linenumber=1;
+	inputname=defname;
 	inf.open(defname);	//Open file
 	if (!inf)
 	{
@@ -25,6 +26,9 @@ scanner::~scanner(){
 }
 void scanner::getsymbol(symbol& s, name& id, int& num)
 {
+	if(curch=='\n'){
+		linenumber+=1;
+	}
 	skipspaces(&inf, curch, eofile);
 	if (eofile){
 		s=eofsym;
@@ -150,4 +154,28 @@ void scanner::skipcommentline(ifstream *infp,char &curch,bool &eofile){
 		eofile = !(infp->get(curch));
 	}
 	return;
+}
+void scanner::getnewline(){
+	//The job of this function is to print out the entirety of the current line. There is a bug that it cannot be called on the eofile line. 
+	inf2.open(inputname);
+	bool isblank;
+	int skiplines=0;
+	string linecontainer="";
+	for (int i=1;i<=linenumber+skiplines;i++){
+		 isblank=true;
+		getline(inf2, linecontainer);
+		for (int j=0;j<linecontainer.length();j++){
+			if (!(isspace(linecontainer[j]))){
+				isblank=false;
+			}
+			
+		}
+		if(isblank){
+			skiplines=skiplines+1;
+		}
+		if (i==linenumber+skiplines){
+			cout << linecontainer <<endl;
+		}
+	}
+	inf2.close();	
 }

@@ -25,7 +25,8 @@ int main(int argc, char **argv)
   while(s!=eofsym){
 	  newscanner.getsymbol(s,id,num1);
 	  cout << enumtypes[s] <<":"<< Nametable.getnamefromtable(id)<<":" <<num1 <<endl;
+	  newscanner.getnewline();
 	  id=0;num1=-1;
   }
-  Nametable.dumptablecontents();
+  //Nametable.dumptablecontents();
 }

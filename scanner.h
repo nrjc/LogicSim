@@ -48,13 +48,17 @@ class scanner
 		
 		~scanner();						
 		void getsymbol(symbol& s, name& id, int& num);
+		void getnewline(); // The aim of this is to print out the entire current line for debugging purposes
 
 	private:
 		ifstream inf; //Input file
+		ifstream inf2; //Second Ifstream for debugging purposes
+		string inputname; //Stores the name of the input file for IOStream. 
 		bool eofile; //This is true if it is the end of file
 		char curch; //This is the current character
 		names* Namestore; //This is a local, synchronised copy of the name table that is passed into the scanner.  
 		string punct; //This will contain the current punctuation line
+		int linenumber; //This contains the current line number that the parser is operating on.
 		
 		name getname(ifstream *infp, char &curch, bool &eofile); 
 		int getnumber(ifstream *infp, char &curch, bool &eofile);
@@ -62,6 +66,7 @@ class scanner
 		string getpunct(ifstream *infp,char &curch,bool &eofile); 
 		void skipcomment(ifstream *infp,char &curch,bool &eofile); //this function skips characters until it sees an ending block /*/
 		void skipcommentline(ifstream *infp,char &curch,bool &eofile); //This function skips characters until it sees an endline symbol.
+
 
 };
 
