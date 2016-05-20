@@ -156,26 +156,17 @@ void scanner::skipcommentline(ifstream *infp,char &curch,bool &eofile){
 	return;
 }
 void scanner::getnewline(){
-	//The job of this function is to print out the entirety of the current line. There is a bug that it cannot be called on the eofile line. 
-	inf2.open(inputname);
-	bool isblank;
-	int skiplines=0;
-	string linecontainer="";
-	for (int i=1;i<=linenumber+skiplines;i++){
-		 isblank=true;
-		getline(inf2, linecontainer);
-		for (int j=0;j<linecontainer.length();j++){
-			if (!(isspace(linecontainer[j]))){
-				isblank=false;
-			}
-			
+	//The job of this function is to print out the rest of the line from when the error was spotted.
+	string line="";
+	int currentposition = inf.tellg();
+	char backup = curch;
+	bool eofile2=false;
+	while (!eofile2 && backup != '\n')
+		{
+			line+=backup;
+			eofile2=!(inf.get(backup));
 		}
-		if(isblank){
-			skiplines=skiplines+1;
-		}
-		if (i==linenumber+skiplines){
-			cout << linecontainer <<endl;
-		}
-	}
-	inf2.close();	
+	cout<<linenumber<<"  " << line <<endl;
+	inf.seekg (currentposition, inf.beg);
+	
 }
