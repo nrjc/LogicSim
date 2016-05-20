@@ -48,11 +48,10 @@ class scanner
 		
 		~scanner();						
 		void getsymbol(symbol& s, name& id, int& num);
-		void getnewline(); // The aim of this is to print out the entire current line for debugging purposes
+		void getnewline(); // The aim of this is to print out the rest of the line
 
 	private:
 		ifstream inf; //Input file
-		ifstream inf2; //Second Ifstream for debugging purposes
 		string inputname; //Stores the name of the input file for IOStream. 
 		bool eofile; //This is true if it is the end of file
 		char curch; //This is the current character
