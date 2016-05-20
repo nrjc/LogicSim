@@ -97,17 +97,14 @@ void parser::device(void){
 						return;
 					}
 					else{
-						cout<<cursym<<endl;
 						error(0); //input must be zero or one
 					}
 				} 
 				else{
-					cout<<cursym<<endl;
 					error(0); // input must be a number
 				}
 			}
 			else{
-				cout<<cursym<<endl;
 				error(0); // no colon error
 			}
 		}
@@ -274,7 +271,6 @@ void parser::connection(void){
 						if (cursym==inputsym){
 							if (curnum<=16 && curnum>=1){
 								// parse num to network class
-								//cout << "current sym:" << cursym <<endl;
 								smz->getsymbol(cursym,curid,curnum);
 							}
 							else error(2); // current number exceeded 16 or is smaller than 1 error
@@ -310,22 +306,23 @@ void parser::connection(void){
 void parser::monitorlist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
-		cout << cursym <<endl;
-		parmonitor();
-	}
-	else error(0); // no opencurly error
-	while (cursym==semicol){
-		smz->getsymbol(cursym,curid,curnum);
-		parmonitor();
-	}
-	if (cursym==closecurly) {
 		smz->getsymbol(cursym,curid,curnum);
 	}
-	else error(0); // not ended with ; or ,
+	else error(11); // no opencurly error
+	while (cursym==namesym){
+		parmonitor();
+		if (cursym==semicol) {
+			smz->getsymbol(cursym,curid,curnum);
+		}
+		if (cursym ==closecurly){
+			return;
+		}
+	}
+
+	error(13); // not ended with ; or ,
 }
 
 void parser::parmonitor(void){
-	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==namesym){
 		// parser to connect this to the network class
 		smz->getsymbol(cursym,curid,curnum);
