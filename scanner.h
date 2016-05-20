@@ -1,7 +1,73 @@
-typedef enum{namesym, numsym, devsym, consym, monsym, endsym, comma, semicol, equals, badsym, eofsym} symbol;
+#ifndef scanner_h
+#define scanner_h
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include "names.h"
 
-//this is the constructor of the scanner class
-scanner (names* names_mod, const char* defname);
-~scanner();
+using namespace std;
 
-void getsymbol(symbol& s, name& id, int& num);
+typedef enum{
+semicol,// ;
+devsym,// DEVICE
+consym,// CONNECTION
+monsym,// MONITORS
+namesym, // Defines name. 
+numsym, // Defines a number
+sclock, // CLOCK 
+sswitch, // SWITCH
+sdtype, // DTYPE
+sxor, // XOR
+sand, // AND
+snand, // NAND
+sor,  //OR
+snor, //NOR
+inputsym,//For I1-I16, the type will be inputsymbol, and the integer will be in num.
+idata, //Input Type - DATA
+iclk,  //Input Type - CLK
+iset,  //Input Type -SET
+iclear, //Input Type - Clear
+oq,  //Output Type -Q
+oqbar, //Output Type -QBAR
+comma,  // ,
+stop, // .
+colon, // :
+opencurly, // {
+closecurly, // }
+arrow,  //  ->
+badsym, // symbol cannot be identified
+eofsym // End of file symbol
+} symbol;
+
+class scanner
+{
+	public:
+		scanner(names* names_mod, //Pointer to names class
+		const char* defname); //Name of file read
+		
+		~scanner();						
+		void getsymbol(symbol& s, name& id, int& num);
+		void getnewline(); // The aim of this is to print out the entire current line for debugging purposes
+
+	private:
+		ifstream inf; //Input file
+		ifstream inf2; //Second Ifstream for debugging purposes
+		string inputname; //Stores the name of the input file for IOStream. 
+		bool eofile; //This is true if it is the end of file
+		char curch; //This is the current character
+		names* Namestore; //This is a local, synchronised copy of the name table that is passed into the scanner.  
+		string punct; //This will contain the current punctuation line
+		int linenumber; //This contains the current line number that the parser is operating on.
+		
+		name getname(ifstream *infp, char &curch, bool &eofile); 
+		int getnumber(ifstream *infp, char &curch, bool &eofile);
+		void skipspaces(ifstream *infp,char &curch,bool &eofile);
+		string getpunct(ifstream *infp,char &curch,bool &eofile); 
+		void skipcomment(ifstream *infp,char &curch,bool &eofile); //this function skips characters until it sees an ending block /*/
+		void skipcommentline(ifstream *infp,char &curch,bool &eofile); //This function skips characters until it sees an endline symbol.
+
+
+};
+
+#endif

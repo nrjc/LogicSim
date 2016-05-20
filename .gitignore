@@ -2,5 +2,9 @@
 *~
 *.so
 *.a
+testnames
 logsim
 guitest
+testscanner
+test/
+testparser
