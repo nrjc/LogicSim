@@ -9,18 +9,18 @@
 using namespace std;
 
 typedef enum{
-semicol,// ;
-devsym,// DEVICE
-consym,// CONNECTION
-monsym,// MONITORS
-namesym, // Defines name. 
-numsym, // Defines a number
-sclock, // CLOCK 
-sswitch, // SWITCH
-sdtype, // DTYPE
-sxor, // XOR
-sand, // AND
-snand, // NAND
+semicol,// ; 0
+devsym,// DEVICE 1
+consym,// CONNECTION 2
+monsym,// MONITORS 3
+namesym, // Defines name. 4 
+numsym, // Defines a number 5
+sclock, // CLOCK 6
+sswitch, // SWITCH 7
+sdtype, // DTYPE 8
+sxor, // XOR 9
+sand, // AND 10
+snand, // NAND 11
 sor,  //OR
 snor, //NOR
 inputsym,//For I1-I16, the type will be inputsymbol, and the integer will be in num.
@@ -71,3 +71,9 @@ class scanner
 };
 
 #endif
+
+
+
+
+
+
