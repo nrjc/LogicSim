@@ -10,6 +10,7 @@
 #include "names.h"
 #include "devices.h"
 #include "monitor.h"
+#include "network.h"
 
 enum { 
   MY_SPINCNTRL_ID = wxID_HIGHEST + 1,
@@ -17,7 +18,7 @@ enum {
   MY_BUTTONRUN_ID,
   MY_BUTTONCONT_ID,
   MY_BUTTONSETMON_ID,
-  MY_CHECK_ID,
+  MY_SWITCH_ID,
   MY_NOTEBOOK_ID,
 }; // widget identifiers
 
@@ -37,13 +38,20 @@ class MyFrame: public wxFrame
   monitor *mmz;                           // pointer to monitor class
   int cyclescompleted;                    // how many simulation cycles have been completed
   void runnetwork(int ncycles);           // function to run the logic network
+  
+  // Added finctions
+  void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
+  
+  // Event handlers
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
   void OnAbout(wxCommandEvent& event);    // event handler for about menu item
   void OnOpen(wxCommandEvent& event);	  // event handler for open menu item
   void OnButtonRun(wxCommandEvent& event);   // event handler for Run button
   void OnButtonCont(wxCommandEvent& event);   // event handler for Continue button
+  void OnSwitchBox(wxCommandEvent& event);
   void OnSpin(wxSpinEvent& event);        // event handler for spin control
   void OnText(wxCommandEvent& event);     // event handler for text entry field
+  
   
   //void SetColours(wxMenuItem* item);
   //void SetColours(wxWindow* item);
@@ -62,6 +70,8 @@ class MyGLCanvas: public wxGLCanvas
   bool init;                         // has the OpenGL context been initialised?
   int pan_x;                         // the current x pan
   int pan_y;                         // the current y pan
+  int disp_h;			     // height of the displayed drawing area
+  int disp_w;			     // width of the displayed drawing area
   double zoom;                       // the current zoom
   int cyclesdisplayed;               // how many simulation cycles have been displayed
   monitor *mmz;                      // pointer to monitor class, used to extract signal traces
