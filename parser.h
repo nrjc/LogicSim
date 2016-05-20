@@ -6,6 +6,7 @@
 #include "network.h"
 #include "devices.h"
 #include "monitor.h"
+#include "error.h"
 using namespace std;
 
 class parser {
@@ -14,6 +15,7 @@ class parser {
 		devices* dmz; 
 		monitor* mmz;
 		scanner* smz;
+		error* err;
 		symbol cursym;
 		name curid;
 		int curnum;
@@ -23,7 +25,7 @@ class parser {
 		void device(void);
 		void connection(void);
 		void parmonitor();
-		void error(int errn);
+
 	
 	public:
 		bool readin();
@@ -33,8 +35,7 @@ class parser {
     /* corresponding internal representation via calls to the 'Network'    */
     /* module and the 'Devices' module.                                    */
 
-		parser(network* network_mod, devices* devices_mod,
-		monitor* monitor_mod, scanner* scanner_mod);
+		parser(network* network_mod, devices* devices_mod, monitor* monitor_mod, scanner* scanner_mod, error* error_mod);
     /* the constructor takes pointers to various other classes as parameters */
 };
 

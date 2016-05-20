@@ -5,6 +5,7 @@
 #include "network.h"
 #include "devices.h"
 #include "monitor.h"
+#include "error.h"
 
 int main(int argc, char **argv)
 
@@ -17,10 +18,13 @@ int main(int argc, char **argv)
 
   names Nametable;
   scanner newscanner(&Nametable,argv[1]);
+  error newerror;
+  
   monitor* newmonitor;
   devices* newdevice;
   network* newnetwork;
-  parser newparser(newnetwork,newdevice,newmonitor,&newscanner);
+  
+  parser newparser(newnetwork,newdevice,newmonitor,&newscanner,&newerror);
   newparser.readin();
   
 
