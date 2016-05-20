@@ -21,23 +21,23 @@ sdtype, // DTYPE 8
 sxor, // XOR 9
 sand, // AND 10
 snand, // NAND 11
-sor,  //OR
-snor, //NOR
-inputsym,//For I1-I16, the type will be inputsymbol, and the integer will be in num.
-idata, //Input Type - DATA
-iclk,  //Input Type - CLK
-iset,  //Input Type -SET
-iclear, //Input Type - Clear
-oq,  //Output Type -Q
-oqbar, //Output Type -QBAR
-comma,  // ,
-stop, // .
-colon, // :
-opencurly, // {
-closecurly, // }
-arrow,  //  ->
-badsym, // symbol cannot be identified
-eofsym // End of file symbol
+sor,  //OR 12
+snor, //NOR 13
+inputsym,//For I1-I16, the type will be inputsymbol, and the integer will be in num. 14
+idata, //Input Type - DATA 15
+iclk,  //Input Type - CLK 16
+iset,  //Input Type -SET 17
+iclear, //Input Type - Clear 18
+oq,  //Output Type -Q 19
+oqbar, //Output Type -QBAR 20
+comma,  // , 21
+stop, // . 22
+colon, // : 23
+opencurly, // { 24
+closecurly, // } 25
+arrow,  //  -> 26
+badsym, // symbol cannot be identified 27
+eofsym // End of file symbol 28
 } symbol;
 
 class scanner
