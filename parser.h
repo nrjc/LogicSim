@@ -23,7 +23,7 @@ class parser {
 		void device(void);
 		void connection(void);
 		void parmonitor();
-		void error();
+		void error(int errn);
 	
 	public:
 		bool readin();

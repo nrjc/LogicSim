@@ -23,15 +23,15 @@ bool parser::readin (void){
 	if (cursym==devsym){
 			devicelist();
 			smz->getsymbol(cursym,curid,curnum);
-	} else {error();return false;}
+	} else {error(0);return false;}
 	if (cursym == consym){	
 			connectionlist();
 			smz->getsymbol(cursym,curid,curnum);
-	} else {error();return false;}
+	} else {error(0);return false;}
    if (cursym == monsym){
 			monitorlist();
 			smz->getsymbol(cursym,curid,curnum);
-	} else {error();return false;}
+	} else {error(18);return false;}
 	if (cursym==eofsym){
 		return true;}
 		else {return false;}
@@ -43,11 +43,9 @@ void parser::devicelist(void){
 		smz->getsymbol(cursym,curid,curnum);
 		device();
 		smz->getsymbol(cursym,curid,curnum);
-		cout<<"symb:" <<cursym<<endl;
 	}
 	else{
-		cout<<"symb:"<<cursym<<endl;
-		error(); // no opencurly error
+		error(0); // no opencurly error
 	}
 	while (cursym==semicol){
 		smz->getsymbol(cursym,curid,curnum);
@@ -73,14 +71,14 @@ void parser::device(void){
 				if (cursym==numsym){
 					// pass number to network class
 				}
-				else error(); // num expected error
+				else error(0); // num expected error
 			}
-			else error(); // no colon error
+			else error(0); // no colon error
 		}
 		else if (cursym==numsym){
-			error(); // devicename must not start with a number error
+			error(0); // devicename must not start with a number error
 		}
-		else error(); // devicename must coincide with a keyword error 
+		else error(0); // devicename must coincide with a keyword error 
 	}
 	else if (cursym==sswitch){
 		smz->getsymbol(cursym,curid,curnum);
@@ -100,24 +98,24 @@ void parser::device(void){
 					}
 					else{
 						cout<<cursym<<endl;
-						error(); //input must be zero or one
+						error(0); //input must be zero or one
 					}
 				} 
 				else{
 					cout<<cursym<<endl;
-					error(); // input must be a number
+					error(0); // input must be a number
 				}
 			}
 			else{
 				cout<<cursym<<endl;
-				error(); // no colon error
+				error(0); // no colon error
 			}
 		}
 		else if (cursym==numsym){
-			error(); // devicename must not start with a number error
+			error(0); // devicename must not start with a number error
 		}
 		else{
-			error(); // devicename must coincide with a keyword error
+			error(0); // devicename must coincide with a keyword error
 		}
 	}
 	else if (cursym==sand){
@@ -131,15 +129,15 @@ void parser::device(void){
 					if (curnum<=16 && curnum>=1){
 						//parse num into network class
 					}
-					else error(); // number of inputs must be smaller than 17 and greater than 0 error
+					else error(0); // number of inputs must be smaller than 17 and greater than 0 error
 				}
 			}
-			else error(); // no colon error
+			else error(0); // no colon error
 		}
 		else if (cursym==numsym){
-			error(); // devicename must not start with a number error
+			error(0); // devicename must not start with a number error
 		}
-		else error(); // devicename must coincide with a keyword error 
+		else error(0); // devicename must coincide with a keyword error 
 	}
 	else if (cursym==snand){
 		smz->getsymbol(cursym,curid,curnum);
@@ -153,15 +151,15 @@ void parser::device(void){
 						//parse num into network class
 						return;
 					}
-					else error(); // number of inputs must be smaller than 17 and greater than 0 error
+					else error(0); // number of inputs must be smaller than 17 and greater than 0 error
 				}
 			}
-			else error(); // no colon error
+			else error(0); // no colon error
 		}
 		else if (cursym==numsym){
-			error(); // devicename must not start with a number error
+			error(0); // devicename must not start with a number error
 		}
-		else error(); // devicename must coincide with a keyword error 
+		else error(0); // devicename must coincide with a keyword error 
 	}
 	else if (cursym==sor){
 		smz->getsymbol(cursym,curid,curnum);
@@ -174,15 +172,15 @@ void parser::device(void){
 					if (curnum<=16 && curnum>=1){
 						//parse num into network class
 					}
-					else error(); // number of inputs must be smaller than 17 and greater than 0 error
+					else error(0); // number of inputs must be smaller than 17 and greater than 0 error
 				}
 			}
-			else error(); // no colon error
+			else error(0); // no colon error
 		}
 		else if (cursym==numsym){
-			error(); // devicename must not start with a number error
+			error(0); // devicename must not start with a number error
 		}
-		else error(); // devicename must coincide with a keyword error 
+		else error(0); // devicename must coincide with a keyword error 
 	}
 	else if (cursym==snor){
 		smz->getsymbol(cursym,curid,curnum);
@@ -195,15 +193,15 @@ void parser::device(void){
 					if (curnum<=16 && curnum>=1){
 						//parse num into network class
 					}
-					else error(); // number of inputs must be smaller than 17 and greater than 0 error
+					else error(0); // number of inputs must be smaller than 17 and greater than 0 error
 				}
 			}
-			else error(); // no colon error
+			else error(0); // no colon error
 		}
 		else if (cursym==numsym){
-			error(); // devicename must not start with a number error
+			error(0); // devicename must not start with a number error
 		}
-		else error(); // devicename must not coincide with a keyword error 
+		else error(0); // devicename must not coincide with a keyword error 
 	}
 	else if (cursym==sdtype){
 		smz->getsymbol(cursym,curid,curnum);
@@ -212,9 +210,9 @@ void parser::device(void){
 			smz->getsymbol(cursym,curid,curnum); 
 		}
 		else if (cursym==numsym){
-			error(); // devicename must not start with a number error
+			error(0); // devicename must not start with a number error
 		}
-		else error(); // devicename must not coincide with a keyword error
+		else error(0); // devicename must not coincide with a keyword error
 	}
 	else if (cursym==sxor){
 		smz->getsymbol(cursym,curid,curnum);
@@ -223,12 +221,12 @@ void parser::device(void){
 			smz->getsymbol(cursym,curid,curnum); 
 		}
 		else if (cursym==numsym){
-			error(); // devicename must not start with a number error
+			error(0); // devicename must not start with a number error
 		}
-		else error(); // devicename must not coincide with a keyword error
+		else error(0); // devicename must not coincide with a keyword error
 	}
 	else {
-		error(); // unidentified type error
+		error(0); // unidentified type error
 	}
 }
 
@@ -237,18 +235,15 @@ void parser::connectionlist(void){
 	if (cursym==opencurly){
 		smz->getsymbol(cursym,curid,curnum);
 		connection();
-		smz->getsymbol(cursym,curid,curnum);
-	}
-	else error(); // no opencurly error
+	}else error(10); // no opencurly error
 	while (cursym==semicol){
 		smz->getsymbol(cursym,curid,curnum);
+		if (cursym==closecurly) {
+			return;
+		} 
 		connection();
-		smz->getsymbol(cursym,curid,curnum);
 	}
-	if (cursym==closecurly){
-		smz->getsymbol(cursym,curid,curnum);
-	}
-	else error(); // not ended with ; or ,
+	error(12); //Error code detected
 }
 
 void parser::connection(void){
@@ -265,7 +260,7 @@ void parser::connection(void){
 				// parser will tell the network class this output q
 				return;
 			}
-			else error(); // invalid output from dtype
+			else error(1); // invalid output from dtype
 		} 
 		if (cursym==arrow){
 			bool firstit=true;
@@ -274,15 +269,15 @@ void parser::connection(void){
 				firstit=false;
 				if (cursym==namesym){
 					smz->getsymbol(cursym,curid,curnum);
-					cout<<"shit happens" <<cursym<<endl;
 					if (cursym==stop){
 						smz->getsymbol(cursym,curid,curnum);
 						if (cursym==inputsym){
 							if (curnum<=16 && curnum>=1){
 								// parse num to network class
+								//cout << "current sym:" << cursym <<endl;
 								smz->getsymbol(cursym,curid,curnum);
 							}
-							else error(); // current number exceeded 16 or is smaller than 1 error
+							else error(2); // current number exceeded 16 or is smaller than 1 error
 						}
 						else if (cursym==idata){
 							// parse data input to network class
@@ -300,23 +295,25 @@ void parser::connection(void){
 							// parse clear input to network class
 							smz->getsymbol(cursym,curid,curnum);
 						}
-						else error(); //input formats is wrong
+						else error(3); //input formats is wrong
 					}
 				}
 			}
+			//cout << "current sym:" << cursym <<endl;
 			if (cursym==semicol){
-				smz->getsymbol(cursym,curid,curnum);
-			}else error(); //comma expected or semicol expected 
-		}else error(); // for connection, no output or arrow following devicename
+				return;
+			}else error(4); //comma expected or semicol expected 
+		}else error(5); // for connection, no output or arrow following devicename
 	}			
 }
 
 void parser::monitorlist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
+		cout << cursym <<endl;
 		parmonitor();
 	}
-	else error(); // no opencurly error
+	else error(0); // no opencurly error
 	while (cursym==semicol){
 		smz->getsymbol(cursym,curid,curnum);
 		parmonitor();
@@ -324,7 +321,7 @@ void parser::monitorlist(void){
 	if (cursym==closecurly) {
 		smz->getsymbol(cursym,curid,curnum);
 	}
-	else error(); // not ended with ; or ,
+	else error(0); // not ended with ; or ,
 }
 
 void parser::parmonitor(void){
@@ -333,13 +330,13 @@ void parser::parmonitor(void){
 		// parser to connect this to the network class
 		smz->getsymbol(cursym,curid,curnum);
 	}
-	else error(); // a devicename expected error
+	else error(0); // a devicename expected error
 }
 
 
-void parser::error(/*int errn, symbol stop*/) {
+void parser::error(int errn) {
 	//add in more here!
-	cout << "error: ";
+	cout << "error, code"<<errn<<":";
 	smz->getnewline();
 	return;
 	/*
