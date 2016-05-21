@@ -365,15 +365,21 @@ void parser::monitorlist(void){
 
 void parser::parmonitor(void){
 	if (cursym==namesym){
+        devnametemp=curid;
+        outputnametemp=blankname;
 		smz->getsymbol(cursym,curid,curnum);
 		if (cursym==stop){
 			smz->getsymbol(cursym,curid,curnum);
 			if (cursym==oq){
+                outputnametemp=curid;
 				// monitor output q
+				mmz->makemonitor(devnametemp,outputnametemp,okcheck);
 				smz->getsymbol(cursym,curid,curnum);
 				return;
 			}
 			else if (cursym==oqbar){
+                outputnametemp=curid;
+                mmz->makemonitor(devnametemp,outputnametemp,okcheck);
 				// monitor output qbar
 				smz->getsymbol(cursym,curid,curnum);
 				return;
@@ -384,6 +390,7 @@ void parser::parmonitor(void){
 			}
 		}
 		else if (cursym==semicol){
+            mmz->makemonitor(devnametemp,outputnametemp,okcheck);
 			return;
 		}
 		else{
