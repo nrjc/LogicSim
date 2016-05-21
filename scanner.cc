@@ -26,9 +26,6 @@ scanner::~scanner(){
 }
 void scanner::getsymbol(symbol& s, name& id, int& num)
 {
-	if(curch=='\n'){
-		linenumber+=1;
-	}
 	skipspaces(&inf, curch, eofile);
 	if (eofile){
 		s=eofsym;
@@ -114,6 +111,9 @@ int scanner::getnumber(ifstream *infp, char &curch, bool &eofile){
 
 void scanner::skipspaces(ifstream *infp,char &curch,bool &eofile){
   while (!eofile) {
+	if(curch=='\n'){
+		linenumber+=1;
+	}
     if (!isspace(curch)){
 		return;
 	}
@@ -166,7 +166,7 @@ void scanner::getnewline(){
 			line+=backup;
 			eofile2=!(inf.get(backup));
 		}
-	cout<<linenumber<<"  " << line <<endl;
+	cout<<linenumber<<"  " << line;
 	inf.seekg (currentposition, inf.beg);
 	
 }

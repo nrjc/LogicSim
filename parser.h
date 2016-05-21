@@ -25,6 +25,7 @@ class parser {
 		void device(void);
 		void connection(void);
 		void parmonitor();
+		void errorparser(int errin);
 
 	
 	public:

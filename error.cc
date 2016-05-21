@@ -15,6 +15,11 @@ error::error(){
 	this->writeerror("EXPECTED ':'"); //5
 	this->writeerror("DEVICENAME MUST NOT START WITH A NUMBER"); //6
 	this->writeerror("DEVICENAME MUST NOT CONINCIDE WITH A KEYWORD"); //7
+	this->writeerror("INPUT MUST BE A 0 / 1"); //8
+	this->writeerror("NUMBER OF INPUTS MUST BE BETWEEN 1-16"); //9
+	this->writeerror("UNIDENTIFIED TYPE"); //10
+	this->writeerror("INVALID OUTPUT FROM D-TYPE"); //11
+	this->writeerror("EXPECTED DEVICENAME"); //12
 }
 
 int error::writeerror(string errordescription){
@@ -27,7 +32,7 @@ int error::writeerror(string errordescription){
 void error::printerror (int id){
 	auto search = map.find(id);
     if(search != map.end()) {
-        cout << "Error Code "<< search->first << ": "<< search->second << endl;
+        cout << "Error Code "<< search->first << ": "<< search->second ;
     }
     else {
         cout << "Error Code Not found";
