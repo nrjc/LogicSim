@@ -4,7 +4,7 @@ CXX = $(shell wx-config --version=3.0 --cxx)
 
 SRC = logsim.cc names.cc scanner.cc network.cc parser.cc monitor.cc devices.cc userint.cc gui.cc guitest.cc
 
-L_OBJECTS = logsim.o names.o scanner.o network.o parser.o monitor.o devices.o userint.o gui.o
+L_OBJECTS = logsim.o names.o scanner.o network.o parser.o monitor.o devices.o userint.o gui.o error.o
 
 G_OBJECTS = guitest.o names.o network.o monitor.o devices.o gui.o
 
@@ -40,7 +40,7 @@ depend:
 
 # DO NOT DELETE
 
-logsim.o: logsim.h names.h devices.h network.h monitor.h parser.h userint.h
+logsim.o: logsim.h names.h devices.h network.h monitor.h parser.h userint.h error.h
 logsim.o: gui.h 
 names.o: names.h
 network.o: network.h names.h

@@ -18,6 +18,7 @@ class MyApp: public wxApp
   devices *dmz;  // pointer to the devices class
   monitor *mmz;  // pointer to the monitor class
   scanner *smz;  // pointer to the scanner class
+  error *err;
   parser *pmz;   // pointer to the parser class
 };
 
