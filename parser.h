@@ -24,7 +24,7 @@ class parser {
 		void monitorlist(void);
 		void device(void);
 		void connection(void);
-		void parmonitor();
+		void monitor();
 		void errorparser(int errin);
 
 	
