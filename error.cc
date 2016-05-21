@@ -22,6 +22,8 @@ error::error(){
 	this->writeerror("EXPECTED DEVICENAME"); //12
 	this->writeerror("EXPECTED '.' or '.'"); //13
 	this->writeerror("DEVICE NOT DEFINED"); //14
+	this->writeerror("TOO MANY INPUTS OR INPUT CANNOT BE SMALLER THAN 1"); //15
+	this->writeerror("INVALID DTYPE INPUT"); //16
 }
 
 int error::writeerror(string errordescription){

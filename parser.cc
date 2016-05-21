@@ -285,42 +285,55 @@ void parser::connection(void){
 					smz->getsymbol(cursym,curid,curnum);
 					if (cursym==namesym){
 						if (netz->finddevice(curid)!=NULL){
-							devnamtempinp=curid;
-							smz->getsymbol(cursym,curid,curnum);
-							if (cursym==stop){
+							//devicepointer=netz->finddevice(curid);
+							//kindindex=devicepointer->kind;
+							int kindindex=0;
+							kindindex=(netz->finddevice(curid))->kind;
+							if (kindindex!=7){
+							//cout<<"shit"<<curnum<<endl;
+							//cout<<"shit :"<<netz->getnumberofinputs(curid)<<endl;
+								int noofinputs=0;
+								noofinputs=netz->getnumberofinputs(curid);
+								devnamtempinp=curid;
 								smz->getsymbol(cursym,curid,curnum);
-								if (cursym==inputsym){
-									if (curnum<=16 && curnum>=1){
-									   /* cout <<devnamtempinp <<endl;
-										cout <<outputnametemp <<endl;
-										cout <<devnametemp <<endl;
-										cout <<curid <<endl;*/
-										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
-										// parse num to network class
+								if (cursym==stop){
+									smz->getsymbol(cursym,curid,curnum);
+									if (cursym==inputsym){
+										if (curnum<=noofinputs && curnum>=1){
+											netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
+											// parse num to network class
+											smz->getsymbol(cursym,curid,curnum);
+										}
+										else errorparser(15); // current number exceeded 16 or is smaller than 1 error
+									}
+								}
+							}
+							else{
+								devnamtempinp=curid;
+								smz->getsymbol(cursym,curid,curnum);
+								if (cursym==stop){
+									smz->getsymbol(cursym,curid,curnum);
+									if (cursym==idata){
+										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
 										smz->getsymbol(cursym,curid,curnum);
 									}
-									else errorparser(9); // current number exceeded 16 or is smaller than 1 error
+									else if (cursym==iclk){
+										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clk input to network class
+										smz->getsymbol(cursym,curid,curnum);
+									}
+									else if (cursym==iset){
+										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse set input to network class
+										smz->getsymbol(cursym,curid,curnum);
+									}
+									else if (cursym==iclear){
+										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
+										smz->getsymbol(cursym,curid,curnum);
+									}
+									else errorparser(16); //input formats is wrong
 								}
-								else if (cursym==idata){
-									netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
-									smz->getsymbol(cursym,curid,curnum);
-								}
-								else if (cursym==iclk){
-									netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clk input to network class
-									smz->getsymbol(cursym,curid,curnum);
-								}
-								else if (cursym==iset){
-									netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse set input to network class
-									smz->getsymbol(cursym,curid,curnum);
-								}
-								else if (cursym==iclear){
-									netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
-									smz->getsymbol(cursym,curid,curnum);
-								}
-								else errorparser(-1); //input formats is wrong
 							}
 						}else errorparser(14); // DEVICE NOT DEFINED
-					}
+					}else errorparser(6);
 				}
 				if (cursym==semicol){
 					return;
