@@ -20,11 +20,11 @@ int main(int argc, char **argv)
   scanner newscanner(&Nametable,argv[1]);
   error newerror;
   
-  monitor* newmonitor;
-  devices* newdevice;
-  network* newnetwork;
-  
-  parser newparser(newnetwork,newdevice,newmonitor,&newscanner,&newerror);
+  network newnetwork(&Nametable);
+  devices newdevice(&Nametable,&newnetwork);
+  monitor newmonitor(&Nametable,&newnetwork);
+
+  parser newparser(&newnetwork,&newdevice,&newmonitor,&newscanner,&newerror);
   newparser.readin();
   
 
