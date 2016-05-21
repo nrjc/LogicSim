@@ -272,7 +272,7 @@ void parser::connection(void){
 
 	if (cursym==namesym){
         devnametemp=curid;// parser will connect this device to the network class here
-        outputnametemp=curid;
+        outputnametemp=blankname;
 		smz->getsymbol(cursym,curid,curnum);
 		if (cursym==stop){
 			smz->getsymbol(cursym,curid,curnum);
@@ -303,26 +303,31 @@ void parser::connection(void){
                                 cout <<outputnametemp <<endl;
                                 cout <<devnametemp <<endl;
                                 cout <<curid <<endl;*/
-                                netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);
+                                netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
+                                cout << okcheck <<endl;
 								// parse num to network class
 								smz->getsymbol(cursym,curid,curnum);
 							}
 							else errorparser(9); // current number exceeded 16 or is smaller than 1 error
 						}
 						else if (cursym==idata){
-							netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);// parse data input to network class
+							netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
+							cout << okcheck <<endl;
 							smz->getsymbol(cursym,curid,curnum);
 						}
 						else if (cursym==iclk){
-							netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);// parse clk input to network class
+							netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clk input to network class
+							cout << okcheck <<endl;
 							smz->getsymbol(cursym,curid,curnum);
 						}
 						else if (cursym==iset){
-							netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);// parse set input to network class
+							netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse set input to network class
+							cout << okcheck <<endl;
 							smz->getsymbol(cursym,curid,curnum);
 						}
 						else if (cursym==iclear){
-							netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);// parse clear input to network class
+							netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
+							cout << okcheck <<endl;
 							smz->getsymbol(cursym,curid,curnum);
 						}
 						else errorparser(-1); //input formats is wrong
