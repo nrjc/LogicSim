@@ -41,6 +41,7 @@ class MyFrame: public wxFrame
   
   // Added functions
   void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
+  void SetSwitchList(wxCheckListBox *switchbox);		//Add checkboxes for editing switches.
   void AddSwitchMonCtrl(wxSizer *control_sizer);
   
   // Event handlers

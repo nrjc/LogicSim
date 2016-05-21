@@ -53,7 +53,7 @@ public:
   void writedevice (devicekind k);
     /* Prints out the given device kind.                                   */
  
- vector<name> GetSwitches(void);
+  vector<devlink> GetSwitches(void);
     /* returns a vector of name id's for devices of devicekind aswitch */
  
   void debug (bool on);

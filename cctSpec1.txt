@@ -1,8 +1,8 @@
 DEVICES {
-SWITCH SW1: 0;
+SWITCH SW1: 1;
 SWITCH SW2: 0;
 NAND G1: 2;
-NAND g2: 2;
+NAND G2: 2;
 }
 
 CONNECTIONS {
@@ -12,7 +12,9 @@ G1 -> G2.I1;
 G2 -> G1.I2;
 }
 
-MONITOR {
-GI;
+MONITORS {
+SW1;
+SW2;
+G1;
 G2;
 }

@@ -432,14 +432,14 @@ devicekind devices::devkind (name id)
  * devicekind aswitch.    
  *
  */
-vector<name> devices::GetSwitches(void)
-{//NOT TESTED
-  vector<name> switches;
+vector<devlink> devices::GetSwitches(void)
+{
+  vector<devlink> switches;
   // Used code from executedevices as an example.
   devlink d= netz->devicelist();
   for (d; d != NULL; d = d->next) {
     if((d->kind)==aswitch)
-    switches.push_back(d->id);
+    switches.push_back(d);
   }
   return switches;
 }

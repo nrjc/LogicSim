@@ -15,7 +15,7 @@
 #include <wx/arrstr.h>
 //#include <wx/menuitem.h>
 #include <wx/string.h>
-
+#define USE_GUI
 
 using namespace std;
 
@@ -99,33 +99,39 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
   #endif
   
   if ((cyclesdisplayed >= 0) && (mcount > 0)) { // draw the first monitor signal, get trace from monitor class
-    curr_y = (-1.0)*(n+1)*plt_height;
-    glColor3f(1.0, 0.0, 0.0);
-    glBegin(GL_LINE_STRIP);
-    for (i=0; i<cyclesdisplayed; i++) {
-      if (mmz->getsignaltrace(n, i, s)) {
-        if (s==low) y = curr_y +low_y;
-        if (s==high) y = curr_y+high_y;
-        glVertex2f(st_width*(i+0.5), y); 
-        glVertex2f(st_width*(i+1.5), y);
-      }
-    }
-    glEnd();
-    // untested alternative to draw multiple traces
-    /*
-    for (n=0; n<mcount; n++)
+    
+    string monname;
+    name dev, outp;
+    
+    for (n=0; n<mcount; n++){
+      // retrieve monitor name
+      mmz->getmonname(n, dev, outp);
+      monname = (string) nmz->getnamefromtable(dev);
+      if (outp!=-1) {monname+="."; monname+=(string) nmz->getnamefromtable(outp);}
+      
+      glColor3f(0.0, 0.0, 1.0);
+      curr_y = (-1.0)*(n+1)*plt_height;
+      
+      // Write out monitor name
+      glRasterPos2f(start_x-15-pan_x, curr_y+high_y+st_height/2);
+      for (i = 0; i < monname.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, monname[i]);
+      // DRAW AXES
+      DrawAxes(start_x, start_x+cyclesdisplayed*st_width, curr_y+low_y, curr_y+high_y);
+      
+      glColor3f(0.7, 0.0, 0.0);
       glBegin(GL_LINE_STRIP);
-      {for (i=0; i<cyclesdisplayed; i++) {
+      for (i=0; i<cyclesdisplayed; i++) {
         if (mmz->getsignaltrace(n, i, s)) {
-          if (s==low) y = (mcount-n-1)*plt_height+10.0;
-          if (s==high) y = (mcount-n-1)*plt_height+30.0;
-          glVertex2f(st_width*i+10.0, y); 
-          glVertex2f(st_width*i+30.0, y);
+          //cout<<"monitor"<<n<<" cycle"<< i <<" trace"<< s <<endl;
+          if (s==low) y = curr_y +low_y;
+          if (s==high) y = curr_y+high_y;
+          glVertex2f(start_x+st_width*(i), y); 
+          glVertex2f(start_x+st_width*(i+1), y);
         }
       }
       glEnd();
-    }*/
-    
+    }
+      
   } else { // draw an artificial trace
     
     mcount = 20;
@@ -154,15 +160,17 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
         glVertex2f(start_x+st_width*(i+1), y);
       }
       glEnd();
-      disp_h = -curr_y+10;
-      // if disp_h is less than canvas height, set disp_h to canvas height.
-      if (disp_h<h) disp_h = h;
-      disp_w = start_x+cyclesdisplayed*st_width+50;
-      if (disp_w<w) disp_w = w;
+      
     }
     
   }
-
+  
+  disp_h = -curr_y+10;
+  // if disp_h is less than canvas height, set disp_h to canvas height.
+  if (disp_h<h) disp_h = h;
+  disp_w = start_x+cyclesdisplayed*st_width+50;
+  if (disp_w<w) disp_w = w;
+  
   // Example of how to use GLUT to draw text on the canvas
   glColor3f(0.5, 0.0, 0.5);
   glRasterPos2f(100-pan_x, -pan_y+120);
@@ -543,7 +551,7 @@ void MyFrame::OnSwitchBox(wxCommandEvent &event)
   // pseudocode for when the network is accessible
   #ifdef USE_GUI
   namestring switchname = (namestring)currswitch->GetLabelText();
-  name sid = names_mod->lookup(switchname);
+  name sid = nmz->lookup(switchname);
   asignal level;
   bool ok;
   
@@ -551,7 +559,7 @@ void MyFrame::OnSwitchBox(wxCommandEvent &event)
   level = high;
   else level=low;
   
-  devices_mod->setswitch( sid, level, ok);
+  //devices_mod->setswitch( sid, level, ok);
   
   
   #endif
@@ -599,13 +607,33 @@ void MyFrame::runnetwork(int ncycles)
 
 void MyFrame::SetSwitchList(wxWindow *parent,wxSizer* sizer)
 {
-  vector<name> switches = dmz->GetSwitches();
+  vector<devlink> switches = dmz->GetSwitches();
   name nm;
-  for (int i=0; i<switches.size(); i++)
+  asignal currswstate;
+  wxCheckBox* currbox;
+  string nmstring;
+  // Going backwards through the list, because the network adds new 
+  //devices/switches at the beginning of the device list
+  for (int i=switches.size()-1; i>-1; i--)
   {
-    nm=switches[i];
-    sizer->Add(new wxCheckBox(parent, MY_SWITCH_ID, nmz->getnamefromtable(nm)), MySwitchFlag);
+    nm=switches[i]->id;
+    currswstate = switches[i]->swstate;
+    nmstring = (string) nmz->getnamefromtable(nm);
+    currbox = new wxCheckBox(parent, MY_SWITCH_ID, nmstring);
+    if (currswstate == high) currbox->SetValue(true);
+    else if (currswstate == low) currbox->SetValue(false);
+    else cout<< "Invalid switch state, switch id "<< nm << ", name "<< nmstring<< endl;
+    cout<< "Switch id "<< nm << ", name "<< nmstring<< endl;
+    sizer->Add(currbox, MySwitchFlag);
     
+  }
+  
+  // for debugging
+  devlink d = switches[0];
+  for (int i = 0; i<5; i++)
+  {
+    cout<<" id"<<d->id<<" name "<<nmz->getnamefromtable(d->id)<<" op"<<d->olist->id<<endl;//<<" inp"<<d->ilist->id<<endl;
+    d = d->next;
   }
   
 }
