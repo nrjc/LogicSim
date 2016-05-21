@@ -377,19 +377,20 @@ void devices::executedevices (bool& ok)
       cout << "machine cycle # " << machinecycle << endl;
     steadystate = true;
     for (d = netz->devicelist (); d != NULL; d = d->next) {
+        switch (d->kind) {
+            case aswitch:  execswitch (d);           break;
+            case aclock:   execclock (d);            break;
+            case orgate:   execgate (d, low, low);   break;
+            case norgate:  execgate (d, low, high);  break;
+            case andgate:  execgate (d, high, high); break;
+            case nandgate: execgate (d, high, low);  break;
+            case xorgate:  execxorgate (d);          break;
+            case dtype:    execdtype (d);            break;
+      }
           if (debugging){
             showdevice (d);}
 
-     /* switch (d->kind) {
-        case aswitch:  execswitch (d);           break;
-        case aclock:   execclock (d);            break;
-        case orgate:   execgate (d, low, low);   break;
-        case norgate:  execgate (d, low, high);  break;
-        case andgate:  execgate (d, high, high); break;
-        case nandgate: execgate (d, high, low);  break;
-        case xorgate:  execxorgate (d);          break;
-        case dtype:    execdtype (d);            break;
-      }*/
+
 
     }
   } while ((! steadystate) && (machinecycle < maxmachinecycles));

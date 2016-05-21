@@ -66,7 +66,7 @@ void parser::device(void){
 	 devtypetemp=dmz->devkind(curid);
 		smz->getsymbol(cursym,curid,curnum);
 		if (cursym==namesym){
-		devnametemp=curid;
+            devnametemp=curid;
 			//this is the place where you get the user defined name and parse it into the network class
 			smz->getsymbol(cursym,curid,curnum);
 			if (cursym==colon){
