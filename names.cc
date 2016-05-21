@@ -11,8 +11,9 @@ using namespace std;
 
 names::names(void)  /* the constructor */
 {
-	counter=0;
-	//Populating the names class with reserved names and punctuation. 
+	counter=-1;
+	//Populating the names class with reserved names and punctuation.
+	this->lookup("");
 	this->lookup(";"); //0
 	this->lookup("DEVICES"); //1
 	this->lookup("CONNECTIONS"); //2
@@ -55,7 +56,7 @@ names::names(void)  /* the constructor */
 	this->lookup("->");//39
 	this->lookup("/*");//40
 	this->lookup("//");//41
-	
+
 }
 
 name names::lookup (namestring str)
@@ -65,9 +66,9 @@ name names::lookup (namestring str)
 		return search->second;
 	}
 	else{
-		//truncates name if larger than maxlength. 
+		//truncates name if larger than maxlength.
 		if (str.length() > maxlength){
-			str = str.substr(0,maxlength);	
+			str = str.substr(0,maxlength);
 			cout << "Warning: name `"<<str<<"' was truncated." <<endl;
 		}
 		map.insert({str,counter});
@@ -90,7 +91,7 @@ name names::cvtname (namestring str)
 void names::writename (name id)
 {
 	cout << getnamefromtable(id) << endl;
-	
+
 }
 
 namestring names::getnamefromtable(name index){
