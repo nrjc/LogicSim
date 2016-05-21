@@ -40,7 +40,7 @@ void devices::showdevice (devlink d)
     cout << "      ";
     nmz->writename (i->id);
     cout << " ";
-    //outsig (i->connect->sig);
+    outsig (i->connect->sig);
     cout << endl;
   }
   cout << "   Outputs:";
@@ -48,7 +48,7 @@ void devices::showdevice (devlink d)
     cout << "      ";
     nmz->writename (o->id);
     cout << " ";
-    //outsig (o->sig);
+    outsig (o->sig);
     cout << endl;
   }
   cout << endl;
