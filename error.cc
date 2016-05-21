@@ -21,6 +21,7 @@ error::error(){
 	this->writeerror("INVALID OUTPUT FROM D-TYPE"); //11
 	this->writeerror("EXPECTED DEVICENAME"); //12
 	this->writeerror("EXPECTED '.' or '.'"); //13
+	this->writeerror("DEVICE NOT DEFINED"); //14
 }
 
 int error::writeerror(string errordescription){
