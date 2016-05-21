@@ -73,6 +73,7 @@ void parser::device(void){
 				smz->getsymbol(cursym,curid,curnum);
 				if (cursym==numsym){
                     dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
+                    cout<< "Device created: "<< okcheck<<endl;
 					return;
 				}
 				else errorparser(4); // num expected error
@@ -95,6 +96,7 @@ void parser::device(void){
 				if (cursym==numsym){
 					if (curnum==0||curnum==1){
                         dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);//parse 0/1 into device class
+                        cout<< "Device created: "<< okcheck<<endl;
 						return;
 					}
 					else{
@@ -127,6 +129,7 @@ void parser::device(void){
 				if (cursym==numsym){
 					if (curnum<=16 && curnum>=1){
                         dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                        cout<< "Device created: "<< okcheck<<endl;
 						return;
 					}
 					else errorparser(0); // number of inputs must be smaller than 17 and greater than 0 error
@@ -150,6 +153,7 @@ void parser::device(void){
 				if (cursym==numsym){
 					if (curnum<=16 && curnum>=1){
                         dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                        cout<< "Device created: "<< okcheck<<endl;
 						//parse num into network class
 						return;
 					}
@@ -175,6 +179,7 @@ void parser::device(void){
 				if (cursym==numsym){
 					if (curnum<=16 && curnum>=1){
                         dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                        cout<< "Device created: "<< okcheck<<endl;
 						//parse num into network class
 						return;
 					}
@@ -200,6 +205,7 @@ void parser::device(void){
 				if (cursym==numsym){
 					if (curnum<=16 && curnum>=1){
                         dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                        cout<< "Device created: "<< okcheck<<endl;
 						//parse num into network class#
 						return;
 					}
@@ -218,6 +224,7 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (cursym==namesym){
             dmz->makedevice(devtypetemp,curid,curnum,okcheck);
+            cout<< "Device created: "<< okcheck<<endl;
 			//this is the place where you get the user defined name and parse it into the network class
 			return;
 		}
@@ -231,6 +238,7 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (cursym==namesym){
             dmz->makedevice(devtypetemp,curid,curnum,okcheck);
+            cout<< "Device created: "<< okcheck<<endl;
 			//this is the place where you get the user defined name and parse it into the network class
 			return;
 		}
@@ -261,17 +269,19 @@ void parser::connectionlist(void){
 }
 
 void parser::connection(void){
+
 	if (cursym==namesym){
-		// parser will connect this device to the network class here
+        devnametemp=curid;// parser will connect this device to the network class here
+        outputnametemp=curid;
 		smz->getsymbol(cursym,curid,curnum);
 		if (cursym==stop){
 			smz->getsymbol(cursym,curid,curnum);
 			if(cursym==oq){
-				// parser will tell the network class this output q
+                outputnametemp=curid;// parser will tell the network class this output q
 				smz->getsymbol(cursym,curid,curnum);
 			}
 			else if (cursym==oqbar){
-				// parser will tell the network class this output q
+				outputnametemp=curid;// parser will tell the network class this output q
 				smz->getsymbol(cursym,curid,curnum);
 			}
 			else errorparser(11); // invalid output from dtype
@@ -283,30 +293,36 @@ void parser::connection(void){
 				smz->getsymbol(cursym,curid,curnum);
 				firstit=false;
 				if (cursym==namesym){
+                    devnamtempinp=curid;
 					smz->getsymbol(cursym,curid,curnum);
 					if (cursym==stop){
 						smz->getsymbol(cursym,curid,curnum);
 						if (cursym==inputsym){
 							if (curnum<=16 && curnum>=1){
+                               /* cout <<devnamtempinp <<endl;
+                                cout <<outputnametemp <<endl;
+                                cout <<devnametemp <<endl;
+                                cout <<curid <<endl;*/
+                                netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);
 								// parse num to network class
 								smz->getsymbol(cursym,curid,curnum);
 							}
 							else errorparser(9); // current number exceeded 16 or is smaller than 1 error
 						}
 						else if (cursym==idata){
-							// parse data input to network class
+							netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);// parse data input to network class
 							smz->getsymbol(cursym,curid,curnum);
 						}
 						else if (cursym==iclk){
-							// parse clk input to network class
+							netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);// parse clk input to network class
 							smz->getsymbol(cursym,curid,curnum);
 						}
 						else if (cursym==iset){
-							// parse set input to network class
+							netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);// parse set input to network class
 							smz->getsymbol(cursym,curid,curnum);
 						}
 						else if (cursym==iclear){
-							// parse clear input to network class
+							netz->makeconnection(devnamtempinp,outputnametemp,devnametemp,curid,okcheck);// parse clear input to network class
 							smz->getsymbol(cursym,curid,curnum);
 						}
 						else errorparser(-1); //input formats is wrong
@@ -317,7 +333,7 @@ void parser::connection(void){
 				return;
 			}else errorparser(-1); //comma expected or semicol expected
 		}else errorparser(-1); // for connection, no output or arrow following devicename
-	}
+	}else errorparser(-1);
 }
 
 void parser::monitorlist(void){

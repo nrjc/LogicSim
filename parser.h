@@ -20,7 +20,10 @@ class parser {
 		name curid;
 
 		devicekind devtypetemp; //Plaeholder variable to store the device kind before it is created.
-		name devnametemp; //Plaeholder variable to store the device name before it is created.
+		name devnametemp; //Plaeholder variable to store the device name before it is created. Also stores the device name of the output.
+		name outputnametemp;
+		name devnamtempinp; //Placeholder variable to store the device name of the input that will be connected to by the output.
+		name inputnametemp;
 		devlink devlinktemp; //Placeholder variable to store links to devices
 		bool okcheck;
 
