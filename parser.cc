@@ -343,7 +343,7 @@ void parser::monitorlist(void){
 	}
 	else errorparser(3); // no opencurly error
 	while (cursym==namesym){
-		monitor();
+		parmonitor();
 		if (cursym==semicol) {
 			smz->getsymbol(cursym,curid,curnum);
 		} else {errorparser(-1); } //Multiple device names
@@ -358,7 +358,7 @@ void parser::monitorlist(void){
 	errorparser(-1); // not ended with ; or ,
 }
 
-void parser::monitor(void){
+void parser::parmonitor(void){
 	if (cursym==namesym){
 		// parser to connect this to the network class
 		smz->getsymbol(cursym,curid,curnum);

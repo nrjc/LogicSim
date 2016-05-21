@@ -33,7 +33,7 @@ class parser {
 		void monitorlist(void);
 		void device(void);
 		void connection(void);
-		void monitor();
+		void parmonitor();
 		void errorparser(int errin);
 
 
