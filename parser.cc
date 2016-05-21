@@ -347,21 +347,44 @@ void parser::monitorlist(void){
 		if (cursym==semicol) {
 			smz->getsymbol(cursym,curid,curnum);
 		} else {errorparser(-1); } //Multiple device names
-		if (cursym ==closecurly){
+		if (cursym==closecurly){
 			return;
 		}
 	}
-	if (cursym ==closecurly){
-			//Should throw a warning.
+	if (cursym==closecurly){
+			//Should throw a warning. monitor class is blank
 			return;
-		}
+	}
 	errorparser(-1); // not ended with ; or ,
 }
 
 void parser::parmonitor(void){
 	if (cursym==namesym){
-		// parser to connect this to the network class
 		smz->getsymbol(cursym,curid,curnum);
+		if (cursym==stop){
+			smz->getsymbol(cursym,curid,curnum);
+			if (cursym==oq){
+				// monitor output q
+				smz->getsymbol(cursym,curid,curnum);
+				return;
+			}
+			else if (cursym==oqbar){
+				// monitor output qbar
+				smz->getsymbol(cursym,curid,curnum);
+				return;
+			}
+			else{
+				errorparser(11); // INVALID OUTPUT FROM D-TYPE
+				return;
+			}
+		}
+		else if (cursym==semicol){
+			return;
+		}
+		else{
+			errorparser(13); // EXPECTED '.' or '.'
+			return;
+		}
 	}
 	else errorparser(12); // a devicename expected error
 }

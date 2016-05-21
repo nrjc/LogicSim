@@ -20,6 +20,7 @@ error::error(){
 	this->writeerror("UNIDENTIFIED TYPE"); //10
 	this->writeerror("INVALID OUTPUT FROM D-TYPE"); //11
 	this->writeerror("EXPECTED DEVICENAME"); //12
+	this->writeerror("EXPECTED '.' or '.'"); //13
 }
 
 int error::writeerror(string errordescription){
