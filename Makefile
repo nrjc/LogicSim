@@ -18,10 +18,10 @@ G_OBJECTS = guitest.o names.o network.o monitor.o devices.o gui.o
 all:    logsim guitest
 
 logsim:	$(L_OBJECTS)
-	$(CXX) -o logsim $(L_OBJECTS) `wx-config --version=3.0 --libs --gl_libs` $(OPENGL_LIBS)
+	$(CXX) -o logsim $(L_OBJECTS) `wx-config --version=3.0 --libs std,aui --gl_libs` $(OPENGL_LIBS)
 
 guitest: $(G_OBJECTS)
-	 $(CXX) -o guitest $(G_OBJECTS) `wx-config --version=3.0 --libs --gl_libs` $(OPENGL_LIBS)
+	 $(CXX) -o guitest $(G_OBJECTS) `wx-config --version=3.0 --libs std,aui --gl_libs` $(OPENGL_LIBS)
 
 testnames: names.o testnames.cc
 	$(CXX) -std=c++11 -o testnames names.o testnames.cc  

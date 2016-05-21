@@ -39,8 +39,9 @@ class MyFrame: public wxFrame
   int cyclescompleted;                    // how many simulation cycles have been completed
   void runnetwork(int ncycles);           // function to run the logic network
   
-  // Added finctions
+  // Added functions
   void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
+  void AddSwitchMonCtrl(wxSizer *control_sizer);
   
   // Event handlers
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
@@ -49,6 +50,7 @@ class MyFrame: public wxFrame
   void OnButtonRun(wxCommandEvent& event);   // event handler for Run button
   void OnButtonCont(wxCommandEvent& event);   // event handler for Continue button
   void OnSwitchBox(wxCommandEvent& event);
+  void OnButtonSetMon(wxCommandEvent& event);   // event handler for when set monitor option is chosen.
   void OnSpin(wxSpinEvent& event);        // event handler for spin control
   void OnText(wxCommandEvent& event);     // event handler for text entry field
   
@@ -64,7 +66,7 @@ class MyGLCanvas: public wxGLCanvas
   MyGLCanvas(wxWindow *parent, wxWindowID id = wxID_ANY, monitor* monitor_mod = NULL, names* names_mod = NULL,
 	     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0,
 	     const wxString& name = "MyGLCanvas", const wxPalette &palette=wxNullPalette); // constructor
-  void Render(wxString example_text = "", int cycles = -1); // function to draw canvas contents
+  void Render(wxString example_text = "", int cycles = -1, bool spinchange = false); // function to draw canvas contents
  private:
   wxGLContext *context;              // OpenGL rendering context
   bool init;                         // has the OpenGL context been initialised?
@@ -80,6 +82,7 @@ class MyGLCanvas: public wxGLCanvas
   void OnSize(wxSizeEvent& event);   // event handler for when canvas is resized
   void OnPaint(wxPaintEvent& event); // event handler for when canvas is exposed
   void OnMouse(wxMouseEvent& event); // event handler for mouse events inside canvas
+  void DrawAxes(float x_low, float x_high, float y_low, float y_high); // draw axes for the trace
   DECLARE_EVENT_TABLE()
 };
     
