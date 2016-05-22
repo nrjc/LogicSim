@@ -299,12 +299,16 @@ void parser::connection(void){
 								if (cursym==stop){
 									smz->getsymbol(cursym,curid,curnum);
 									if (cursym==inputsym){
-										if (curnum<=noofinputs && curnum>=1){
-											netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
-											// parse num to network class
-											smz->getsymbol(cursym,curid,curnum);
-										}
-										else errorparser(15); // current number exceeded 16 or is smaller than 1 error
+                                        if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
+                                            if (curnum<=noofinputs && curnum>=1){
+                                                netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
+                                                smz->getsymbol(cursym,curid,curnum);
+                                            }
+                                            else errorparser(15); // current number exceeded 16 or is smaller than 1 error
+                                            }
+                                        else{
+                                            errorparser(17); // PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                        }
 									}
 								}
 							}
@@ -313,23 +317,28 @@ void parser::connection(void){
 								smz->getsymbol(cursym,curid,curnum);
 								if (cursym==stop){
 									smz->getsymbol(cursym,curid,curnum);
-									if (cursym==idata){
-										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
-										smz->getsymbol(cursym,curid,curnum);
+									if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
+                                        if (cursym==idata){
+                                            netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
+                                            smz->getsymbol(cursym,curid,curnum);
+                                        }
+                                        else if (cursym==iclk){
+                                            netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clk input to network class
+                                            smz->getsymbol(cursym,curid,curnum);
+                                        }
+                                        else if (cursym==iset){
+                                            netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse set input to network class
+                                            smz->getsymbol(cursym,curid,curnum);
+                                        }
+                                        else if (cursym==iclear){
+                                            netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
+                                            smz->getsymbol(cursym,curid,curnum);
+                                        }
+                                        else errorparser(16); //input formats is wrong
 									}
-									else if (cursym==iclk){
-										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clk input to network class
-										smz->getsymbol(cursym,curid,curnum);
-									}
-									else if (cursym==iset){
-										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse set input to network class
-										smz->getsymbol(cursym,curid,curnum);
-									}
-									else if (cursym==iclear){
-										netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
-										smz->getsymbol(cursym,curid,curnum);
-									}
-									else errorparser(16); //input formats is wrong
+									else{
+                                        errorparser(17); // PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                    }
 								}
 							}
 						}else errorparser(14); // DEVICE NOT DEFINED
@@ -340,7 +349,7 @@ void parser::connection(void){
 				}else errorparser(-1); //comma expected or semicol expected
 			}else errorparser(-1); // for connection, no output or arrow following devicename
 		}else errorparser(14); // DEVICE NOT DEFINED
-	}else errorparser(-1); 
+	}else errorparser(-1);
 }
 
 void parser::monitorlist(void){

@@ -24,13 +24,14 @@ error::error(){
 	this->writeerror("DEVICE NOT DEFINED"); //14
 	this->writeerror("TOO MANY INPUTS OR INPUT CANNOT BE SMALLER THAN 1"); //15
 	this->writeerror("INVALID DTYPE INPUT"); //16
+	this->writeerror("PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT"); //17
 }
 
 int error::writeerror(string errordescription){
 	map.insert({errorcounter,errordescription});
 	errorcounter++;
 	return (errorcounter-1);
-	
+
 }
 
 void error::printerror (int id){
