@@ -16,7 +16,7 @@ error::error(){
 	this->writeerror("DEVICENAME MUST NOT START WITH A NUMBER"); //6
 	this->writeerror("DEVICENAME MUST NOT CONINCIDE WITH A KEYWORD"); //7
 	this->writeerror("INPUT MUST BE A 0 / 1"); //8
-	this->writeerror("NUMBER OF INPUTS MUST BE BETWEEN 1-16"); //9
+	this->writeerror("NUMBER OF INPUTS MUST BE BETWEEN 1-17"); //9
 	this->writeerror("UNIDENTIFIED TYPE"); //10
 	this->writeerror("INVALID OUTPUT"); //11
 	this->writeerror("EXPECTED DEVICENAME"); //12
@@ -32,6 +32,7 @@ error::error(){
 	this->writeerror("EXPECTED '->'"); //22
 	this->writeerror("EXPECTED ';'"); //23
 	this->writeerror("CLOCK PERIOD MUST BE > 0"); //24
+	this->writeerror("EXPECTED '}' OR A VALID DEVICENAME"); //25
 
 }
 

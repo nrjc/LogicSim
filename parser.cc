@@ -65,20 +65,29 @@ void parser::devicelist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
 		smz->getsymbol(cursym,curid,curnum);
-        device();
-        smz->getsymbol(cursym,curid,curnum);
 	}
 	else{
 		errorparser(3); // no opencurly error
 	}
-	while (cursym==semicol){
-		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==closecurly) {
-			return;
-		}
+	while (cursym==sclock || cursym==sswitch || cursym==sdtype || cursym==sxor || cursym==sand || cursym==snand || cursym==sor || cursym==snor){
         device();
-        smz->getsymbol(cursym,curid,curnum);
+		if (cursym==semicol){
+			smz->getsymbol(cursym,curid,curnum);
+		}
+		else{
+            errorparser(23); // EXPECTED ';'
+        }
+        if (cursym==closecurly){
+        return;
+        }
 	}
+    if (cursym==closecurly){
+    //Should throw a warning. device class is blank
+    return;
+	}
+	else{
+        errorparser(25); // EXPECTED '}'
+    }
 }
 
 // device() will parse a device specification statement and return the semicol behind
@@ -97,6 +106,7 @@ void parser::device(void){
                     if (cursym==numsym){
                         if (curnum>0){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
+                            smz->getsymbol(cursym,curid,curnum);
                             return;
                         }
                         else{
@@ -128,6 +138,7 @@ void parser::device(void){
                     if (cursym==numsym){
                         if (curnum==0||curnum==1){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);//parse 0/1 into device class
+                            smz->getsymbol(cursym,curid,curnum);
                             return;
                         }
                         else{
@@ -163,8 +174,9 @@ void parser::device(void){
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum<=16 && curnum>=1){
+                        if (curnum<=16 && curnum>1){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                            smz->getsymbol(cursym,curid,curnum);
                             return;
                         }
                         else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
@@ -191,8 +203,9 @@ void parser::device(void){
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum<=16 && curnum>=1){
+                        if (curnum<=16 && curnum>1){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                            smz->getsymbol(cursym,curid,curnum);
                             //parse num into network class
                             return;
                         }
@@ -221,8 +234,9 @@ void parser::device(void){
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum<=16 && curnum>=1){
+                        if (curnum<=16 && curnum>1){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                            smz->getsymbol(cursym,curid,curnum);
                             //parse num into network class
                             return;
                         }
@@ -251,8 +265,9 @@ void parser::device(void){
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum<=16 && curnum>=1){
+                        if (curnum<=16 && curnum>1){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                            smz->getsymbol(cursym,curid,curnum);
                             //parse num into network class#
                             return;
                         }
@@ -276,6 +291,7 @@ void parser::device(void){
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
                 dmz->makedevice(devtypetemp,curid,curnum,okcheck);
+                smz->getsymbol(cursym,curid,curnum);
                 //this is the place where you get the user defined name and parse it into the network class
                 return;
             }
@@ -294,6 +310,7 @@ void parser::device(void){
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
                 dmz->makedevice(devtypetemp,curid,curnum,okcheck);
+                smz->getsymbol(cursym,curid,curnum);
                 //this is the place where you get the user defined name and parse it into the network class
                 return;
             }
@@ -315,16 +332,26 @@ void parser::connectionlist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
 		smz->getsymbol(cursym,curid,curnum);
-		connection();
 	}else errorparser(3); // no opencurly error
-	while (cursym==semicol){
-		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==closecurly) {
-			return;
-		}
+	while (cursym==namesym){
 		connection();
+		if (cursym==semicol) {
+			smz->getsymbol(cursym,curid,curnum);
+		}
+		else{
+            errorparser(23); // EXPECTED ';'
+        }
+        if (cursym==closecurly){
+        return;
+        }
 	}
-	errorparser(-1); //Error code detected
+    if (cursym==closecurly){
+    //Should throw a warning. monitor class is blank
+    return;
+	}
+	else{
+        errorparser(25); // EXPECTED '}'
+    }
 }
 
 void parser::connection(void){
@@ -469,16 +496,21 @@ void parser::monitorlist(void){
 		parmonitor();
 		if (cursym==semicol) {
 			smz->getsymbol(cursym,curid,curnum);
-		} else {errorparser(-1); } //Multiple device names
-		if (cursym==closecurly){
-			return;
 		}
+		else{
+            errorparser(23); // EXPECTED ';'
+        }
+        if (cursym==closecurly){
+        return;
+        }
 	}
 	if (cursym==closecurly){
-			//Should throw a warning. monitor class is blank
-			return;
+        //Should throw a warning. monitor class is blank
+        return;
 	}
-	errorparser(-1); // not ended with ; or ,
+	else{
+        errorparser(25); // EXPECTED '}'
+    }
 }
 
 void parser::parmonitor(void){
