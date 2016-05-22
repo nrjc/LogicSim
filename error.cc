@@ -43,10 +43,10 @@ int error::writeerror(string errordescription){
 void error::printerror (int id){
 	auto search = map.find(id);
     if(search != map.end()) {
-        cout << "Error Code "<< search->first << ": "<< search->second ;
+        cout << "ERROR CODE "<< search->first << ": "<< search->second ;
     }
     else {
-        cout << "Error Code Not found";
+        cout << "ERROR CODE -1: UNDEFINED ERROR HAS OCCURRED";
     }
 }
 
