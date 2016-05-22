@@ -52,7 +52,7 @@ class scanner
 		void linedisplayerror(); //Function prints out the current input line along with a marker on the following line to show precisely where the error occured.
 
 	private:
-		ifstream inf; //Input file
+		ifstream inf; //    Input file
 		string inputname; //Stores the name of the input file for IOStream.
 		bool eofile; //This is true if it is the end of file
 		char curch; //This is the current character

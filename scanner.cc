@@ -173,6 +173,7 @@ void scanner::getnewline(){
 }
 
 void scanner::linedisplayerror(){
+    cout<< "LINE "<<linenumber<<endl;
     string line1="";
     string line2="";
 	int currentposition = inf.tellg();
@@ -185,7 +186,7 @@ void scanner::linedisplayerror(){
             if (backup=='\n') break;
 			line1+=backup;
 		}
-    for(int i=0;i<(currentposition-lastparsedline);i++){
+    for(int i=1;i<(currentposition-lastparsedline);i++){
         line2+=" ";
     }
 	cout<<line1<<endl;
