@@ -31,6 +31,7 @@ error::error(){
 	this->writeerror("EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE"); //21
 	this->writeerror("EXPECTED '->'"); //22
 	this->writeerror("EXPECTED ';'"); //23
+	this->writeerror("CLOCK PERIOD MUST BE > 0"); //24
 
 }
 

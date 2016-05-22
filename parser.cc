@@ -95,8 +95,13 @@ void parser::device(void){
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
-                        return;
+                        if (curnum>0){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
+                            return;
+                        }
+                        else{
+                            errorparser(24);// CLOCK PERIOD MUST BE > 0
+                        }
                     }
                     else errorparser(4); // num expected error
                 }
@@ -162,15 +167,15 @@ void parser::device(void){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
                             return;
                         }
-                        else errorparser(0); // number of inputs must be smaller than 17 and greater than 0 error
+                        else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
                     }
                 }
-                else errorparser(0); // no colon error
+                else errorparser(5); // no colon error
             }
             else if (cursym==numsym){
-                errorparser(0); // devicename must not start with a number error
+                errorparser(6); // devicename must not start with a number error
             }
-            else errorparser(0); // devicename must coincide with a keyword error
+            else errorparser(7); // devicename must coincide with a keyword error
 		}
 		else{
             errorparser(18); // DEVICENAME IS ALREADY BEING USED
@@ -432,14 +437,26 @@ void parser::connection(void){
                                 }
 							}
 						}else errorparser(14); // DEVICE NOT DEFINED
-					}else errorparser(6);// DEVICENAME CANNOT START WITH A NUMBER
+					}
+					else if (cursym==numsym){
+                        errorparser(6); // DEVICENAME CANNOT START WITH A NUMBER
+					}
+					else{
+                        errorparser(7); // DEVICENAME MUST NOT CONINCIDE WITH A KEYWORD
+                    }
 				}
 				if (cursym==semicol){
 					return;
 				}else errorparser(23); //EXPECTED ';'
 			}else errorparser(22); // EXPECTED '->'
 		}else errorparser(14); // DEVICE NOT DEFINED
-	}else errorparser(6); //DEVICENAME CANNOT START WITH A NUMBER
+	}
+	else if (cursym==numsym){
+        errorparser(6); //DEVICENAME CANNOT START WITH A NUMBER
+	}
+	else {
+        errorparser(7); //DEVICENAME
+    }
 }
 
 void parser::monitorlist(void){
