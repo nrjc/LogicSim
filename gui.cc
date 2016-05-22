@@ -118,7 +118,8 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
       // DRAW AXES
       DrawAxes(start_x, start_x+cyclesdisplayed*st_width, curr_y+low_y, curr_y+high_y);
       
-      glColor3f(0.7, 0.0, 0.0);
+      glColor3f(0.0, 0.7, 0.0);
+      glLineWidth(2);
       glBegin(GL_LINE_STRIP);
       for (i=0; i<cyclesdisplayed; i++) {
         if (mmz->getsignaltrace(n, i, s)) {
@@ -130,50 +131,53 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
         }
       }
       glEnd();
-    }
-      
-  } else { // draw an artificial trace
-    
-    mcount = 20;
-    if (cyclesdisplayed<1)
-    cyclesdisplayed = 30;
-    
-    string monname;
-    for (n=0; n<mcount; n++){
-      glColor3f(0.0, 0.0, 1.0);
-      monname = "Example ";
-      monname+= to_string(n+1);
-      curr_y = (-1.0)*(n+1)*plt_height;
-      
-      // Write out monitor name
-      glRasterPos2f(start_x-15-pan_x, curr_y+high_y+st_height/2);
-      for (i = 0; i < monname.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, monname[i]);
-      // DRAW AXES
-      DrawAxes(start_x, start_x+cyclesdisplayed*st_width, curr_y+low_y, curr_y+high_y);
-      
-      glColor3f(0.0, 0.7, 0.0);
-      glBegin(GL_LINE_STRIP);
-      for (i=0; i<cyclesdisplayed; i++) {
-        if (i%2) y = curr_y +low_y;
-        else y = curr_y +high_y;
-        glVertex2f(start_x+st_width*(i), y); 
-        glVertex2f(start_x+st_width*(i+1), y);
-      }
-      glEnd();
-      
+      NameAxes(start_x, start_x+cyclesdisplayed*st_width, curr_y+low_y, curr_y+high_y);
     }
     
+    disp_h = -curr_y+10;
+    // if disp_h is less than canvas height, set disp_h to canvas height.
+    if (disp_h<h) disp_h = h;
+    disp_w = start_x+cyclesdisplayed*st_width+50;
+    if (disp_w<w) disp_w = w;
+  
+} else { // draw an artificial trace
+  
+  
+  // Don't need the artificial trace any more.
+  /*
+  mcount = 20;
+  if (cyclesdisplayed<1)
+  cyclesdisplayed = 30;
+  
+  string monname;
+  for (n=0; n<mcount; n++){
+    glColor3f(0.0, 0.0, 1.0);
+    monname = "Example ";
+    monname+= to_string(n+1);
+    curr_y = (-1.0)*(n+1)*plt_height;
+    
+    // Write out monitor name
+    glRasterPos2f(start_x-15-pan_x, curr_y+high_y+st_height/2);
+    for (i = 0; i < monname.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, monname[i]);
+    // DRAW AXES
+    DrawAxes(start_x, start_x+cyclesdisplayed*st_width, curr_y+low_y, curr_y+high_y);
+    
+    glColor3f(0.0, 0.7, 0.0);
+    glBegin(GL_LINE_STRIP);
+    for (i=0; i<cyclesdisplayed; i++) {
+      if (i%2) y = curr_y +low_y;
+      else y = curr_y +high_y;
+      glVertex2f(start_x+st_width*(i), y); 
+      glVertex2f(start_x+st_width*(i+1), y);
+    }
+    glEnd();
+    
+    }
+    */
   }
-  
-  disp_h = -curr_y+10;
-  // if disp_h is less than canvas height, set disp_h to canvas height.
-  if (disp_h<h) disp_h = h;
-  disp_w = start_x+cyclesdisplayed*st_width+50;
-  if (disp_w<w) disp_w = w;
-  
   // Example of how to use GLUT to draw text on the canvas
   glColor3f(0.5, 0.0, 0.5);
-  glRasterPos2f(100-pan_x, -pan_y+120);
+  glRasterPos2f(100-pan_x, -pan_y+20);
   for (i = 0; i < example_text.Len(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, example_text[i]);
 
   // We've been drawing to the back buffer, flush the graphics pipeline and swap the back buffer to the front
@@ -280,29 +284,37 @@ void MyGLCanvas::OnMouse(wxMouseEvent& event)
   if (event.GetWheelRotation() || event.ButtonDown() || event.ButtonUp() || event.Dragging() || event.Leaving()) Render(text);
 }
 
-void MyGLCanvas::DrawAxes(float x_low, float x_high, float y_low, float y_high)
-// Draw axes for the trace
-{
-  string lowstr = "low", highstr = "high";
-  glColor3f(0.8, 0.8, 0.8);
-      glBegin(GL_LINE_STRIP);
-      glVertex2f(x_low, y_high);
-      glVertex2f(x_high+10, y_high);
-      glEnd();
-      
-      glColor3f(0.0, 0.0, 0.0);
-      //glColor3f(1.0, 1.0, 1.0);
-      glBegin(GL_LINE_STRIP);
-      glVertex2f(x_low, y_high+5);
-      glVertex2f(x_low, y_low-1);
-      glVertex2f(x_high+10, y_low-1);
-      glEnd();
-      
-      glRasterPos2f(x_low-25, y_high-5);
-      for (int i = 0; i < highstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, highstr[i]);
-      glRasterPos2f(x_low-25, y_low-5);
-      for (int i = 0; i < lowstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, lowstr[i]);
+void MyGLCanvas::DrawAxes(float x_low, float x_high, float y_low, float y_high){
+// Draw axes for the trace givent the plot dimmensions
+
   
+  glLineWidth(1);// Set correct line width.
+  glColor3f(0.8, 0.8, 0.8);
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(x_low, y_high);
+  glVertex2f(x_high+10, y_high);
+  glEnd();
+  
+  
+  glColor3f(0.0, 0.0, 0.0);
+  //glColor3f(1.0, 1.0, 1.0);
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(x_low, y_high+5);
+  glVertex2f(x_low, y_low-1);
+  glVertex2f(x_high+10, y_low-1);
+  glEnd();
+  
+}
+
+void MyGLCanvas::NameAxes(float x_low, float x_high, float y_low, float y_high){
+  // Put text labels on axes, given the plot dimensions
+  string lowstr = "low", highstr = "high";
+  
+  glColor3f(0.0, 0.0, 0.0);
+  glRasterPos2f(x_low-28-pan_x, y_high);
+  for (int i = 0; i < highstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, highstr[i]);
+  glRasterPos2f(x_low-28-pan_x, y_low-10);
+  for (int i = 0; i < lowstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, lowstr[i]);
 }
 
 // MyFrame ///////////////////////////////////////////////////////////////////////////////////////
@@ -321,21 +333,24 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 END_EVENT_TABLE()
   
 MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, const wxSize& size,
-		 names *names_mod, devices *devices_mod, monitor *monitor_mod, long style):
-  wxFrame(parent, wxID_ANY, title, pos, size, style)
+		 names *names_mod, network *network_mod, devices *devices_mod, monitor *monitor_mod, long style):
+  wxFrame(parent, wxID_ANY, title, pos, size, style){
   // Constructor - initialises pointers to names, devices and monitor classes, lays out widgets
   // using sizers
-{
+
   SetIcon(wxIcon(wx_icon));
 
   cyclescompleted = 0;
   nmz = names_mod;
+  netz = network_mod;
   dmz = devices_mod;
   mmz = monitor_mod;
-  if (nmz == NULL || dmz == NULL || mmz == NULL) {
+  if (nmz == NULL || netz==NULL || dmz == NULL || mmz == NULL) {
     cout << "Cannot operate GUI without names, devices and monitor classes" << endl;
     exit(1);
   }
+  
+  monman = new MyMonManager(nmz, netz, dmz, mmz);
   
   SetBackgroundColour(BcColour);
   SetForegroundColour(*wxWHITE);
@@ -369,7 +384,7 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   sim_sizer->Add(new wxStaticText(this, wxID_ANY, "Cycles"), 0, wxTOP|wxLEFT|wxRIGHT, 5);
   spin = new wxSpinCtrl(this, MY_SPINCNTRL_ID, wxString("10"), wxDefaultPosition, wxDefaultSize);
   spin->SetForegroundColour(*wxBLACK);
-  spin->SetRange(1, 100);
+  spin->SetRange(1, 2000);
   sim_sizer->Add(spin, MyStdFlag);
   //sim_sizer->Add(cycles_sizer);
   
@@ -398,9 +413,10 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
 
 // EVENT HANDLERS //
 
-void MyFrame::OnExit(wxCommandEvent &event)
+void MyFrame::OnExit(wxCommandEvent &event){
   // Event handler for the exit menu item
-{
+
+  
   Close(true);
 }
 
@@ -489,6 +505,9 @@ void MyFrame::OnButtonSetMon(wxCommandEvent &event)
   wxArrayString monlist = *(new wxArrayString);
   
   int vsp = 3;
+  int monct = mmz->moncount();
+  name dev, outp;
+  string monstr;
   
   for(int i=0; i<10; i++)
   {
@@ -498,11 +517,13 @@ void MyFrame::OnButtonSetMon(wxCommandEvent &event)
     
   }
   
-  for(int i=0; i<5; i++)
+  for(int i=0; i<monct; i++)
   {
-    string temp = "Monitor ";
-    temp+= to_string(i+1);
-    monlist.Add(temp);
+    mmz->getmonname(i, dev, outp);
+    monstr = (string) nmz->getnamefromtable(dev);
+    if (outp!=-1) {monstr+="."; monstr+=(string) nmz->getnamefromtable(outp);}
+    
+    monlist.Add(monstr);
     
   }
   
@@ -530,7 +551,7 @@ void MyFrame::OnButtonSetMon(wxCommandEvent &event)
   tsizer->AddSpacer(10);
   mymon->SetSizer(tsizer);
   //my_mon->CreateButtonSizer(wxOK|wxCANCEL);
-  mymon->Show(); 
+  mymon->ShowModal(); 
   
   
 }
@@ -559,7 +580,7 @@ void MyFrame::OnSwitchBox(wxCommandEvent &event)
   level = high;
   else level=low;
   
-  //devices_mod->setswitch( sid, level, ok);
+  dmz->setswitch( sid, level, ok);
   
   
   #endif
@@ -569,11 +590,12 @@ void MyFrame::OnSwitchBox(wxCommandEvent &event)
 void MyFrame::OnSpin(wxSpinEvent &event)
   // Event handler for the spin control
 {
+  /*
   wxString text;
   int pos = event.GetPosition();
   cout<<pos<<endl;
   text.Printf("New spinctrl value %d", pos);
-  canvas->Render(text, pos, true);
+  canvas->Render(text, pos, true);*/
 }
 
 void MyFrame::OnText(wxCommandEvent &event)
@@ -629,13 +651,13 @@ void MyFrame::SetSwitchList(wxWindow *parent,wxSizer* sizer)
   }
   
   // for debugging
-  devlink d = switches[0];
-  for (int i = 0; i<5; i++)
+  /*devlink d = switches[0];
+  for (int i = 0; i<2; i++)
   {
     cout<<" id"<<d->id<<" name "<<nmz->getnamefromtable(d->id)<<" op"<<d->olist->id<<endl;//<<" inp"<<d->ilist->id<<endl;
     d = d->next;
   }
-  
+  */
 }
 
 void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer)
@@ -651,17 +673,12 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer)
   // Later replace this with a separate function that initialises the window and all its contents uppon loading a new circuit.
   wxBoxSizer *switch_sizer = new wxBoxSizer(wxVERTICAL);
   #ifndef USE_GUI
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck1"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck2"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck3"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck4"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck5"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck6"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck7"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck8"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck9"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck10"), MySwitchFlag);
-  switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, "TestCheck11"), MySwitchFlag);
+  for (int i = 0; i<15; i++)
+  {
+    string temp = "TestCheck";
+    temp+= to_string(i+1);
+    switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, temp), MySwitchFlag);
+  }
   #else
   SetSwitchList(switchwin, switch_sizer);
   #endif
@@ -689,6 +706,48 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer)
   monwin->SetScrollRate(xstep, ystep);
 }
 
+// MYMONMANAGER: added class to make monitor point managing easier and more object-oriented
+MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devices_mod, monitor *monitor_mod)
+{
+  nmz = names_mod;
+  netz = network_mod;
+  dmz = devices_mod;
+  mmz = monitor_mod;
+  opProps temp;
+  
+  for(int i=40; i<45; i++)
+  {
+    cout<<nmz->getnamefromtable(i)<<endl;
+  }
+  
+  // find all outputs.
+  devlink d = netz->devicelist();
+  outplink o;
+  while( d != NULL)
+  {
+    temp = *(new opProps());
+    temp.dev = d->id;
+    temp.devstr = nmz->getnamefromtable(temp.dev);
+    o = d->olist;
+    cout<<temp.devstr<< " id "<< temp.dev<<endl;
+    if (o->next==NULL)
+    {
+      temp.op=o->id;
+      // temp.opstr preset to "";
+      temp.fullstr = temp.devstr;
+      allops.push_back(temp);
+    }
+    else while(o != NULL)
+    {
+      temp.op=o->id;
+      temp.opstr = nmz->getnamefromtable(temp.op);
+      temp.fullstr = temp.devstr + "." + temp.opstr;
+      allops.push_back(temp);
+      o = o->next;
+    }
+    d=d->next;
+  }
+}
 
 /*
 void MyFrame::SetColours(wxMenuItem* item)

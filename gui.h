@@ -12,7 +12,7 @@
 #include "monitor.h"
 #include "network.h"
 
-enum { 
+enum {
   MY_SPINCNTRL_ID = wxID_HIGHEST + 1,
   MY_TEXTCTRL_ID,
   MY_BUTTONRUN_ID,
@@ -23,27 +23,54 @@ enum {
 }; // widget identifiers
 
 class MyGLCanvas;
+class MyMonManager;
+
+struct opProps
+{
+  name dev;
+  name op=-1;
+  string devstr;// Actual name of device
+  string opstr; // String for output.
+  string fullstr; // Output name string as it appears on the GUI interface.
+  opProps()
+  {
+    dev=-1;
+    op=-1;
+    devstr = "";
+    opstr = "";
+    fullstr = "";
+  }
+  // from http://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
+  /*bool operator > (const opProps& pr) const
+    {
+        return (key > pr.dev);
+    }*/
+};
+
+
 
 class MyFrame: public wxFrame
 {
  public:
-  MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, const wxSize& size, 
-	  names *names_mod = NULL, devices *devices_mod = NULL, monitor *monitor_mod = NULL, 
+  MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, const wxSize& size,
+	  names *names_mod = NULL, network *network_mod = NULL, devices *devices_mod = NULL, monitor *monitor_mod = NULL,
 	  long style = wxDEFAULT_FRAME_STYLE); // constructor
- private: 
+ private:
   MyGLCanvas *canvas;                     // OpenGL drawing area widget to draw traces
   wxSpinCtrl *spin;                       // control widget to select the number of cycles
   names *nmz;                             // pointer to names class
+  network *netz;			  // pointer to network class
   devices *dmz;                           // pointer to devices class
   monitor *mmz;                           // pointer to monitor class
+  MyMonManager *monman;			  // monitor manaker class instance.
   int cyclescompleted;                    // how many simulation cycles have been completed
   void runnetwork(int ncycles);           // function to run the logic network
-  
+
   // Added functions
   void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
   void SetSwitchList(wxCheckListBox *switchbox);		//Add checkboxes for editing switches.
   void AddSwitchMonCtrl(wxSizer *control_sizer);
-  
+
   // Event handlers
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
   void OnAbout(wxCommandEvent& event);    // event handler for about menu item
@@ -54,13 +81,13 @@ class MyFrame: public wxFrame
   void OnButtonSetMon(wxCommandEvent& event);   // event handler for when set monitor option is chosen.
   void OnSpin(wxSpinEvent& event);        // event handler for spin control
   void OnText(wxCommandEvent& event);     // event handler for text entry field
-  
-  
+
+
   //void SetColours(wxMenuItem* item);
   //void SetColours(wxWindow* item);
   DECLARE_EVENT_TABLE()
 };
-    
+
 class MyGLCanvas: public wxGLCanvas
 {
  public:
@@ -84,7 +111,27 @@ class MyGLCanvas: public wxGLCanvas
   void OnPaint(wxPaintEvent& event); // event handler for when canvas is exposed
   void OnMouse(wxMouseEvent& event); // event handler for mouse events inside canvas
   void DrawAxes(float x_low, float x_high, float y_low, float y_high); // draw axes for the trace
+  void NameAxes(float x_low, float x_high, float y_low, float y_high); // draw axes text labels for the trace
   DECLARE_EVENT_TABLE()
 };
-    
+
+class MyMonManager
+{
+ public:
+  MyMonManager(names *names_mod = NULL, network *network_mod = NULL,
+                devices *devices_mod = NULL, monitor *monitor_mod = NULL);
+
+ private:
+  names *nmz;                             // pointer to names class
+  network *netz;			  // pointer to network class
+  devices *dmz;                           // pointer to devices class
+  monitor *mmz;                           // pointer to monitor class
+
+  vector<opProps> allops;		// Vector to store info about all outputs. Reserved for future use, eg. Clear.
+  vector<opProps> unmonitored;		// Vector to store all unmonitored outputs.
+  vector<opProps> monitored;		// Vector to store all monitored outputs.
+
+
+};
+
 #endif /* gui_h */
