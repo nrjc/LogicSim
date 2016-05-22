@@ -27,6 +27,7 @@ error::error(){
 	this->writeerror("PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT"); //17
 	this->writeerror("DEVICENAME IS ALREADY BEING USED"); //18
 	this->writeerror("UNIDENTIFIED DEVICE TYPE"); //19
+	this->writeerror("NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT"); //20
 
 }
 

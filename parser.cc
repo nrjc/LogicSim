@@ -20,22 +20,45 @@ bool parser::readin (void){
 	symbol cursym;
 	name curid=0;
 	int curnum=0;
+	bool allinputsconnected=false;
 	smz->getsymbol(cursym,curid,curnum); //get the first symbol
 	if (cursym==devsym){
-			devicelist();
-			smz->getsymbol(cursym,curid,curnum);
-	} else {errorparser(0);return false;}
+        devicelist();
+        smz->getsymbol(cursym,curid,curnum);
+	}
+    else{
+        errorparser(0);
+        return false;
+    }
 	if (cursym == consym){
-			connectionlist();
-			smz->getsymbol(cursym,curid,curnum);
-	} else {errorparser(1);return false;}
-   if (cursym == monsym){
-			monitorlist();
-			smz->getsymbol(cursym,curid,curnum);
-	} else {errorparser(2);return false;}
+        connectionlist();
+        smz->getsymbol(cursym,curid,curnum);
+	}
+	else{
+        errorparser(1);
+        return false;
+    }
+    if(cursym == monsym){
+        monitorlist();
+        smz->getsymbol(cursym,curid,curnum);
+	}
+	else{
+        errorparser(2);
+        return false;
+    }
 	if (cursym==eofsym){
-		return true;}
-		else {return false;}
+        netz->checknetwork(allinputsconnected);
+        if (allinputsconnected==true){
+            return true;
+        }
+        else{
+            errorparser(20); //NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
 }
 
 void parser::devicelist(void){
