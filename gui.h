@@ -20,6 +20,9 @@ enum {
   MY_BUTTONSETMON_ID,
   MY_SWITCH_ID,
   MY_NOTEBOOK_ID,
+
+  MY_ADDMON_ID,
+  MY_REMMON_ID,
 }; // widget identifiers
 
 class MyGLCanvas;
@@ -32,29 +35,40 @@ struct opProps
   string devstr;// Actual name of device
   string opstr; // String for output.
   string fullstr; // Output name string as it appears on the GUI interface.
-  opProps()
-  {
-    dev=-1;
-    op=-1;
-    devstr = "";
-    opstr = "";
-    fullstr = "";
+  opProps(name devid=-1, name opid=-1, string devs="", string ops=""){
+    dev=devid;
+    op=opid;
+    devstr = devs;
+    opstr = ops;
+    fullstr = devs;
+    if (opstr !="") fullstr+="."+opstr;
   }
   // from http://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
-  /*bool operator > (const opProps& pr) const
-    {
-        return (key > pr.dev);
-    }*/
+  bool operator > (const opProps& pr) const{
+    if (dev==pr.dev)
+        return(op>pr.op);
+    else
+        return (dev > pr.dev);
+  }
+  bool operator < (const opProps& pr) const{
+    if (dev==pr.dev)
+      return(op<pr.op);
+    else
+      return (dev < pr.dev);
+  }
+  bool operator == (const opProps& pr) const{
+    return(dev==pr.dev&&op==pr.op);
+  }
 };
 
 
+class MyFrame: public wxFrame{
 
-class MyFrame: public wxFrame
-{
  public:
   MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, const wxSize& size,
 	  names *names_mod = NULL, network *network_mod = NULL, devices *devices_mod = NULL, monitor *monitor_mod = NULL,
 	  long style = wxDEFAULT_FRAME_STYLE); // constructor
+
  private:
   MyGLCanvas *canvas;                     // OpenGL drawing area widget to draw traces
   wxSpinCtrl *spin;                       // control widget to select the number of cycles
@@ -82,14 +96,13 @@ class MyFrame: public wxFrame
   void OnSpin(wxSpinEvent& event);        // event handler for spin control
   void OnText(wxCommandEvent& event);     // event handler for text entry field
 
-
-  //void SetColours(wxMenuItem* item);
+ //void SetColours(wxMenuItem* item);
   //void SetColours(wxWindow* item);
   DECLARE_EVENT_TABLE()
 };
 
-class MyGLCanvas: public wxGLCanvas
-{
+class MyGLCanvas: public wxGLCanvas{
+
  public:
   MyGLCanvas(wxWindow *parent, wxWindowID id = wxID_ANY, monitor* monitor_mod = NULL, names* names_mod = NULL,
 	     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0,
@@ -112,14 +125,21 @@ class MyGLCanvas: public wxGLCanvas
   void OnMouse(wxMouseEvent& event); // event handler for mouse events inside canvas
   void DrawAxes(float x_low, float x_high, float y_low, float y_high); // draw axes for the trace
   void NameAxes(float x_low, float x_high, float y_low, float y_high); // draw axes text labels for the trace
+  void FixPan(); 		// Fixes the canvas pan
   DECLARE_EVENT_TABLE()
 };
 
-class MyMonManager
-{
+class MyMonManager{
+
  public:
   MyMonManager(names *names_mod = NULL, network *network_mod = NULL,
                 devices *devices_mod = NULL, monitor *monitor_mod = NULL);
+
+  wxArrayString GetMonitoredList();  //Returns array of monitored output names
+  wxArrayString GetUnmonitoredList();//Returns array of unmonitored output names
+
+  bool AddMonitor(int m);      // Adds a monitor and removes it from the unmonitored list
+  bool RemoveMonitor(int m);      // Removes a monitor and adds it to the monitored list
 
  private:
   names *nmz;                             // pointer to names class
@@ -134,4 +154,21 @@ class MyMonManager
 
 };
 
+class MyMonDialog: public wxDialog{
+ public:
+  MyMonDialog(wxWindow *parent, wxWindowID id, const wxString &title,MyMonManager *mon_man,
+          const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize,
+          long style=wxDEFAULT_DIALOG_STYLE, const wxString &name=wxDialogNameStr);//Default constructor
+ private:
+  MyMonManager *monman;
+  wxListBox *optListBox;
+  wxListBox *monListBox;
+
+  void RefreshLists();
+
+  void OnBtnAddMon(wxCommandEvent& event);// event to handle Remove button click in monitor dialog
+  void OnBtnRemMon(wxCommandEvent& event);// event to handle Add button click in monitor dialog
+
+  DECLARE_EVENT_TABLE()
+};
 #endif /* gui_h */

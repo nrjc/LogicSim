@@ -3,6 +3,7 @@
 #include "wx_icon.xpm"
 #include <iostream>
 #include <string>
+#include <algorithm> //sort
 //wxSize
 #include <wx/gdicmn.h>
 #include <wx/spinctrl.h>
@@ -47,9 +48,9 @@ const wxSizerFlags MyTabFlag = wxSizerFlags().Proportion(1).Expand().Border(wxAL
 
 MyGLCanvas::MyGLCanvas(wxWindow *parent, wxWindowID id, monitor* monitor_mod, names* names_mod, const wxPoint& pos, 
 		       const wxSize& size, long style, const wxString& name, const wxPalette& palette):
-  wxGLCanvas(parent, id, wxglcanvas_attrib_list, pos, size, style, name, palette)
+  wxGLCanvas(parent, id, wxglcanvas_attrib_list, pos, size, style, name, palette){
   // Constructor - initialises private variables
-{
+
   context = new wxGLContext(this);
   mmz = monitor_mod;
   nmz = names_mod;
@@ -62,12 +63,12 @@ MyGLCanvas::MyGLCanvas(wxWindow *parent, wxWindowID id, monitor* monitor_mod, na
   cyclesdisplayed = -1;
 }
 
-void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
+void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange){
   // Draws canvas contents - the following example writes the string "example text" onto the canvas
   // and draws a signal trace. The trace is artificial if the simulator has not yet been run.
   // When the simulator is run, the number of cycles is passed as a parameter and the first monitor
   // trace is displayed.
-{
+
   float y, st_width = 30, st_height = 40, low_y = 10, high_y = low_y+st_height;
   float start_x = 30;
   float plt_height = high_y*2, curr_y;
@@ -77,11 +78,7 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
   
   int w, h;
   
-  this->GetVirtualSize(&w,&h);
-  /*
-  printf("GLcanvas: Width %d   Height %d", w, h);
-  cout<<endl;
-  */
+  GetClientSize(&w, &h);
   
   if (cycles >= 0) cyclesdisplayed = cycles;
 
@@ -91,13 +88,9 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
     init = true;
   }
   glClear(GL_COLOR_BUFFER_BIT);
-  
-  #ifdef USE_GUI  
+
   int mcount = mmz->moncount();
-  #else
-  int mcount = 0;
-  #endif
-  
+
   if ((cyclesdisplayed >= 0) && (mcount > 0)) { // draw the first monitor signal, get trace from monitor class
     
     string monname;
@@ -123,7 +116,7 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
       glBegin(GL_LINE_STRIP);
       for (i=0; i<cyclesdisplayed; i++) {
         if (mmz->getsignaltrace(n, i, s)) {
-          //cout<<"monitor"<<n<<" cycle"<< i <<" trace"<< s <<endl;
+          cout<<"monitor"<<n<<" cycle"<< i <<" trace"<< s <<endl;
           if (s==low) y = curr_y +low_y;
           if (s==high) y = curr_y+high_y;
           glVertex2f(start_x+st_width*(i), y); 
@@ -135,46 +128,15 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
     }
     
     disp_h = -curr_y+10;
-    // if disp_h is less than canvas height, set disp_h to canvas height.
-    if (disp_h<h) disp_h = h;
     disp_w = start_x+cyclesdisplayed*st_width+50;
-    if (disp_w<w) disp_w = w;
+    // if disp_w or disp_h have values lesser than canvas dimensions,
+    // they will be fixed with FixPan()
   
-} else { // draw an artificial trace
-  
-  
-  // Don't need the artificial trace any more.
-  /*
-  mcount = 20;
-  if (cyclesdisplayed<1)
-  cyclesdisplayed = 30;
-  
-  string monname;
-  for (n=0; n<mcount; n++){
-    glColor3f(0.0, 0.0, 1.0);
-    monname = "Example ";
-    monname+= to_string(n+1);
-    curr_y = (-1.0)*(n+1)*plt_height;
-    
-    // Write out monitor name
-    glRasterPos2f(start_x-15-pan_x, curr_y+high_y+st_height/2);
-    for (i = 0; i < monname.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, monname[i]);
-    // DRAW AXES
-    DrawAxes(start_x, start_x+cyclesdisplayed*st_width, curr_y+low_y, curr_y+high_y);
-    
-    glColor3f(0.0, 0.7, 0.0);
-    glBegin(GL_LINE_STRIP);
-    for (i=0; i<cyclesdisplayed; i++) {
-      if (i%2) y = curr_y +low_y;
-      else y = curr_y +high_y;
-      glVertex2f(start_x+st_width*(i), y); 
-      glVertex2f(start_x+st_width*(i+1), y);
-    }
-    glEnd();
-    
-    }
-    */
+} else { cout<<"Error: cyclesdispalyed or mcount have unexpected values"<< endl;
   }
+  FixPan();
+  
+  
   // Example of how to use GLUT to draw text on the canvas
   glColor3f(0.5, 0.0, 0.5);
   glRasterPos2f(100-pan_x, -pan_y+20);
@@ -185,9 +147,9 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange)
   SwapBuffers();
 }
 
-void MyGLCanvas::InitGL()
+void MyGLCanvas::InitGL(){
   // Function to initialise the GL context
-{
+
   int w, h;
 
   GetClientSize(&w, &h);
@@ -209,9 +171,9 @@ void MyGLCanvas::InitGL()
   
 }
 
-void MyGLCanvas::OnPaint(wxPaintEvent& event)
+void MyGLCanvas::OnPaint(wxPaintEvent& event){
   // Event handler for when the canvas is exposed
-{
+
   int w, h;
   wxString text;
 
@@ -221,48 +183,38 @@ void MyGLCanvas::OnPaint(wxPaintEvent& event)
   Render(text);
 }
 
-void MyGLCanvas::OnSize(wxSizeEvent& event)
+void MyGLCanvas::OnSize(wxSizeEvent& event){
   // Event handler for when the canvas is resized
-{
-  int w, h;
-  GetClientSize(&w, &h);
-  if (pan_y<h) pan_y=h;
-  if (pan_y>disp_h) pan_y=disp_h;
-  if (pan_x<w-disp_w) pan_x = w-disp_w;
-  if (pan_x>10) pan_x = 10;
+  FixPan();
   init = false;; // this will force the viewport and projection matrices to be reconfigured on the next paint
 }
 
-void MyGLCanvas::OnMouse(wxMouseEvent& event)
+void MyGLCanvas::OnMouse(wxMouseEvent& event){
   // Event handler for mouse events inside the GL canvas
-{
+
   wxString text;
   int w, h;
   static int last_x, last_y;
 
   GetClientSize(&w, &h);
   if (event.ButtonDown()) {
+    // Required for dragging to work correctly.
     last_x = event.m_x;
     last_y = event.m_y;
     text.Printf("Mouse button %d pressed at %d %d", event.GetButton(), event.m_x, h-event.m_y);
   }
-  if (event.ButtonUp()) text.Printf("Mouse button %d released at %d %d", event.GetButton(), event.m_x, h-event.m_y);
+  //if (event.ButtonUp()) text.Printf("Mouse button %d released at %d %d", event.GetButton(), event.m_x, h-event.m_y);
   if (event.Dragging()) {
     pan_x += event.m_x - last_x;
     pan_y -= event.m_y - last_y;
-    if (pan_y<h) pan_y=h;
-    if (pan_y>disp_h) pan_y=disp_h;
-    if (pan_x<w-disp_w) pan_x = w-disp_w;
-    if (pan_x>10) pan_x = 10;
+    FixPan();
     
-    //if (-pan_x<w) pan_x = -w;
-    //if (-pan_x>disp_w) pan_x = -disp_w;
     last_x = event.m_x;
     last_y = event.m_y;
     init = false;
     text.Printf("Mouse dragged to %d %d, pan now %d %d", event.m_x, h-event.m_y, pan_x, pan_y);
   }
-  if (event.Leaving()) text.Printf("Mouse left window at %d %d", event.m_x, h-event.m_y);
+  //if (event.Leaving()) text.Printf("Mouse left window at %d %d", event.m_x, h-event.m_y);
   if (event.GetWheelRotation() < 0) {
     pan_y -= (int)10*event.GetWheelRotation()/(event.GetWheelDelta());
     if (pan_y<h) pan_y=h;
@@ -275,13 +227,12 @@ void MyGLCanvas::OnMouse(wxMouseEvent& event)
     pan_y -= (int)10*event.GetWheelRotation()/(event.GetWheelDelta());
     if (pan_y<h) pan_y=h;
     if (pan_y>disp_h) pan_y=disp_h;
-    //TODO: GET PLOT HEIGHT AND RESTRICT SCROLL ACCORDINGLY
     //zoom = zoom / (1.0 + (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
     init = false;
     text.Printf("Positive mouse wheel rotation, pan_y now %d", pan_y);
   }
 
-  if (event.GetWheelRotation() || event.ButtonDown() || event.ButtonUp() || event.Dragging() || event.Leaving()) Render(text);
+  if (event.GetWheelRotation() || event.Dragging()) Render(text);
 }
 
 void MyGLCanvas::DrawAxes(float x_low, float x_high, float y_low, float y_high){
@@ -317,6 +268,19 @@ void MyGLCanvas::NameAxes(float x_low, float x_high, float y_low, float y_high){
   for (int i = 0; i < lowstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, lowstr[i]);
 }
 
+void MyGLCanvas::FixPan(){
+  // Fixes the pan after a mouse/size event or after drawing.
+  int w, h;
+  GetClientSize(&w, &h);
+  if (disp_h<h) disp_h=h;
+  if (disp_w<w) disp_w=w;
+  if (pan_y<h) pan_y=h;
+  if (pan_y>disp_h) pan_y=disp_h;
+  if (pan_x<w-disp_w) pan_x = w-disp_w;
+  if (pan_x>10) pan_x = 10;
+  
+}
+
 // MyFrame ///////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -326,7 +290,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(wxID_OPEN, MyFrame::OnOpen)
   EVT_BUTTON(MY_BUTTONRUN_ID, MyFrame::OnButtonRun)
   EVT_BUTTON(MY_BUTTONCONT_ID, MyFrame::OnButtonCont)
-  EVT_BUTTON(MY_BUTTONSETMON_ID, MyFrame::OnButtonSetMon)
+  EVT_BUTTON(MY_BUTTONSETMON_ID, MyFrame::OnButtonSetMon)  
   EVT_CHECKBOX(MY_SWITCH_ID, MyFrame::OnSwitchBox)
   EVT_SPINCTRL(MY_SPINCNTRL_ID, MyFrame::OnSpin)
   EVT_TEXT_ENTER(MY_TEXTCTRL_ID, MyFrame::OnText)
@@ -469,9 +433,9 @@ void MyFrame::OnOpen(wxCommandEvent &event)
     }
 }
 
-void MyFrame::OnButtonRun(wxCommandEvent &event)
+void MyFrame::OnButtonRun(wxCommandEvent &event){
   // Event handler for the push button
-{
+
   int n, ncycles;
 
   cyclescompleted = 0;
@@ -489,8 +453,8 @@ void MyFrame::OnButtonCont(wxCommandEvent &event)
   canvas->Render("Continue button pressed", cyclescompleted);
 }
 
-void MyFrame::OnButtonSetMon(wxCommandEvent &event)
-{
+void MyFrame::OnButtonSetMon(wxCommandEvent &event){
+
   /*wxRect framerect = this->GetRect();
   int w = framerect.GetWidth()/2;
   int h = framerect.GetHeight()/2;
@@ -498,67 +462,21 @@ void MyFrame::OnButtonSetMon(wxCommandEvent &event)
   printf("  Top %d", framerect.GetY());
   cout<<endl;
   const wxPoint mon_pos = *(new wxPoint(w,h ));*/
+  
   const wxSize mon_size = *(new wxSize(400, 400));
-  const wxSize mylistsize = *(new wxSize(180, 300));
-  
-  wxArrayString oplist = *(new wxArrayString);
-  wxArrayString monlist = *(new wxArrayString);
-  
-  int vsp = 3;
-  int monct = mmz->moncount();
-  name dev, outp;
-  string monstr;
-  
-  for(int i=0; i<10; i++)
-  {
-    string temp = "Example ";
-    temp+= to_string(i+1);
-    oplist.Add(temp);
-    
-  }
-  
-  for(int i=0; i<monct; i++)
-  {
-    mmz->getmonname(i, dev, outp);
-    monstr = (string) nmz->getnamefromtable(dev);
-    if (outp!=-1) {monstr+="."; monstr+=(string) nmz->getnamefromtable(outp);}
-    
-    monlist.Add(monstr);
-    
-  }
-  
-  
-  wxDialog* mymon = new wxDialog(this, wxID_ANY, "Add or set Motitor", wxDefaultPosition, mon_size);
+  MyMonDialog* mymon = new MyMonDialog(this, wxID_ANY,"Add or set Monitor", monman, wxDefaultPosition, mon_size);
   mymon->Centre();
   
-  wxBoxSizer *tsizer = new wxBoxSizer(wxHORIZONTAL);
-  wxBoxSizer *opsizer = new wxBoxSizer(wxVERTICAL);
-  wxBoxSizer *monsizer = new wxBoxSizer(wxVERTICAL);
-  
-  wxListBox *opListBox = new wxListBox(mymon, wxID_ANY, wxDefaultPosition,  mylistsize, oplist);
-  wxListBox *monListBox = new wxListBox(mymon, wxID_ANY, wxDefaultPosition,  mylistsize, monlist);
-  
-  opsizer->Add(opListBox, MyTabFlag);
-  opsizer->AddSpacer(vsp);
-  monsizer->Add(monListBox, MyTabFlag);
-  monsizer->AddSpacer(vsp);
-  
-  opsizer->Add(new wxButton(mymon, wxID_ANY, "Add", wxDefaultPosition, ContSize), MyStdFlag);
-  monsizer->Add(new wxButton(mymon, wxID_ANY, "Remove", wxDefaultPosition, ContSize), MyStdFlag);
-  
-  tsizer->Add(opsizer, MyTabFlag);
-  tsizer->Add(monsizer, MyTabFlag);
-  tsizer->AddSpacer(10);
-  mymon->SetSizer(tsizer);
   //my_mon->CreateButtonSizer(wxOK|wxCANCEL);
   mymon->ShowModal(); 
   
   
 }
 
-void MyFrame::OnSwitchBox(wxCommandEvent &event)
+
+void MyFrame::OnSwitchBox(wxCommandEvent &event){
   // Event handler for the push button
-{
+
   string textstring="Switch ";
   wxCheckBox* currswitch = (wxCheckBox*)event.GetEventObject();
   textstring += currswitch->GetLabelText();
@@ -587,9 +505,9 @@ void MyFrame::OnSwitchBox(wxCommandEvent &event)
   
 }
 
-void MyFrame::OnSpin(wxSpinEvent &event)
+void MyFrame::OnSpin(wxSpinEvent &event){
   // Event handler for the spin control
-{
+
   /*
   wxString text;
   int pos = event.GetPosition();
@@ -598,18 +516,18 @@ void MyFrame::OnSpin(wxSpinEvent &event)
   canvas->Render(text, pos, true);*/
 }
 
-void MyFrame::OnText(wxCommandEvent &event)
+void MyFrame::OnText(wxCommandEvent &event){
   // Event handler for the text entry field
-{
+
   wxString text;
 
   text.Printf("New text entered %s", event.GetString().c_str());
   canvas->Render(text);
 }
 
-void MyFrame::runnetwork(int ncycles)
+void MyFrame::runnetwork(int ncycles){
   // Function to run the network, derived from corresponding function in userint.cc
-{
+
   bool ok = true;
   int n = ncycles;
 
@@ -706,6 +624,7 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer)
   monwin->SetScrollRate(xstep, ystep);
 }
 
+////////////////////////////////////////////////////////////////////////
 // MYMONMANAGER: added class to make monitor point managing easier and more object-oriented
 MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devices_mod, monitor *monitor_mod)
 {
@@ -713,39 +632,198 @@ MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devi
   netz = network_mod;
   dmz = devices_mod;
   mmz = monitor_mod;
-  opProps temp;
   
-  for(int i=40; i<45; i++)
+  name dev, outp;
+  string devstr, opstr;
+  opProps temp;
+  /*for(int i=40; i<45; i++)
   {
-    cout<<nmz->getnamefromtable(i)<<endl;
-  }
+    cout<<nmz->getnamefromtable(i)<<endl;//////////////COUT//////////////
+  }*/
   
   // find all outputs.
   devlink d = netz->devicelist();
   outplink o;
-  while( d != NULL)
-  {
-    temp = *(new opProps());
-    temp.dev = d->id;
-    temp.devstr = nmz->getnamefromtable(temp.dev);
+  cout<< "devices" <<endl;
+  while( d != NULL){
+    dev = d->id;
+    devstr = nmz->getnamefromtable(dev);
+    cout<<devstr<< " id "<< dev<<endl;//////////////COUT//////////////
+    
     o = d->olist;
-    cout<<temp.devstr<< " id "<< temp.dev<<endl;
-    if (o->next==NULL)
+    while(o != NULL)
     {
-      temp.op=o->id;
-      // temp.opstr preset to "";
-      temp.fullstr = temp.devstr;
+      outp=o->id;
+      if (outp==-1){
+      temp = *(new opProps(dev, outp, devstr));
+      // temp.opstr preset to ""
       allops.push_back(temp);
-    }
-    else while(o != NULL)
-    {
-      temp.op=o->id;
-      temp.opstr = nmz->getnamefromtable(temp.op);
-      temp.fullstr = temp.devstr + "." + temp.opstr;
+      } else {
+      opstr = nmz->getnamefromtable(outp);
+      temp = *(new opProps(dev, outp, devstr, opstr));
       allops.push_back(temp);
+      
+      }
       o = o->next;
     }
     d=d->next;
+  }
+  // Sort the allops list
+  sort(allops.begin(), allops.end());
+  
+  // Assemble list of current monitor points
+//cout<<" Assembling monitored list "<<endl;
+  for(int i=0; i<mmz->moncount();i++){
+    //cout<<"Iteration "<< i<< endl;
+    mmz->getmonname(i, dev, outp);
+    if (outp==-1){
+      temp = *(new opProps(dev, outp, nmz->getnamefromtable(dev)));
+      monitored.push_back(temp);
+      } else {
+      temp=*(new opProps(dev, outp, nmz->getnamefromtable(dev), nmz->getnamefromtable(outp) ));
+      monitored.push_back(temp);
+      }
+  }
+  // Sort the monitored list
+  sort(monitored.begin(), monitored.end());
+  
+  cout<<" Assembling unmonitored list "<<endl;
+  // Assemble a list of unmonitored outputs. For each element of allops
+  // add it to unmonitored, if it does not exist in monitored. Since the
+  // number of monitors is more restricted than the number of devices,
+  // this strategy may help exploit temporal locality of reference. And
+  // speed up the process.
+  for(int i=0; i<allops.size();i++){
+    bool found=false;
+    cout<<"Entered loop "<< allops[i].fullstr<<endl;
+    for(int j=0; j<monitored.size(); j++){
+      if (allops[i]==monitored[j]){
+        found=true;
+        cout<<"found monitor "<<allops[i].fullstr<<endl;
+        break;
+      }
+      else{
+        //cout<<"monitor not found "<< allops[i].fullstr<<" vs "<< monitored[i].fullstr<<endl;
+      }
+    }
+    if(!found) unmonitored.push_back(allops[i]);
+  }
+  // Sort the unmonitored list
+  sort(unmonitored.begin(), unmonitored.end());
+  
+  
+}
+
+wxArrayString MyMonManager::GetMonitoredList(){
+  wxArrayString monlist = *(new wxArrayString);
+  for(int i=0; i<monitored.size(); i++)
+  {
+    monlist.Add(monitored[i].fullstr);
+  }  
+  return monlist;
+}
+
+wxArrayString MyMonManager::GetUnmonitoredList(){
+  wxArrayString unmonlist = *(new wxArrayString);
+  for(int i=0; i<unmonitored.size(); i++)
+  {
+    unmonlist.Add(unmonitored[i].fullstr);
+  }
+  return unmonlist;
+  
+}
+
+bool MyMonManager::AddMonitor(int m){
+  if(m>unmonitored.size()|| m<0) return false;
+  monitored.push_back(unmonitored[m]);
+  // Sort the monitored list
+  sort(monitored.begin(), monitored.end());
+  bool ok;
+  mmz->makemonitor(unmonitored[m].dev, unmonitored[m].op, ok);
+  unmonitored.erase(unmonitored.begin()+m);
+  return true;
+}
+
+bool MyMonManager::RemoveMonitor(int m){
+  if(m>monitored.size()|| m<0) return false;
+  unmonitored.push_back(monitored[m]);
+  // Sort the monitored list
+  sort(unmonitored.begin(), unmonitored.end());
+  bool ok;
+  mmz->remmonitor(monitored[m].dev, monitored[m].op, ok);
+  monitored.erase(monitored.begin()+m);
+  
+  return true;
+}
+
+////////////////////////////////////////////////////////////////////////
+// MYMONDIALOG class that manages the monitors. Needed to create for proper event handling.
+BEGIN_EVENT_TABLE(MyMonDialog, wxDialog)
+  EVT_BUTTON(MY_REMMON_ID, MyMonDialog::OnBtnRemMon)
+  EVT_BUTTON(MY_ADDMON_ID, MyMonDialog::OnBtnAddMon)
+END_EVENT_TABLE()
+MyMonDialog::MyMonDialog(wxWindow *parent, wxWindowID id, const wxString &title,MyMonManager *mon_man,
+          const wxPoint &pos, const wxSize &size, 
+          long style, const wxString &name):wxDialog(parent, id, title, pos, size, style, name){
+  
+  monman=mon_man;
+  
+  int vsp = 3;
+  // Set opListBox and monListBox
+  const wxSize mylistsize = *(new wxSize(180, 300));
+  
+  wxArrayString monlist = monman->GetMonitoredList();
+  wxArrayString oplist = monman->GetUnmonitoredList();
+  
+  optListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition,  mylistsize, oplist);
+  monListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition,  mylistsize, monlist);
+  
+  wxBoxSizer *tsizer = new wxBoxSizer(wxHORIZONTAL);
+  wxBoxSizer *optsizer = new wxBoxSizer(wxVERTICAL);
+  wxBoxSizer *monsizer = new wxBoxSizer(wxVERTICAL);
+  
+  optsizer->Add(optListBox, MyTabFlag);
+  optsizer->AddSpacer(vsp);
+  monsizer->Add(monListBox, MyTabFlag);
+  monsizer->AddSpacer(vsp);
+  
+  optsizer->Add(new wxButton(this, MY_ADDMON_ID, "Add", wxDefaultPosition, ContSize), MyStdFlag);
+  monsizer->Add(new wxButton(this, MY_REMMON_ID, "Remove", wxDefaultPosition, ContSize), MyStdFlag);
+  
+  tsizer->Add(optsizer, MyTabFlag);
+  tsizer->Add(monsizer, MyTabFlag);
+  tsizer->AddSpacer(10);
+  SetSizer(tsizer);
+  
+}
+
+void MyMonDialog::RefreshLists(){
+  
+  wxArrayString monlist = monman->GetMonitoredList();
+  wxArrayString optlist = monman->GetUnmonitoredList();
+  
+  monListBox->Set(monlist);
+  optListBox->Set(optlist);
+  
+}
+
+// EVENTS
+void MyMonDialog::OnBtnRemMon(wxCommandEvent &event){
+  int sel = monListBox->GetSelection();
+  cout<<"Remove Clicked, selection "<<sel<<endl;
+  if(sel!=-1){
+    monman->RemoveMonitor(sel);
+    RefreshLists();
+  }
+}
+
+void MyMonDialog::OnBtnAddMon(wxCommandEvent &event){
+  cout<<"Add Clicked"<<endl;
+  int sel = optListBox->GetSelection();
+  cout<<"Add Clicked, selection "<<sel<<endl;
+  if(sel!=-1){
+    monman->AddMonitor(sel);
+    RefreshLists();
   }
 }
 
