@@ -42,8 +42,8 @@ void parser::devicelist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
 		smz->getsymbol(cursym,curid,curnum);
-		device();
-		smz->getsymbol(cursym,curid,curnum);
+        device();
+        smz->getsymbol(cursym,curid,curnum);
 	}
 	else{
 		errorparser(3); // no opencurly error
@@ -53,194 +53,233 @@ void parser::devicelist(void){
 		if (cursym==closecurly) {
 			return;
 		}
-		device();
-		smz->getsymbol(cursym,curid,curnum);
+        device();
+        smz->getsymbol(cursym,curid,curnum);
 	}
-
 }
 
 // device() will parse a device specification statement and return the semicol behind
 
 void parser::device(void){
 	if (cursym==sclock){
-	 devtypetemp=dmz->devkind(curid);
+        devtypetemp=dmz->devkind(curid);
 		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==namesym){
-            devnametemp=curid;
-			//this is the place where you get the user defined name and parse it into the network class
-			smz->getsymbol(cursym,curid,curnum);
-			if (cursym==colon){
-				smz->getsymbol(cursym,curid,curnum);
-				if (cursym==numsym){
-                    dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
-					return;
-				}
-				else errorparser(4); // num expected error
-			}
-			else errorparser(5); // no colon error
-		}
-		else if (cursym==numsym){
-			errorparser(6); // devicename must not start with a number error
-		}
-		else errorparser(7); // devicename must coincide with a keyword error
-	}
-	else if (cursym==sswitch){
-	devtypetemp=dmz->devkind(curid);
-		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==namesym){
-            devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
-			smz->getsymbol(cursym,curid,curnum);
-			if (cursym==colon){
-				smz->getsymbol(cursym,curid,curnum);
-				if (cursym==numsym){
-					if (curnum==0||curnum==1){
-                        dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);//parse 0/1 into device class
-						return;
-					}
-					else{
-						errorparser(8); //input must be zero or one !!!
-					}
-				}
-				else{
-					errorparser(4); // input must be a number
-				}
-			}
-			else{
-				errorparser(5); // no colon error
-			}
-		}
-		else if (cursym==numsym){
-			errorparser(6); // devicename must not start with a number error
+		if (netz->finddevice(curid)==NULL){
+            if (cursym==namesym){
+                devnametemp=curid;
+                //this is the place where you get the user defined name and parse it into the network class
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==colon){
+                    smz->getsymbol(cursym,curid,curnum);
+                    if (cursym==numsym){
+                        dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
+                        return;
+                    }
+                    else errorparser(4); // num expected error
+                }
+                else errorparser(5); // no colon error
+            }
+            else if (cursym==numsym){
+                errorparser(6); // devicename must not start with a number error
+            }
+            else errorparser(7); // devicename must coincide with a keyword error
 		}
 		else{
-			errorparser(7); // devicename must coincide with a keyword error
+            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+        }
+	}
+	else if (cursym==sswitch){
+        devtypetemp=dmz->devkind(curid);
+		smz->getsymbol(cursym,curid,curnum);
+		if (netz->finddevice(curid)==NULL){
+            if (cursym==namesym){
+                devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==colon){
+                    smz->getsymbol(cursym,curid,curnum);
+                    if (cursym==numsym){
+                        if (curnum==0||curnum==1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);//parse 0/1 into device class
+                            return;
+                        }
+                        else{
+                            errorparser(8); //input must be zero or one !!!
+                        }
+                    }
+                    else{
+                        errorparser(4); // input must be a number
+                    }
+                }
+                else{
+                    errorparser(5); // no colon error
+                }
+            }
+            else if (cursym==numsym){
+                errorparser(6); // devicename must not start with a number error
+            }
+            else{
+                errorparser(7); // devicename must coincide with a keyword error
+            }
 		}
+		else{
+            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+        }
 	}
 	else if (cursym==sand){
-	devtypetemp=dmz->devkind(curid);
+        devtypetemp=dmz->devkind(curid);
 		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==namesym){
-            devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
-			smz->getsymbol(cursym,curid,curnum);
-			if (cursym==colon){
-				smz->getsymbol(cursym,curid,curnum);
-				if (cursym==numsym){
-					if (curnum<=16 && curnum>=1){
-                        dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
-						return;
-					}
-					else errorparser(0); // number of inputs must be smaller than 17 and greater than 0 error
-				}
-			}
-			else errorparser(0); // no colon error
+		if (netz->finddevice(curid)==NULL){
+            if (cursym==namesym){
+                devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==colon){
+                    smz->getsymbol(cursym,curid,curnum);
+                    if (cursym==numsym){
+                        if (curnum<=16 && curnum>=1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                            return;
+                        }
+                        else errorparser(0); // number of inputs must be smaller than 17 and greater than 0 error
+                    }
+                }
+                else errorparser(0); // no colon error
+            }
+            else if (cursym==numsym){
+                errorparser(0); // devicename must not start with a number error
+            }
+            else errorparser(0); // devicename must coincide with a keyword error
 		}
-		else if (cursym==numsym){
-			errorparser(0); // devicename must not start with a number error
-		}
-		else errorparser(0); // devicename must coincide with a keyword error
+		else{
+            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+        }
 	}
 	else if (cursym==snand){
-	devtypetemp=dmz->devkind(curid);
+        devtypetemp=dmz->devkind(curid);
 		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==namesym){
-            devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
-			smz->getsymbol(cursym,curid,curnum);
-			if (cursym==colon){
-				smz->getsymbol(cursym,curid,curnum);
-				if (cursym==numsym){
-					if (curnum<=16 && curnum>=1){
-                        dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
-						//parse num into network class
-						return;
-					}
-					else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
-				}
-			}
-			else errorparser(5); // no colon error
+		if (netz->finddevice(curid)==NULL){
+            if (cursym==namesym){
+                devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==colon){
+                    smz->getsymbol(cursym,curid,curnum);
+                    if (cursym==numsym){
+                        if (curnum<=16 && curnum>=1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                            //parse num into network class
+                            return;
+                        }
+                        else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
+                    }
+                }
+                else errorparser(5); // no colon error
+            }
+            else if (cursym==numsym){
+                errorparser(6); // devicename must not start with a number error
+            }
+            else errorparser(7); // devicename must coincide with a keyword error
 		}
-		else if (cursym==numsym){
-			errorparser(6); // devicename must not start with a number error
-		}
-		else errorparser(7); // devicename must coincide with a keyword error
+		else{
+            errorparser(18); //DEVICENAME IS ALREADY BEING USED
+        }
 	}
 	else if (cursym==sor){
-	devtypetemp=dmz->devkind(curid);
+        devtypetemp=dmz->devkind(curid);
 		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==namesym){
-		devnametemp=curid;
-			//this is the place where you get the user defined name and parse it into the network class
-			smz->getsymbol(cursym,curid,curnum);
-			if (cursym==colon){
-				smz->getsymbol(cursym,curid,curnum);
-				if (cursym==numsym){
-					if (curnum<=16 && curnum>=1){
-                        dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
-						//parse num into network class
-						return;
-					}
-					else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
-				}
-			}
-			else errorparser(5); // no colon error
+		if (netz->finddevice(curid)==NULL){
+            if (cursym==namesym){
+            devnametemp=curid;
+                //this is the place where you get the user defined name and parse it into the network class
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==colon){
+                    smz->getsymbol(cursym,curid,curnum);
+                    if (cursym==numsym){
+                        if (curnum<=16 && curnum>=1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                            //parse num into network class
+                            return;
+                        }
+                        else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
+                    }
+                }
+                else errorparser(5); // no colon error
+            }
+            else if (cursym==numsym){
+                errorparser(6); // devicename must not start with a number error
+            }
+            else errorparser(7); // devicename must coincide with a keyword error
 		}
-		else if (cursym==numsym){
-			errorparser(6); // devicename must not start with a number error
-		}
-		else errorparser(7); // devicename must coincide with a keyword error
+		else{
+            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+        }
 	}
 	else if (cursym==snor){
-	devtypetemp=dmz->devkind(curid);
+        devtypetemp=dmz->devkind(curid);
 		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==namesym){
-		devnametemp=curid;
-			//this is the place where you get the user defined name and parse it into the network class
-			smz->getsymbol(cursym,curid,curnum);
-			if (cursym==colon){
-				smz->getsymbol(cursym,curid,curnum);
-				if (cursym==numsym){
-					if (curnum<=16 && curnum>=1){
-                        dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
-						//parse num into network class#
-						return;
-					}
-					else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
-				}
-			}
-			else errorparser(5); // no colon error
+		if (netz->finddevice(curid)==NULL){
+            if (cursym==namesym){
+            devnametemp=curid;
+                //this is the place where you get the user defined name and parse it into the network class
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==colon){
+                    smz->getsymbol(cursym,curid,curnum);
+                    if (cursym==numsym){
+                        if (curnum<=16 && curnum>=1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                            //parse num into network class#
+                            return;
+                        }
+                        else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
+                    }
+                }
+                else errorparser(5); // no colon error
+            }
+            else if (cursym==numsym){
+                errorparser(6); // devicename must not start with a number error
+            }
+            else errorparser(7); // devicename must not coincide with a keyword error
 		}
-		else if (cursym==numsym){
-			errorparser(6); // devicename must not start with a number error
-		}
-		else errorparser(7); // devicename must not coincide with a keyword error
+		else{
+            errorparser(18); //DEVICENAME IS ALREADY BEING USED
+        }
 	}
 	else if (cursym==sdtype){
-	devtypetemp=dmz->devkind(curid);
+        devtypetemp=dmz->devkind(curid);
 		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==namesym){
-            dmz->makedevice(devtypetemp,curid,curnum,okcheck);
-			//this is the place where you get the user defined name and parse it into the network class
-			return;
+		if (netz->finddevice(curid)==NULL){
+            if (cursym==namesym){
+                dmz->makedevice(devtypetemp,curid,curnum,okcheck);
+                //this is the place where you get the user defined name and parse it into the network class
+                return;
+            }
+            else if (cursym==numsym){
+                errorparser(6); // devicename must not start with a number error
+            }
+            else errorparser(7); // devicename must not coincide with a keyword error
 		}
-		else if (cursym==numsym){
-			errorparser(6); // devicename must not start with a number error
-		}
-		else errorparser(7); // devicename must not coincide with a keyword error
+		else{
+            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+        }
 	}
 	else if (cursym==sxor){
-	devtypetemp=dmz->devkind(curid);
+        devtypetemp=dmz->devkind(curid);
 		smz->getsymbol(cursym,curid,curnum);
-		if (cursym==namesym){
-            dmz->makedevice(devtypetemp,curid,curnum,okcheck);
-			//this is the place where you get the user defined name and parse it into the network class
-			return;
+		if (netz->finddevice(curid)==NULL){
+            if (cursym==namesym){
+                dmz->makedevice(devtypetemp,curid,curnum,okcheck);
+                //this is the place where you get the user defined name and parse it into the network class
+                return;
+            }
+            else if (cursym==numsym){
+                errorparser(6); // devicename must not start with a number error
+            }
+            else errorparser(7); // devicename must not coincide with a keyword error
 		}
-		else if (cursym==numsym){
-			errorparser(6); // devicename must not start with a number error
-		}
-		else errorparser(7); // devicename must not coincide with a keyword error
+		else{
+            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+        }
 	}
 	else {
-		errorparser(-1); // unidentified type error
+		errorparser(19); // UNIDENTIFIED DEVICE TYPE
 	}
 }
 

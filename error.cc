@@ -25,6 +25,9 @@ error::error(){
 	this->writeerror("TOO MANY INPUTS OR INPUT CANNOT BE SMALLER THAN 1"); //15
 	this->writeerror("INVALID DTYPE INPUT"); //16
 	this->writeerror("PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT"); //17
+	this->writeerror("DEVICENAME IS ALREADY BEING USED"); //18
+	this->writeerror("UNIDENTIFIED DEVICE TYPE"); //19
+
 }
 
 int error::writeerror(string errordescription){
