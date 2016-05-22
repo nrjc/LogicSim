@@ -8,9 +8,7 @@
 #include "error.h"
 
 int main(int argc, char **argv)
-
 {
-
   if (argc != 2) {
     cout << "Usage:         " << argv[0] << " [filename]" << endl;
     exit(1);
@@ -27,6 +25,7 @@ int main(int argc, char **argv)
   parser newparser(&newnetwork,&newdevice,&newmonitor,&newscanner,&newerror);
   newparser.readin();
   newdevice.debug(true);
-
-
+  bool check=true;
+  check=newparser.readin();
+  cout<<"result of parser check: "<<check<<endl;
 }

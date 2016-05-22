@@ -27,6 +27,7 @@ scanner::~scanner(){
 void scanner::getsymbol(symbol& s, name& id, int& num)
 {
 	skipspaces(&inf, curch, eofile);
+	lastparsedsym=inf.tellg();
 	if (eofile){
 		s=eofsym;
 		inf.close();
@@ -34,14 +35,14 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 	else{
 		if(isdigit(curch)){
 			s=numsym;
-			num=getnumber(&inf, curch, eofile);	
+			num=getnumber(&inf, curch, eofile);
 		}
 		else{
 			if(isalpha(curch)){
 				id=getname(&inf, curch, eofile);
 				if (id==1) s=devsym; else
 				if(id==2) s=consym; else
-				if (id==3) s=monsym; else 
+				if (id==3) s=monsym; else
 				if (id==4) s=sclock; else
 				if (id==5) s=sswitch; else
 				if(id==6) s=sdtype; else
@@ -54,7 +55,7 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 				{
 					s=inputsym;
 					num=stoi((Namestore->getnamefromtable(id)).substr(1,2));
-				} else 
+				} else
 				if(id==28) s=idata; else
 				if(id==29) s=iclk; else
 				if(id==30) s=iset; else
@@ -64,7 +65,7 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 				s=namesym; //not a keyword
 			}
 			else{
-				//This operation is invalid because a switch can only operate on an integer. Need rewrite. 
+				//This operation is invalid because a switch can only operate on an integer. Need rewrite.
 				//Slap all these into names table????
 				punct=getpunct(&inf,curch, eofile);
 				switch(Namestore->cvtname(punct)){
@@ -87,12 +88,12 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 name scanner::getname(ifstream *infp, char &curch, bool &eofile){
 	bool checkflag=false;
 	namestring str="";
-	
+
 	while (!eofile&&(isdigit(curch)||isalpha(curch)||curch=='_')) { //Continues as long as curch is _, or an alphabet / number.
 		str+=curch;
 		eofile = !(infp->get(curch));
 	}
-	return Namestore->lookup(str);	
+	return Namestore->lookup(str);
 }
 
 int scanner::getnumber(ifstream *infp, char &curch, bool &eofile){
@@ -105,20 +106,21 @@ int scanner::getnumber(ifstream *infp, char &curch, bool &eofile){
 		placeholder = curch - '0';
 		number = number*10+placeholder;
 		eofile = !(infp->get(curch));
-	}	
+	}
 	return number;
 }
 
 void scanner::skipspaces(ifstream *infp,char &curch,bool &eofile){
   while (!eofile) {
 	if(curch=='\n'){
+        lastparsedline=(infp->tellg());//Ideally this should give the location of the line right after the error
 		linenumber+=1;
 	}
     if (!isspace(curch)){
 		return;
 	}
 	eofile = !(infp->get(curch));
-  }	
+  }
 }
 
 string scanner::getpunct(ifstream *infp,char &curch,bool &eofile){
@@ -141,7 +143,7 @@ void scanner::skipcomment(ifstream *infp,char &curch,bool &eofile){
 		eofile = !(infp->get(curch));
 		if (prev=='*' && cur=='/'){
 			return;
-		}	
+		}
 	}
 	return;
 }
@@ -168,5 +170,28 @@ void scanner::getnewline(){
 		}
 	cout<<linenumber<<"  " << line;
 	inf.seekg (currentposition, inf.beg);
-	
+
+}
+
+void scanner::linedisplayerror(){
+    cout<< "LINE "<<linenumber<<endl;
+    string line1="";
+    string line2="";
+	int currentposition = inf.tellg();
+	bool eofile2=false;
+	char backup;
+	inf.seekg(lastparsedline,inf.beg);
+	while (!eofile2)
+		{
+            eofile2=!(inf.get(backup));
+            if (backup=='\n') break;
+			line1+=backup;
+		}
+    for(int i=1;i<(lastparsedsym-lastparsedline);i++){
+        line2+=" ";
+    }
+	cout<<line1<<endl;
+	cout<<line2<<"^"<<endl;
+	inf.seekg (currentposition, inf.beg);
+
 }

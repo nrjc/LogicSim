@@ -16,28 +16,40 @@ error::error(){
 	this->writeerror("DEVICENAME MUST NOT START WITH A NUMBER"); //6
 	this->writeerror("DEVICENAME MUST NOT CONINCIDE WITH A KEYWORD"); //7
 	this->writeerror("INPUT MUST BE A 0 / 1"); //8
-	this->writeerror("NUMBER OF INPUTS MUST BE BETWEEN 1-16"); //9
+	this->writeerror("NUMBER OF INPUTS MUST BE BETWEEN 1-17"); //9
 	this->writeerror("UNIDENTIFIED TYPE"); //10
-	this->writeerror("INVALID OUTPUT FROM D-TYPE"); //11
+	this->writeerror("INVALID OUTPUT"); //11
 	this->writeerror("EXPECTED DEVICENAME"); //12
-	this->writeerror("EXPECTED '.' or '.'"); //13
+	this->writeerror("EXPECTED '.'"); //13
 	this->writeerror("DEVICE NOT DEFINED"); //14
+	this->writeerror("TOO MANY INPUTS OR INPUT CANNOT BE SMALLER THAN 1"); //15
+	this->writeerror("INVALID INPUT"); //16
+	this->writeerror("PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT"); //17
+	this->writeerror("DEVICENAME IS ALREADY BEING USED"); //18
+	this->writeerror("UNIDENTIFIED DEVICE TYPE"); //19
+	this->writeerror("NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT"); //20
+	this->writeerror("EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE"); //21
+	this->writeerror("EXPECTED '->'"); //22
+	this->writeerror("EXPECTED ';'"); //23
+	this->writeerror("CLOCK PERIOD MUST BE > 0"); //24
+	this->writeerror("EXPECTED '}' OR A VALID DEVICENAME"); //25
+
 }
 
 int error::writeerror(string errordescription){
 	map.insert({errorcounter,errordescription});
 	errorcounter++;
 	return (errorcounter-1);
-	
+
 }
 
 void error::printerror (int id){
 	auto search = map.find(id);
     if(search != map.end()) {
-        cout << "Error Code "<< search->first << ": "<< search->second ;
+        cout << "ERROR CODE "<< search->first << ": "<< search->second ;
     }
     else {
-        cout << "Error Code Not found";
+        cout << "ERROR CODE -1: UNDEFINED ERROR HAS OCCURRED";
     }
 }
 
