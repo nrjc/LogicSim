@@ -327,19 +327,27 @@ void parser::connection(void){
 		if (netz->finddevice(curid)!=NULL){
 			devnametemp=curid;// parser will connect this device to the network class here
 			outputnametemp=blankname;
-			smz->getsymbol(cursym,curid,curnum);
-			if (cursym==stop){
-				smz->getsymbol(cursym,curid,curnum);
-				if(cursym==oq){
-					outputnametemp=curid;// parser will tell the network class this output q
-					smz->getsymbol(cursym,curid,curnum);
-				}
-				else if (cursym==oqbar){
-					outputnametemp=curid;// parser will tell the network class this output q
-					smz->getsymbol(cursym,curid,curnum);
-				}
-				else errorparser(11); // invalid output from dtype
+			if (netz->finddevice(curid)->kind==7){ // check if device is a dtype
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==stop){
+                    smz->getsymbol(cursym,curid,curnum);
+                    if(cursym==oq){
+                        outputnametemp=curid;// parser will tell the network class this output q
+                        smz->getsymbol(cursym,curid,curnum);
+                    }
+                    else if (cursym==oqbar){
+                        outputnametemp=curid;// parser will tell the network class this output q
+                        smz->getsymbol(cursym,curid,curnum);
+                    }
+                    else errorparser(11); // invalid output from dtype
+                }
+                else{
+                    errorparser(21); // EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE
+                }
 			}
+			else{
+                smz->getsymbol(cursym,curid,curnum);
+            }
 			if (cursym==arrow){
 				bool firstit=true;
 				while (cursym==comma||firstit){
@@ -347,13 +355,9 @@ void parser::connection(void){
 					smz->getsymbol(cursym,curid,curnum);
 					if (cursym==namesym){
 						if (netz->finddevice(curid)!=NULL){
-							//devicepointer=netz->finddevice(curid);
-							//kindindex=devicepointer->kind;
 							int kindindex=0;
 							kindindex=(netz->finddevice(curid))->kind;
 							if (kindindex!=7){
-							//cout<<"shit"<<curnum<<endl;
-							//cout<<"shit :"<<netz->getnumberofinputs(curid)<<endl;
 								int noofinputs=0;
 								noofinputs=netz->getnumberofinputs(curid);
 								devnamtempinp=curid;
@@ -409,7 +413,7 @@ void parser::connection(void){
 				if (cursym==semicol){
 					return;
 				}else errorparser(-1); //comma expected or semicol expected
-			}else errorparser(-1); // for connection, no output or arrow following devicename
+			}else errorparser(22); // EXPECTED '->'
 		}else errorparser(14); // DEVICE NOT DEFINED
 	}else errorparser(-1);
 }
