@@ -355,9 +355,8 @@ void parser::connection(void){
 					smz->getsymbol(cursym,curid,curnum);
 					if (cursym==namesym){
 						if (netz->finddevice(curid)!=NULL){
-							int kindindex=0;
-							kindindex=(netz->finddevice(curid))->kind;
-							if (kindindex!=7){
+							if (netz->finddevice(curid)->kind!=7){
+							cout<<"POINTER: "<<netz->finddevice(curid)->kind<<endl;
 								int noofinputs=0;
 								noofinputs=netz->getnumberofinputs(curid);
 								devnamtempinp=curid;
@@ -376,6 +375,9 @@ void parser::connection(void){
                                             errorparser(17); // PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
                                         }
 									}
+									else{
+                                        errorparser(16); //INVALID INPUT
+                                    }
 								}
 							}
 							else{
@@ -383,6 +385,9 @@ void parser::connection(void){
 								smz->getsymbol(cursym,curid,curnum);
 								if (cursym==stop){
 									smz->getsymbol(cursym,curid,curnum);
+									//cout<<"POINTER: "<<netz->finddevice(curid)->kind<<endl;
+									//cout<<"CURSYM: "<<cursym<<endl;
+									//cout<<"PREVIOUS CONNECTION: "<<netz->findinput(netz->finddevice(devnamtempinp),curid)->connect<<endl;
 									if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
                                         if (cursym==idata){
                                             netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
@@ -400,7 +405,7 @@ void parser::connection(void){
                                             netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
-                                        else errorparser(16); //input formats is wrong
+                                        else errorparser(16); // INVALID INPUT
 									}
 									else{
                                         errorparser(17); // PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT

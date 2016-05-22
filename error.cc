@@ -18,12 +18,12 @@ error::error(){
 	this->writeerror("INPUT MUST BE A 0 / 1"); //8
 	this->writeerror("NUMBER OF INPUTS MUST BE BETWEEN 1-16"); //9
 	this->writeerror("UNIDENTIFIED TYPE"); //10
-	this->writeerror("INVALID OUTPUT FROM D-TYPE"); //11
+	this->writeerror("INVALID OUTPUT"); //11
 	this->writeerror("EXPECTED DEVICENAME"); //12
 	this->writeerror("EXPECTED '.'"); //13
 	this->writeerror("DEVICE NOT DEFINED"); //14
 	this->writeerror("TOO MANY INPUTS OR INPUT CANNOT BE SMALLER THAN 1"); //15
-	this->writeerror("INVALID DTYPE INPUT"); //16
+	this->writeerror("INVALID INPUT"); //16
 	this->writeerror("PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT"); //17
 	this->writeerror("DEVICENAME IS ALREADY BEING USED"); //18
 	this->writeerror("UNIDENTIFIED DEVICE TYPE"); //19
