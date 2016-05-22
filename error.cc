@@ -29,7 +29,8 @@ error::error(){
 	this->writeerror("UNIDENTIFIED DEVICE TYPE"); //19
 	this->writeerror("NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT"); //20
 	this->writeerror("EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE"); //21
-	this->writeerror("EXPECTED '->'"); //21
+	this->writeerror("EXPECTED '->'"); //22
+	this->writeerror("EXPECTED ';'"); //23
 
 }
 

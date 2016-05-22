@@ -356,7 +356,6 @@ void parser::connection(void){
 					if (cursym==namesym){
 						if (netz->finddevice(curid)!=NULL){
 							if (netz->finddevice(curid)->kind!=7){
-							cout<<"POINTER: "<<netz->finddevice(curid)->kind<<endl;
 								int noofinputs=0;
 								noofinputs=netz->getnumberofinputs(curid);
 								devnamtempinp=curid;
@@ -388,39 +387,59 @@ void parser::connection(void){
 									//cout<<"POINTER: "<<netz->finddevice(curid)->kind<<endl;
 									//cout<<"CURSYM: "<<cursym<<endl;
 									//cout<<"PREVIOUS CONNECTION: "<<netz->findinput(netz->finddevice(devnamtempinp),curid)->connect<<endl;
-									if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
-                                        if (cursym==idata){
+                                    //cout<<"POINTER: "<<netz->findinput(netz->finddevice(devnamtempinp),curid)->connect<<endl;
+
+                                    if (cursym==idata){
+                                        if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
                                             netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
-                                        else if (cursym==iclk){
+                                        else{
+                                            errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                        }
+                                    }
+                                    else if (cursym==iclk){
+                                        if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
                                             netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clk input to network class
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
-                                        else if (cursym==iset){
+                                        else{
+                                            errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                        }
+                                    }
+                                    else if (cursym==iset){
+                                        if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
                                             netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse set input to network class
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
-                                        else if (cursym==iclear){
+                                        else{
+                                            errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                        }
+                                    }
+                                    else if (cursym==iclear){
+                                        if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
                                             netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
-                                        else errorparser(16); // INVALID INPUT
-									}
-									else{
-                                        errorparser(17); // PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                        else{
+                                            errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                        }
                                     }
+                                    else errorparser(16); // INVALID INPUT
 								}
+								else{
+                                    errorparser(13);//  expected '.'
+                                }
 							}
 						}else errorparser(14); // DEVICE NOT DEFINED
-					}else errorparser(6);
+					}else errorparser(6);// DEVICENAME CANNOT START WITH A NUMBER
 				}
 				if (cursym==semicol){
 					return;
-				}else errorparser(-1); //comma expected or semicol expected
+				}else errorparser(23); //EXPECTED ';'
 			}else errorparser(22); // EXPECTED '->'
 		}else errorparser(14); // DEVICE NOT DEFINED
-	}else errorparser(-1);
+	}else errorparser(6); //DEVICENAME CANNOT START WITH A NUMBER
 }
 
 void parser::monitorlist(void){
