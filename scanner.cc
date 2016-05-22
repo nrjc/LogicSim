@@ -27,6 +27,7 @@ scanner::~scanner(){
 void scanner::getsymbol(symbol& s, name& id, int& num)
 {
 	skipspaces(&inf, curch, eofile);
+	lastparsedsym=inf.tellg();
 	if (eofile){
 		s=eofsym;
 		inf.close();
@@ -186,7 +187,7 @@ void scanner::linedisplayerror(){
             if (backup=='\n') break;
 			line1+=backup;
 		}
-    for(int i=1;i<(currentposition-lastparsedline);i++){
+    for(int i=1;i<(lastparsedsym-lastparsedline);i++){
         line2+=" ";
     }
 	cout<<line1<<endl;
