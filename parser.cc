@@ -484,9 +484,7 @@ void parser::parmonitor(void){
 }
 
 void parser::errorparser(int errin){
-	cout << "line ";
-	smz->getnewline();
-	cout <<": " ;
+	smz->linedisplayerror();
 	err->printerror(errin);
 	cout << endl;
 }

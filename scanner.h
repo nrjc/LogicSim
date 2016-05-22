@@ -13,7 +13,7 @@ semicol,// ; 0
 devsym,// DEVICE 1
 consym,// CONNECTION 2
 monsym,// MONITORS 3
-namesym, // Defines name. 4 
+namesym, // Defines name. 4
 numsym, // Defines a number 5
 sclock, // CLOCK 6
 sswitch, // SWITCH 7
@@ -45,24 +45,26 @@ class scanner
 	public:
 		scanner(names* names_mod, //Pointer to names class
 		const char* defname); //Name of file read
-		
-		~scanner();						
+
+		~scanner();
 		void getsymbol(symbol& s, name& id, int& num);
 		void getnewline(); // The aim of this is to print out the rest of the line
+		void linedisplayerror(); //Function prints out the current input line along with a marker on the following line to show precisely where the error occured.
 
 	private:
 		ifstream inf; //Input file
-		string inputname; //Stores the name of the input file for IOStream. 
+		string inputname; //Stores the name of the input file for IOStream.
 		bool eofile; //This is true if it is the end of file
 		char curch; //This is the current character
-		names* Namestore; //This is a local, synchronised copy of the name table that is passed into the scanner.  
+		names* Namestore; //This is a local, synchronised copy of the name table that is passed into the scanner.
 		string punct; //This will contain the current punctuation line
 		int linenumber; //This contains the current line number that the parser is operating on.
-		
-		name getname(ifstream *infp, char &curch, bool &eofile); 
+		int lastparsedline; //This will contain the last known character position of the ifstream.
+
+		name getname(ifstream *infp, char &curch, bool &eofile);
 		int getnumber(ifstream *infp, char &curch, bool &eofile);
 		void skipspaces(ifstream *infp,char &curch,bool &eofile);
-		string getpunct(ifstream *infp,char &curch,bool &eofile); 
+		string getpunct(ifstream *infp,char &curch,bool &eofile);
 		void skipcomment(ifstream *infp,char &curch,bool &eofile); //this function skips characters until it sees an ending block /*/
 		void skipcommentline(ifstream *infp,char &curch,bool &eofile); //This function skips characters until it sees an endline symbol.
 
