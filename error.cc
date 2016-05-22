@@ -20,7 +20,7 @@ error::error(){
 	this->writeerror("UNIDENTIFIED TYPE"); //10
 	this->writeerror("INVALID OUTPUT FROM D-TYPE"); //11
 	this->writeerror("EXPECTED DEVICENAME"); //12
-	this->writeerror("EXPECTED '.' or '.'"); //13
+	this->writeerror("EXPECTED '.'"); //13
 	this->writeerror("DEVICE NOT DEFINED"); //14
 	this->writeerror("TOO MANY INPUTS OR INPUT CANNOT BE SMALLER THAN 1"); //15
 	this->writeerror("INVALID DTYPE INPUT"); //16
@@ -28,6 +28,8 @@ error::error(){
 	this->writeerror("DEVICENAME IS ALREADY BEING USED"); //18
 	this->writeerror("UNIDENTIFIED DEVICE TYPE"); //19
 	this->writeerror("NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT"); //20
+	this->writeerror("EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE"); //21
+	this->writeerror("EXPECTED '->'"); //21
 
 }
 
