@@ -112,7 +112,7 @@ int scanner::getnumber(ifstream *infp, char &curch, bool &eofile){
 void scanner::skipspaces(ifstream *infp,char &curch,bool &eofile){
   while (!eofile) {
 	if(curch=='\n'){
-        lastparsedline=infp->tellg()+1;//Ideally this should give the location of the line right after the error
+        lastparsedline=(infp->tellg())+1;//Ideally this should give the location of the line right after the error
 		linenumber+=1;
 	}
     if (!isspace(curch)){
@@ -176,13 +176,14 @@ void scanner::linedisplayerror(){
     string line1="";
     string line2="";
 	int currentposition = inf.tellg();
-	char backup = curch;
 	bool eofile2=false;
+	char backup;
 	inf.seekg(lastparsedline,inf.beg);
-	while (!eofile2 && backup != '\n')
+	while (!eofile2)
 		{
+            eofile2=!(inf.get(backup));
+            if (backup=='\n') break;
 			line1+=backup;
-			eofile2=!(inf.get(backup));
 		}
     for(int i=0;i<(currentposition-lastparsedline);i++){
         line2+=" ";
