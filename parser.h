@@ -34,7 +34,7 @@ class parser {
 		void device(void);
 		void connection(void);
 		void parmonitor();
-		void errorparser(int errin);
+		void errorparser(int errin, symbol stop=badsym);
 
 
 	public:
