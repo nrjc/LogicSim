@@ -39,7 +39,7 @@ errorframe test5("./test/test5",0,emptylines,emptycodes);
 vector<int> line6l={4};
 vector<int> line6c={18};
 errorframe test6("./test/test6",1,line6l,line6c);
-vector<int> line7l={8};
+vector<int> line7l={14};
 vector<int> line7c={20};
 errorframe test7("./test/test7",1,line7l,line7c);
 vector<int> line8l={8};

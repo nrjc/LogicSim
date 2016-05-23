@@ -356,6 +356,7 @@ void parser::connectionlist(void){
 
 void parser::connection(void){
 	if (cursym==namesym){
+        cout<<"shit0 "<<netz->finddevice(curid)->kind<<endl;
 		if (netz->finddevice(curid)!=NULL){
 			devnametemp=curid;// parser will connect this device to the network class here
 			outputnametemp=blankname;
@@ -395,21 +396,24 @@ void parser::connection(void){
 								if (cursym==stop){
 									smz->getsymbol(cursym,curid,curnum);
 									if (cursym==inputsym){
-                                        if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
-                                            if (curnum<=noofinputs && curnum>=1){
+                                        if (curnum<=noofinputs && curnum>=1){
+                                            if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
                                                 netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
                                                 smz->getsymbol(cursym,curid,curnum);
                                             }
-                                            else errorparser(15); // current number exceeded 16 or is smaller than 1 error
+                                            else errorparser(17); // PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
                                             }
                                         else{
-                                            errorparser(17); // PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            errorparser(15); // current number exceeded 16 or is smaller than 1 error
                                         }
 									}
 									else{
                                         errorparser(16); //INVALID INPUT
                                     }
 								}
+								else{
+                                    errorparser(13);
+                                }
 							}
 							else{
 								devnamtempinp=curid;
@@ -456,15 +460,15 @@ void parser::connection(void){
                                         else{
                                             errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
                                         }
-                                    }
-                                    else errorparser(16); // INVALID INPUT
-								}
-								else{
-                                    errorparser(13);//  expected '.'
-                                }
+                                    }else errorparser(16); // INVALID INPUT
+								}else errorparser(13);//  expected '.'
 							}
-						}else errorparser(14); // DEVICE NOT DEFINED
-					}
+                        }
+                        else{
+                            cout<<"shit2 "<<cursym<<endl;
+                            errorparser(14); // DEVICE NOT DEFINED
+                        }
+                    }
 					else if (cursym==numsym){
                         errorparser(6); // DEVICENAME CANNOT START WITH A NUMBER
 					}
@@ -473,10 +477,14 @@ void parser::connection(void){
                     }
 				}
 				if (cursym==semicol){
-					return;
+                    return;
 				}else errorparser(23); //EXPECTED ';'
 			}else errorparser(22); // EXPECTED '->'
-		}else errorparser(14); // DEVICE NOT DEFINED
+		}
+		else{
+            cout<<"shit1 "<<cursym<<endl;
+            errorparser(14); // DEVICE NOT DEFINED
+        }
 	}
 	else if (cursym==numsym){
         errorparser(6); //DEVICENAME CANNOT START WITH A NUMBER
