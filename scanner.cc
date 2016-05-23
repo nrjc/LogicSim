@@ -65,7 +65,6 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 				s=namesym; //not a keyword
 			}
 			else{
-				//This operation is invalid because a switch can only operate on an integer. Need rewrite.
 				//Slap all these into names table????
 				punct=getpunct(&inf,curch, eofile);
 				switch(Namestore->cvtname(punct)){
@@ -167,13 +166,13 @@ void scanner::linedisplayerror(){
 	bool eofile2=false;
 	char backup;
 	inf.seekg(lastparsedline,inf.beg);
-	while (!eofile2)
+	while (!eofile2) //Keeps adding characters into the line to be displayed until a newline character or endfile found.
 		{
             eofile2=!(inf.get(backup));
             if (backup=='\n') break;
 			line1+=backup;
 		}
-    for(int i=1;i<(lastparsedsym-lastparsedline);i++){
+    for(int i=1;i<(lastparsedsym-lastparsedline);i++){ //Counter increments starting from i=1 because the carrot character has a width as well
         line2+=" ";
     }
 	cout<<line1<<endl;

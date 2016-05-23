@@ -7,25 +7,25 @@
 #include "monitor.h"
 #include "error.h"
 
+char* filestotest[]= {"./test/test1","./test/test2","./test/test3","./test/test4","./test/test5"};
+int numoftest = 5;
+
+
 int main(int argc, char **argv)
 {
-  if (argc != 2) {
-    cout << "Usage:         " << argv[0] << " [filename]" << endl;
-    exit(1);
-  }
-
+  for (int i=0;i<numoftest;i++){
   names Nametable;
-  scanner newscanner(&Nametable,argv[1]);
+  scanner newscanner(&Nametable,filestotest[i]);
   error newerror;
 
   network newnetwork(&Nametable);
   devices newdevice(&Nametable,&newnetwork);
   monitor newmonitor(&Nametable,&newnetwork);
 
+  newdevice.debug(true);
+
   parser newparser(&newnetwork,&newdevice,&newmonitor,&newscanner,&newerror);
   newparser.readin();
-  newdevice.debug(true);
-  bool check=true;
-  check=newparser.readin();
-  cout<<"result of parser check: "<<check<<endl;
+}
+
 }
