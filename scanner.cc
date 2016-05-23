@@ -157,21 +157,7 @@ void scanner::skipcommentline(ifstream *infp,char &curch,bool &eofile){
 	}
 	return;
 }
-void scanner::getnewline(){
-	//The job of this function is to print out the rest of the line from when the error was spotted.
-	string line="";
-	int currentposition = inf.tellg();
-	char backup = curch;
-	bool eofile2=false;
-	while (!eofile2 && backup != '\n')
-		{
-			line+=backup;
-			eofile2=!(inf.get(backup));
-		}
-	cout<<linenumber<<"  " << line;
-	inf.seekg (currentposition, inf.beg);
 
-}
 
 void scanner::linedisplayerror(){
     cout<< "LINE "<<linenumber<<endl;
