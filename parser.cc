@@ -568,6 +568,11 @@ void parser::parmonitor(void){
 	}
 }
 
-void parser::errorparser(int errin){
+void parser::errorparser(int errin, symbol stop){
 	err->printerror(errin);
+	if(stop!=badsym){
+        while((cursym!=stop)&&(cursym!=eofsym)){
+            smz->getsymbol(cursym,curid,curnum);
+        }
+	}
 }
