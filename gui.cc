@@ -314,7 +314,7 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
     exit(1);
   }
   
-  monman = new MyMonManager(nmz, netz, dmz, mmz);
+  monman = new MyMonManager(nmz, netz, dmz, mmz, &cyclescompleted);
   
   SetBackgroundColour(BcColour);
   SetForegroundColour(*wxWHITE);
@@ -384,16 +384,16 @@ void MyFrame::OnExit(wxCommandEvent &event){
   Close(true);
 }
 
-void MyFrame::OnAbout(wxCommandEvent &event)
+void MyFrame::OnAbout(wxCommandEvent &event){
   // Event handler for the about menu item
-{
+
   wxMessageDialog about(this, "Example wxWidgets GUI\nAndrew Gee\nJune 2014", "About Logsim", wxICON_INFORMATION | wxOK);
   about.ShowModal();
 }
 
-void MyFrame::OnOpen(wxCommandEvent &event)
+void MyFrame::OnOpen(wxCommandEvent &event){
   // Event handler for the open menu item
-{
+
     // Check out http://docs.wxwidgets.org/trunk/classwx_file_dialog.html
     // Create and Open file dialog
     /*  if (...current content has not been saved...)
@@ -444,9 +444,9 @@ void MyFrame::OnButtonRun(wxCommandEvent &event){
   canvas->Render("Run button pressed", cyclescompleted);
 }
 
-void MyFrame::OnButtonCont(wxCommandEvent &event)
+void MyFrame::OnButtonCont(wxCommandEvent &event){
   // Event handler for the push button
-{
+
   int n, ncycles;
   
   runnetwork(spin->GetValue());
@@ -466,13 +466,10 @@ void MyFrame::OnButtonSetMon(wxCommandEvent &event){
   const wxSize mon_size = *(new wxSize(400, 400));
   MyMonDialog* mymon = new MyMonDialog(this, wxID_ANY,"Add or set Monitor", monman, wxDefaultPosition, mon_size);
   mymon->Centre();
-  
-  //my_mon->CreateButtonSizer(wxOK|wxCANCEL);
   mymon->ShowModal(); 
   
   
 }
-
 
 void MyFrame::OnSwitchBox(wxCommandEvent &event){
   // Event handler for the push button
@@ -626,12 +623,13 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer)
 
 ////////////////////////////////////////////////////////////////////////
 // MYMONMANAGER: added class to make monitor point managing easier and more object-oriented
-MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devices_mod, monitor *monitor_mod)
+MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devices_mod, monitor *monitor_mod, int *cyclesp)
 {
   nmz = names_mod;
   netz = network_mod;
   dmz = devices_mod;
   mmz = monitor_mod;
+  cyclescompletedp = cyclesp;
   
   name dev, outp;
   string devstr, opstr;
@@ -741,6 +739,9 @@ bool MyMonManager::AddMonitor(int m){
   bool ok;
   mmz->makemonitor(unmonitored[m].dev, unmonitored[m].op, ok);
   unmonitored.erase(unmonitored.begin()+m);
+  // Reset monitors to work around monitor class inconsistencies
+  *cyclescompletedp = 0;
+  mmz->resetmonitor();
   return true;
 }
 
@@ -752,7 +753,9 @@ bool MyMonManager::RemoveMonitor(int m){
   bool ok;
   mmz->remmonitor(monitored[m].dev, monitored[m].op, ok);
   monitored.erase(monitored.begin()+m);
-  
+  // Reset monitors to work around monitor class inconsistencies
+  *cyclescompletedp = 0;
+  mmz->resetmonitor();
   return true;
 }
 
@@ -770,7 +773,7 @@ MyMonDialog::MyMonDialog(wxWindow *parent, wxWindowID id, const wxString &title,
   
   int vsp = 3;
   // Set opListBox and monListBox
-  const wxSize mylistsize = *(new wxSize(180, 300));
+  const wxSize mylistsize = *(new wxSize(180, 250));
   
   wxArrayString monlist = monman->GetMonitoredList();
   wxArrayString oplist = monman->GetUnmonitoredList();
@@ -778,7 +781,8 @@ MyMonDialog::MyMonDialog(wxWindow *parent, wxWindowID id, const wxString &title,
   optListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition,  mylistsize, oplist);
   monListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition,  mylistsize, monlist);
   
-  wxBoxSizer *tsizer = new wxBoxSizer(wxHORIZONTAL);
+  wxBoxSizer *tsizer = new wxBoxSizer(wxVERTICAL);
+  wxBoxSizer *listsizer = new wxBoxSizer(wxHORIZONTAL);
   wxBoxSizer *optsizer = new wxBoxSizer(wxVERTICAL);
   wxBoxSizer *monsizer = new wxBoxSizer(wxVERTICAL);
   
@@ -790,9 +794,12 @@ MyMonDialog::MyMonDialog(wxWindow *parent, wxWindowID id, const wxString &title,
   optsizer->Add(new wxButton(this, MY_ADDMON_ID, "Add", wxDefaultPosition, ContSize), MyStdFlag);
   monsizer->Add(new wxButton(this, MY_REMMON_ID, "Remove", wxDefaultPosition, ContSize), MyStdFlag);
   
-  tsizer->Add(optsizer, MyTabFlag);
-  tsizer->Add(monsizer, MyTabFlag);
-  tsizer->AddSpacer(10);
+  listsizer->Add(optsizer, MyTabFlag);
+  listsizer->Add(monsizer, MyTabFlag);
+  listsizer->AddSpacer(10);
+  tsizer->Add(listsizer);
+  tsizer->Add(new wxButton(this, wxID_OK, "OK", wxDefaultPosition, ContSize),0, wxALIGN_CENTER);
+  
   SetSizer(tsizer);
   
 }
