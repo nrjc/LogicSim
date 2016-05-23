@@ -45,10 +45,12 @@ errorframe test7("./test/test7",1,line7l,line7c);
 vector<int> line8l={8};
 vector<int> line8c={15};
 errorframe test8("./test/test8",1,line8l,line8c);
+vector<int> line9l={21};
+vector<int> line9c={14};
+errorframe test9("./test/test8",1,line9l,line9c);
 
-
-errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8};
-int testnumber=8;
+errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9};
+int testnumber=9;
 
 
 int main(int argc, char **argv)
