@@ -52,13 +52,16 @@ void error::printerror (int id){
     string line1;
     string line2;
     scnr->linedisplayerror(linenumber,line1,line2);
+    linenumvec.push_back(linenumber);
     cout<<"ERROR ON LINE "<<linenumber<<"::";
 	auto search = map.find(id);
     if(search != map.end()) {
         cout << "ERROR CODE "<< search->first << "::"<< search->second ;
+        errorcodevec.push_back(search->first);
     }
     else {
         cout << "ERROR CODE -1: UNDEFINED ERROR HAS OCCURRED";
+        errorcodevec.push_back(-1);
     }
     cout<<endl;
     cout<< line1<<endl;
@@ -70,4 +73,13 @@ void error::printerrornum(){
     }
 }
 
+int error::gettotalerrornum(){
+    return totalerrorcount;
+}
 
+vector<int> error::getlinenumvector(){
+    return linenumvec;
+}
+vector<int> error::geterrorcodevec(){
+    return errorcodevec;
+}

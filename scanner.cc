@@ -22,7 +22,7 @@ scanner::scanner(names* names_mod, const char* defname)
 }
 
 scanner::~scanner(){
-	cout << "scanner has been destroyed" <<endl;
+
 }
 void scanner::getsymbol(symbol& s, name& id, int& num)
 {

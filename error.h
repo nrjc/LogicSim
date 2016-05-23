@@ -14,12 +14,17 @@ class error{
     int totalwarningcount;
     int totalerrorcount;
     scanner* scnr;
+    vector<int> linenumvec; //This contains a vector of all the lines which contain errors.
+    vector<int> errorcodevec;// this contains a vectir of all the error codes
 
 
 public:
   int writeerror (string errordescription); //Writes errordescription as a new error, returns the id associated with the error.
   void printerror (int id); //Prints the error with error id on the command line.
   void printerrornum(); //Prints the total number of errors on the console.
+  int gettotalerrornum(); //Returns the total number of errorss
+  vector<int> getlinenumvector();
+  vector<int> geterrorcodevec();
 
 
 
