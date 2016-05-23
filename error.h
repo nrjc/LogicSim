@@ -8,13 +8,16 @@ using namespace std;
 
 
 class error{
-	unordered_map<int,string> map;	
-	int errorcounter;
+	unordered_map<int,string> map;
+	int mapcounter;
+    int totalwarningcount;
+    int totalerrorcount;
 
 
 public:
-  int writeerror (string errordescription); //Writes errordescription as a new error, returns the id associated with the error. 
-  void printerror (int id); //Prints the error with error id on the command line. 
+  int writeerror (string errordescription); //Writes errordescription as a new error, returns the id associated with the error.
+  void printerror (int id); //Prints the error with error id on the command line.
+  void printerrornum(); //Prints the total number of errors on the console.
 
 
 
@@ -22,4 +25,4 @@ public:
 
 };
 
-#endif 
+#endif

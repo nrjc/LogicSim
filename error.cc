@@ -6,7 +6,9 @@
 using namespace std;
 
 error::error(){
-	errorcounter=0;
+	mapcounter=0;
+	totalerrorcount=0;
+	totalwarningcount=0;
 	this->writeerror("DEVICE BLOCK NOT FOUND"); //0
 	this->writeerror("CONNECTION BLOCK NOT FOUND"); //1
 	this->writeerror("MONITOR BLOCK NOT FOUND"); //2
@@ -37,14 +39,16 @@ error::error(){
 }
 
 int error::writeerror(string errordescription){
-	map.insert({errorcounter,errordescription});
-	errorcounter++;
-	return (errorcounter-1);
+	map.insert({mapcounter,errordescription});
+	mapcounter++;
+	return (mapcounter-1);
 
 }
 
 void error::printerror (int id){
+    totalerrorcount+=1;
 	auto search = map.find(id);
+
     if(search != map.end()) {
         cout << "ERROR CODE "<< search->first << ": "<< search->second ;
     }
@@ -52,6 +56,10 @@ void error::printerror (int id){
         cout << "ERROR CODE -1: UNDEFINED ERROR HAS OCCURRED";
     }
 }
-
+void error::printerrornum(){
+    if (totalerrorcount>0){
+        cout << "***"<<totalerrorcount<<"ERROR(S) DETECTED"<< endl;
+    }
+}
 
 
