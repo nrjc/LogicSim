@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   for (int i=0;i<numoftest;i++){
   names Nametable;
   scanner newscanner(&Nametable,filestotest[i]);
-  error newerror;
+  error newerror(&newscanner);
 
   network newnetwork(&Nametable);
   devices newdevice(&Nametable,&newnetwork);

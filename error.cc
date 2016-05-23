@@ -5,7 +5,8 @@
 
 using namespace std;
 
-error::error(){
+error::error(scanner* scanner_mod){
+    scnr=scanner_mod;
 	mapcounter=0;
 	totalerrorcount=0;
 	totalwarningcount=0;
@@ -47,14 +48,21 @@ int error::writeerror(string errordescription){
 
 void error::printerror (int id){
     totalerrorcount+=1;
+    int linenumber;
+    string line1;
+    string line2;
+    scnr->linedisplayerror(linenumber,line1,line2);
+    cout<<"ERROR ON LINE "<<linenumber<<"::"<<endl;
 	auto search = map.find(id);
-
     if(search != map.end()) {
         cout << "ERROR CODE "<< search->first << ": "<< search->second ;
     }
     else {
         cout << "ERROR CODE -1: UNDEFINED ERROR HAS OCCURRED";
     }
+    cout<<endl;
+    cout<< line1<<endl;
+    cout<<line2<<endl;
 }
 void error::printerrornum(){
     if (totalerrorcount>0){

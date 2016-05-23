@@ -158,10 +158,10 @@ void scanner::skipcommentline(ifstream *infp,char &curch,bool &eofile){
 }
 
 
-void scanner::linedisplayerror(){
-    cout<< "LINE "<<linenumber<<endl;
-    string line1="";
-    string line2="";
+void scanner::linedisplayerror(int &linenum,string &line1, string &line2){
+    linenum=linenumber;
+    line1="";
+    line2="";
 	int currentposition = inf.tellg();
 	bool eofile2=false;
 	char backup;
@@ -175,8 +175,7 @@ void scanner::linedisplayerror(){
     for(int i=1;i<(lastparsedsym-lastparsedline);i++){ //Counter increments starting from i=1 because the carrot character has a width as well
         line2+=" ";
     }
-	cout<<line1<<endl;
-	cout<<line2<<"^"<<endl;
+    line2+="^";
 	inf.seekg (currentposition, inf.beg);
 
 }

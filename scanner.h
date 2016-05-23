@@ -48,8 +48,8 @@ class scanner
 
 		~scanner();
 		void getsymbol(symbol& s, name& id, int& num);
-		void linedisplayerror(); /*Function prints out the current input line along with a marker on the following line to show precisely where the error occured. According to the pre-agreed definition,
-              the carrot will point to the symbol prior to the one causing the error.                  */
+		void linedisplayerror(int &linenum,string &line1, string &line2); /*linenum contains the line of the error. Line 1 contains the error message.
+		Line 2 contains the marker with the carrot. By definition, carrot will point to symbol preceding current symbol.*/
 
 	private:
 		ifstream inf; //    Input file

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "scanner.h"
 
 using namespace std;
 
@@ -12,6 +13,7 @@ class error{
 	int mapcounter;
     int totalwarningcount;
     int totalerrorcount;
+    scanner* scnr;
 
 
 public:
@@ -21,7 +23,7 @@ public:
 
 
 
-  error(); // Constructor
+  error(scanner* scanner_mod); // Constructor
 
 };
 
