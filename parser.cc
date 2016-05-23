@@ -67,7 +67,8 @@ void parser::devicelist(void){
 		smz->getsymbol(cursym,curid,curnum);
 	}
 	else{
-		errorparser(3); // no opencurly error
+		errorparser(3,closecurly); // no opencurly error
+        return;
 	}
 	while (cursym==sclock || cursym==sswitch || cursym==sdtype || cursym==sxor || cursym==sand || cursym==snand || cursym==sor || cursym==snor){
         device();
