@@ -52,10 +52,10 @@ void error::printerror (int id){
     string line1;
     string line2;
     scnr->linedisplayerror(linenumber,line1,line2);
-    cout<<"ERROR ON LINE "<<linenumber<<"::"<<endl;
+    cout<<"ERROR ON LINE "<<linenumber<<"::";
 	auto search = map.find(id);
     if(search != map.end()) {
-        cout << "ERROR CODE "<< search->first << ": "<< search->second ;
+        cout << "ERROR CODE "<< search->first << "::"<< search->second ;
     }
     else {
         cout << "ERROR CODE -1: UNDEFINED ERROR HAS OCCURRED";
@@ -66,7 +66,7 @@ void error::printerror (int id){
 }
 void error::printerrornum(){
     if (totalerrorcount>0){
-        cout << "***"<<totalerrorcount<<"ERROR(S) DETECTED"<< endl;
+        cout << "***"<<totalerrorcount<<" ERROR(S) DETECTED"<< endl;
     }
 }
 
