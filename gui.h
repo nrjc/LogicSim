@@ -132,8 +132,8 @@ class MyGLCanvas: public wxGLCanvas{
 class MyMonManager{
 
  public:
-  MyMonManager(names *names_mod = NULL, network *network_mod = NULL,
-                devices *devices_mod = NULL, monitor *monitor_mod = NULL);
+  MyMonManager(names *names_mod, network *network_mod,
+                devices *devices_mod, monitor *monitor_mod, int *cyclesp);
 
   wxArrayString GetMonitoredList();  //Returns array of monitored output names
   wxArrayString GetUnmonitoredList();//Returns array of unmonitored output names
@@ -146,6 +146,8 @@ class MyMonManager{
   network *netz;			  // pointer to network class
   devices *dmz;                           // pointer to devices class
   monitor *mmz;                           // pointer to monitor class
+
+  int *cyclescompletedp;
 
   vector<opProps> allops;		// Vector to store info about all outputs. Reserved for future use, eg. Clear.
   vector<opProps> unmonitored;		// Vector to store all unmonitored outputs.
