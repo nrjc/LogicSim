@@ -1,0 +1,13 @@
+// Tests SEMANTIC ERROR: Too few inputs into device.
+DEVICES{
+SWITCH SW1:0;
+NAND NAND1:2;
+}
+
+CONNECTIONS{
+SW1->NAND1.I1;
+}
+
+MONITORS{
+NAND1;
+} 
