@@ -36,6 +36,7 @@ error::error(scanner* scanner_mod){
 	this->writeerror("EXPECTED ';'"); //23
 	this->writeerror("CLOCK PERIOD MUST BE > 0"); //24
 	this->writeerror("EXPECTED '}' OR A VALID DEVICENAME"); //25
+	this->writeerror("UNFINISHED LINE HERE"); //26
 
 }
 

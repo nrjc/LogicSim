@@ -13,40 +13,60 @@ parser::parser(network* network_mod, devices* devices_mod, monitor* monitor_mod,
 	smz = scanner_mod;   /* class you say:                               */
 	err = error_mod;
 	errorsfound=false;
-/* netz->makeconnection(i1, i2, o1, o2, ok);   */
-	/* any other initialisation you want to do? */
+
 }
 
 bool parser::readin (void){
-	symbol cursym;
-	name curid=0;
-	int curnum=0;
 	bool allinputsconnected=false;
 	smz->getsymbol(cursym,curid,curnum); //get the first symbol
 	if (cursym==devsym){
         devicelist();
-        smz->getsymbol(cursym,curid,curnum);
+        if (cursym==closecurly){
+            smz->getsymbol(cursym,curid,curnum);
+        }
+        else if (cursym!=consym){
+            errorparser(26,consym);
+        }
+        else{
+            //cursym is consym, move on to parse the connection block
+        }
 	}
     else{
-        errorparser(0);
+        errorparser(0,consym);
         return !errorsfound;
-    }
+        }
 	if (cursym == consym){
         connectionlist();
-        smz->getsymbol(cursym,curid,curnum);
+        if (cursym==closecurly){
+            smz->getsymbol(cursym,curid,curnum);
+        }
+        else if (cursym!=monsym){
+            errorparser(26,monsym);
+        }
+        else{
+            //cursym is monsym, move on to parse the monitor block
+        }
 	}
 	else{
-        errorparser(1);
+        errorparser(1,monsym);
         return !errorsfound;
-    }
+        }
     if(cursym == monsym){
         monitorlist();
-        smz->getsymbol(cursym,curid,curnum);
+        if (cursym==closecurly){
+            smz->getsymbol(cursym,curid,curnum);
+        }
+        else if (cursym!=eofsym){
+            errorparser(26,eofsym);
+        }
+        else{
+            //cursym is eofsym
+        }
 	}
 	else{
-        errorparser(2);
+        errorparser(2,eofsym);
         return !errorsfound;
-    }
+        }
 	if (cursym==eofsym){
         netz->checknetwork(allinputsconnected);
         if (allinputsconnected==true){
@@ -77,7 +97,8 @@ void parser::devicelist(void){
 			smz->getsymbol(cursym,curid,curnum);
 		}
 		else{
-            errorparser(23); // EXPECTED ';'
+            errorparser(23,closecurly); // EXPECTED ';'
+            return;
         }
         if (cursym==closecurly){
         return;
@@ -89,6 +110,7 @@ void parser::devicelist(void){
 	}
 	else{
         errorparser(25); // EXPECTED '}'
+        return;
     }
 }
 
@@ -106,7 +128,7 @@ void parser::device(void){
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum>0){
+                        if (curnum>0 && err->gettotalerrornum()==0){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
                             smz->getsymbol(cursym,curid,curnum);
                             return;
@@ -334,14 +356,14 @@ void parser::connectionlist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
 		smz->getsymbol(cursym,curid,curnum);
-	}else errorparser(3); // no opencurly error
+	}else errorparser(3,closecurly); // no opencurly error
 	while (cursym==namesym){
 		connection();
 		if (cursym==semicol) {
 			smz->getsymbol(cursym,curid,curnum);
 		}
 		else{
-            errorparser(23); // EXPECTED ';'
+            errorparser(23,closecurly); // EXPECTED ';'
         }
         if (cursym==closecurly){
         return;
@@ -358,7 +380,6 @@ void parser::connectionlist(void){
 
 void parser::connection(void){
 	if (cursym==namesym){
-        cout<<"shit0 "<<netz->finddevice(curid)->kind<<endl;
 		if (netz->finddevice(curid)!=NULL){
 			devnametemp=curid;// parser will connect this device to the network class here
 			outputnametemp=blankname;
@@ -467,7 +488,6 @@ void parser::connection(void){
 							}
                         }
                         else{
-                            cout<<"shit2 "<<cursym<<endl;
                             errorparser(14); // DEVICE NOT DEFINED
                         }
                     }
@@ -484,7 +504,6 @@ void parser::connection(void){
 			}else errorparser(22); // EXPECTED '->'
 		}
 		else{
-            cout<<"shit1 "<<cursym<<endl;
             errorparser(14); // DEVICE NOT DEFINED
         }
 	}
