@@ -12,52 +12,73 @@ parser::parser(network* network_mod, devices* devices_mod, monitor* monitor_mod,
 	mmz = monitor_mod;   /* eg. to call makeconnection from the network  */
 	smz = scanner_mod;   /* class you say:                               */
 	err = error_mod;
-/* netz->makeconnection(i1, i2, o1, o2, ok);   */
-	/* any other initialisation you want to do? */
+	errorsfound=false;
+
 }
 
 bool parser::readin (void){
-	symbol cursym;
-	name curid=0;
-	int curnum=0;
 	bool allinputsconnected=false;
 	smz->getsymbol(cursym,curid,curnum); //get the first symbol
 	if (cursym==devsym){
         devicelist();
-        smz->getsymbol(cursym,curid,curnum);
+        if (cursym==closecurly){
+            smz->getsymbol(cursym,curid,curnum);
+        }
+        else if (cursym!=consym){
+            errorparser(26,consym);
+        }
+        else{
+            //cursym is consym, move on to parse the connection block
+        }
 	}
     else{
-        errorparser(0);
-        return false;
-    }
+        errorparser(0,consym);
+        return !errorsfound;
+        }
 	if (cursym == consym){
         connectionlist();
-        smz->getsymbol(cursym,curid,curnum);
+        if (cursym==closecurly){
+            smz->getsymbol(cursym,curid,curnum);
+        }
+        else if (cursym!=monsym){
+            errorparser(26,monsym);
+        }
+        else{
+            //cursym is monsym, move on to parse the monitor block
+        }
 	}
 	else{
-        errorparser(1);
-        return false;
-    }
+        errorparser(1,monsym);
+        return !errorsfound;
+        }
     if(cursym == monsym){
         monitorlist();
-        smz->getsymbol(cursym,curid,curnum);
+        if (cursym==closecurly){
+            smz->getsymbol(cursym,curid,curnum);
+        }
+        else if (cursym!=eofsym){
+            errorparser(26,eofsym);
+        }
+        else{
+            //cursym is eofsym
+        }
 	}
 	else{
-        errorparser(2);
-        return false;
-    }
+        errorparser(2,eofsym);
+        return !errorsfound;
+        }
 	if (cursym==eofsym){
         netz->checknetwork(allinputsconnected);
         if (allinputsconnected==true){
-            return true;
+            return !errorsfound;
         }
         else{
             errorparser(20); //NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT
-            return false;
+            return !errorsfound;
         }
     }
     else{
-        return false;
+        return !errorsfound;
     }
 }
 
@@ -67,7 +88,8 @@ void parser::devicelist(void){
 		smz->getsymbol(cursym,curid,curnum);
 	}
 	else{
-		errorparser(3); // no opencurly error
+		errorparser(3,closecurly); // no opencurly error
+        return;
 	}
 	while (cursym==sclock || cursym==sswitch || cursym==sdtype || cursym==sxor || cursym==sand || cursym==snand || cursym==sor || cursym==snor){
         device();
@@ -75,7 +97,8 @@ void parser::devicelist(void){
 			smz->getsymbol(cursym,curid,curnum);
 		}
 		else{
-            errorparser(23); // EXPECTED ';'
+            errorparser(23,closecurly); // EXPECTED ';'
+            return;
         }
         if (cursym==closecurly){
         return;
@@ -87,6 +110,7 @@ void parser::devicelist(void){
 	}
 	else{
         errorparser(25); // EXPECTED '}'
+        return;
     }
 }
 
@@ -104,26 +128,38 @@ void parser::device(void){
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum>0){
+                        if (curnum>0 && err->gettotalerrornum()==0){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
                             smz->getsymbol(cursym,curid,curnum);
                             return;
                         }
                         else{
-                            errorparser(24);// CLOCK PERIOD MUST BE > 0
+                            errorparser(24,semicol);// CLOCK PERIOD MUST BE > 0
+                            return;
                         }
                     }
-                    else errorparser(4); // num expected error
+                    else {
+                        errorparser(4,semicol); // num expected error
+                        return;
+                    }
                 }
-                else errorparser(5); // no colon error
+                else{
+                    errorparser(5,semicol);// no colon error
+                    return;
+                }
             }
             else if (cursym==numsym){
-                errorparser(6); // devicename must not start with a number error
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
             }
-            else errorparser(7); // devicename must coincide with a keyword error
+            else {
+                errorparser(7,semicol); // devicename must coincide with a keyword error
+                return;
+            }
 		}
 		else{
-            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+            errorparser(18,semicol); // DEVICENAME IS ALREADY BEING USED
+            return;
         }
 	}
 	else if (cursym==sswitch){
@@ -142,26 +178,32 @@ void parser::device(void){
                             return;
                         }
                         else{
-                            errorparser(8); //input must be zero or one !!!
+                            errorparser(8,semicol); //input must be zero or one !!!
+                            return;
                         }
                     }
                     else{
-                        errorparser(4); // input must be a number
+                        errorparser(4,semicol); // input must be a number
+                        return;
                     }
                 }
                 else{
-                    errorparser(5); // no colon error
+                    errorparser(5,semicol); // no colon error
+                    return;
                 }
             }
             else if (cursym==numsym){
-                errorparser(6); // devicename must not start with a number error
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
             }
             else{
-                errorparser(7); // devicename must coincide with a keyword error
+                errorparser(7,semicol); // devicename must coincide with a keyword error
+                return;
             }
 		}
 		else{
-            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+            errorparser(18,semicol); // DEVICENAME IS ALREADY BEING USED
+            return;
         }
 	}
 	else if (cursym==sand){
@@ -179,18 +221,29 @@ void parser::device(void){
                             smz->getsymbol(cursym,curid,curnum);
                             return;
                         }
-                        else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
+                        else {
+                            errorparser(9,semicol); // number of inputs must be smaller than 17 and greater than 0 error
+                            return;
+                        }
                     }
                 }
-                else errorparser(5); // no colon error
+                else{
+                     errorparser(5,semicol);// no colon error
+                     return;
+                 }
             }
             else if (cursym==numsym){
-                errorparser(6); // devicename must not start with a number error
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
             }
-            else errorparser(7); // devicename must coincide with a keyword error
+            else {
+                errorparser(7,semicol); // devicename must coincide with a keyword error
+                return;
+            }
 		}
 		else{
-            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+            errorparser(18,semicol); // DEVICENAME IS ALREADY BEING USED
+            return;
         }
 	}
 	else if (cursym==snand){
@@ -209,18 +262,29 @@ void parser::device(void){
                             //parse num into network class
                             return;
                         }
-                        else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
+                        else {
+                            errorparser(9,semicol); // number of inputs must be smaller than 17 and greater than 0 error
+                            return;
+                        }
                     }
                 }
-                else errorparser(5); // no colon error
+                else{
+                    errorparser(5,semicol); // no colon error
+                    return;
+                }
             }
             else if (cursym==numsym){
-                errorparser(6); // devicename must not start with a number error
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
             }
-            else errorparser(7); // devicename must coincide with a keyword error
+            else{
+                errorparser(7,semicol); // devicename must coincide with a keyword error
+                return;
+            }
 		}
 		else{
-            errorparser(18); //DEVICENAME IS ALREADY BEING USED
+            errorparser(18,semicol); //DEVICENAME IS ALREADY BEING USED
+            return;
         }
 	}
 	else if (cursym==sor){
@@ -240,18 +304,29 @@ void parser::device(void){
                             //parse num into network class
                             return;
                         }
-                        else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
+                        else{
+                            errorparser(9,semicol); // number of inputs must be smaller than 17 and greater than 0 error
+                            return;
+                        }
                     }
                 }
-                else errorparser(5); // no colon error
+                else{
+                    errorparser(5,semicol); // no colon error
+                    return;
+                }
             }
             else if (cursym==numsym){
-                errorparser(6); // devicename must not start with a number error
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
             }
-            else errorparser(7); // devicename must coincide with a keyword error
+            else {
+                errorparser(7,semicol); // devicename must coincide with a keyword error
+                return;
+            }
 		}
 		else{
-            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+            errorparser(18,semicol); // DEVICENAME IS ALREADY BEING USED
+            return;
         }
 	}
 	else if (cursym==snor){
@@ -271,18 +346,29 @@ void parser::device(void){
                             //parse num into network class#
                             return;
                         }
-                        else errorparser(9); // number of inputs must be smaller than 17 and greater than 0 error
+                        else {
+                            errorparser(9,semicol); // number of inputs must be smaller than 17 and greater than 0 error
+                            return;
+                        }
                     }
                 }
-                else errorparser(5); // no colon error
+                else{
+                    errorparser(5,semicol); // no colon error
+                    return;
+                }
             }
             else if (cursym==numsym){
-                errorparser(6); // devicename must not start with a number error
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
             }
-            else errorparser(7); // devicename must not coincide with a keyword error
+            else {
+                errorparser(7,semicol); // devicename must not coincide with a keyword error
+                return;
+            }
 		}
 		else{
-            errorparser(18); //DEVICENAME IS ALREADY BEING USED
+            errorparser(18,semicol); //DEVICENAME IS ALREADY BEING USED
+            return;
         }
 	}
 	else if (cursym==sdtype){
@@ -296,12 +382,17 @@ void parser::device(void){
                 return;
             }
             else if (cursym==numsym){
-                errorparser(6); // devicename must not start with a number error
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
             }
-            else errorparser(7); // devicename must not coincide with a keyword error
+            else {
+                errorparser(7,semicol); // devicename must not coincide with a keyword error
+                return;
+            }
 		}
 		else{
-            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+            errorparser(18,semicol); // DEVICENAME IS ALREADY BEING USED
+            return;
         }
 	}
 	else if (cursym==sxor){
@@ -315,16 +406,22 @@ void parser::device(void){
                 return;
             }
             else if (cursym==numsym){
-                errorparser(6); // devicename must not start with a number error
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
             }
-            else errorparser(7); // devicename must not coincide with a keyword error
+            else{
+                errorparser(7,semicol); // devicename must not coincide with a keyword error
+                return;
+            }
 		}
 		else{
-            errorparser(18); // DEVICENAME IS ALREADY BEING USED
+            errorparser(18,semicol); // DEVICENAME IS ALREADY BEING USED
+            return;
         }
 	}
 	else {
-		errorparser(19); // UNIDENTIFIED DEVICE TYPE
+		errorparser(19,semicol); // UNIDENTIFIED DEVICE TYPE
+		return;
 	}
 }
 
@@ -332,14 +429,14 @@ void parser::connectionlist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
 		smz->getsymbol(cursym,curid,curnum);
-	}else errorparser(3); // no opencurly error
+	}else errorparser(3,closecurly); // no opencurly error
 	while (cursym==namesym){
 		connection();
 		if (cursym==semicol) {
 			smz->getsymbol(cursym,curid,curnum);
 		}
 		else{
-            errorparser(23); // EXPECTED ';'
+            errorparser(23,closecurly); // EXPECTED ';'
         }
         if (cursym==closecurly){
         return;
@@ -371,10 +468,14 @@ void parser::connection(void){
                         outputnametemp=curid;// parser will tell the network class this output q
                         smz->getsymbol(cursym,curid,curnum);
                     }
-                    else errorparser(11); // invalid output from dtype
+                    else{
+                        errorparser(11,semicol);
+                        return;
+                    }// invalid output from dtype
                 }
                 else{
-                    errorparser(21); // EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE
+                    errorparser(21,semicol); // EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE
+                    return;
                 }
 			}
 			else{
@@ -395,21 +496,30 @@ void parser::connection(void){
 								if (cursym==stop){
 									smz->getsymbol(cursym,curid,curnum);
 									if (cursym==inputsym){
-                                        if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
-                                            if (curnum<=noofinputs && curnum>=1){
+                                        if (curnum<=noofinputs && curnum>=1){
+                                            if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
                                                 netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
                                                 smz->getsymbol(cursym,curid,curnum);
                                             }
-                                            else errorparser(15); // current number exceeded 16 or is smaller than 1 error
+                                            else{
+                                                errorparser(17,semicol);
+                                                return;
+                                                }// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
                                             }
                                         else{
-                                            errorparser(17); // PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            errorparser(15,semicol); // current number exceeded 16 or is smaller than 1 error
+                                            return;
                                         }
 									}
 									else{
-                                        errorparser(16); //INVALID INPUT
+                                        errorparser(16,semicol); //INVALID INPUT
+                                        return;
                                     }
 								}
+								else{
+                                    errorparser(13,semicol);
+                                    return;
+                                }
 							}
 							else{
 								devnamtempinp=curid;
@@ -427,7 +537,8 @@ void parser::connection(void){
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
                                         else{
-                                            errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            errorparser(17,semicol);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            return;
                                         }
                                     }
                                     else if (cursym==iclk){
@@ -436,7 +547,8 @@ void parser::connection(void){
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
                                         else{
-                                            errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            errorparser(17,semicol);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            return;
                                         }
                                     }
                                     else if (cursym==iset){
@@ -445,7 +557,8 @@ void parser::connection(void){
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
                                         else{
-                                            errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            errorparser(17,semicol);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            return;
                                         }
                                     }
                                     else if (cursym==iclear){
@@ -454,35 +567,56 @@ void parser::connection(void){
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
                                         else{
-                                            errorparser(17);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            errorparser(17,semicol);// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
+                                            return;
                                         }
+                                    }else{
+                                        errorparser(16,semicol);// INVALID INPUT
+                                        return;
                                     }
-                                    else errorparser(16); // INVALID INPUT
+								}else{
+                                    errorparser(13,semicol);//  expected '.'
+                                    return;
 								}
-								else{
-                                    errorparser(13);//  expected '.'
-                                }
 							}
-						}else errorparser(14); // DEVICE NOT DEFINED
-					}
+                        }
+                        else{
+                            errorparser(14,semicol); // DEVICE NOT DEFINED
+                            return;
+                        }
+                    }
 					else if (cursym==numsym){
-                        errorparser(6); // DEVICENAME CANNOT START WITH A NUMBER
+                        errorparser(6,semicol); // DEVICENAME CANNOT START WITH A NUMBER
+                        return;
 					}
 					else{
-                        errorparser(7); // DEVICENAME MUST NOT CONINCIDE WITH A KEYWORD
+                        errorparser(7,semicol); // DEVICENAME MUST NOT CONINCIDE WITH A KEYWORD
+                        return;
                     }
 				}
 				if (cursym==semicol){
-					return;
-				}else errorparser(23); //EXPECTED ';'
-			}else errorparser(22); // EXPECTED '->'
-		}else errorparser(14); // DEVICE NOT DEFINED
+                    return;
+				}else{
+                    errorparser(23,semicol);// EXPECTED '->'
+                    return;
+				}
+			}else{
+                errorparser(22,semicol);//EXPECTED ';'
+                return;
+			}
+		}
+		else{
+            errorparser(14,semicol); // DEVICE NOT DEFINED
+            return;
+        }
 	}
 	else if (cursym==numsym){
-        errorparser(6); //DEVICENAME CANNOT START WITH A NUMBER
+        errorparser(6,semicol); //DEVICENAME CANNOT START WITH A NUMBER
+        return;
 	}
 	else {
-        errorparser(7); //DEVICENAME
+        errorparser(7,semicol); //DEVICENAME
+        return;
     }
 }
 
@@ -513,7 +647,7 @@ void parser::monitorlist(void){
     }
 }
 
-void parser::parmonitor(void){
+void parser::parmonitor(void){ //NEED TO ADD CHECK FOR DTYPE ERRORS. FOR EXAMPLE, DTYPE must have DTYPE.Q
 	if (cursym==namesym){
 		if (netz->finddevice(curid)!=NULL){
 			devnametemp=curid;
@@ -536,7 +670,7 @@ void parser::parmonitor(void){
 					return;
 				}
 				else{
-					errorparser(11); // INVALID OUTPUT FROM D-TYPE
+					errorparser(11,semicol); // INVALID OUTPUT FROM D-TYPE
 					return;
 				}
 			}
@@ -545,24 +679,26 @@ void parser::parmonitor(void){
 				return;
 			}
 			else{
-				errorparser(13); // EXPECTED '.' or '.'
+				errorparser(13,semicol); // EXPECTED '.' or '.'
 				return;
 			}
 		}
 		else{
-			cursym=badsym;
-			errorparser(14);
+			errorparser(14,semicol);
 			return;
 		}
 	}
 	else{
-		errorparser(12); // a devicename expected error
+		errorparser(12,semicol); // a devicename expected error
 	}
 }
 
-void parser::errorparser(int errin){
+void parser::errorparser(int errin, symbol stop){
+    errorsfound=true;
 	err->printerror(errin);
-	cout <<endl;
-	smz->linedisplayerror();
-	cout << endl <<endl;
+	if(stop!=badsym){
+        while((cursym!=stop)&&(cursym!=eofsym)){
+            smz->getsymbol(cursym,curid,curnum);
+        }
+	}
 }

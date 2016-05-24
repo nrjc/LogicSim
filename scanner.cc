@@ -22,7 +22,7 @@ scanner::scanner(names* names_mod, const char* defname)
 }
 
 scanner::~scanner(){
-	cout << "scanner has been destroyed" <<endl;
+
 }
 void scanner::getsymbol(symbol& s, name& id, int& num)
 {
@@ -65,7 +65,6 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 				s=namesym; //not a keyword
 			}
 			else{
-				//This operation is invalid because a switch can only operate on an integer. Need rewrite.
 				//Slap all these into names table????
 				punct=getpunct(&inf,curch, eofile);
 				switch(Namestore->cvtname(punct)){
@@ -157,41 +156,26 @@ void scanner::skipcommentline(ifstream *infp,char &curch,bool &eofile){
 	}
 	return;
 }
-void scanner::getnewline(){
-	//The job of this function is to print out the rest of the line from when the error was spotted.
-	string line="";
-	int currentposition = inf.tellg();
-	char backup = curch;
-	bool eofile2=false;
-	while (!eofile2 && backup != '\n')
-		{
-			line+=backup;
-			eofile2=!(inf.get(backup));
-		}
-	cout<<linenumber<<"  " << line;
-	inf.seekg (currentposition, inf.beg);
 
-}
 
-void scanner::linedisplayerror(){
-    cout<< "LINE "<<linenumber<<endl;
-    string line1="";
-    string line2="";
+void scanner::linedisplayerror(int &linenum,string &line1, string &line2){
+    linenum=linenumber;
+    line1="";
+    line2="";
 	int currentposition = inf.tellg();
 	bool eofile2=false;
 	char backup;
 	inf.seekg(lastparsedline,inf.beg);
-	while (!eofile2)
+	while (!eofile2) //Keeps adding characters into the line to be displayed until a newline character or endfile found.
 		{
             eofile2=!(inf.get(backup));
             if (backup=='\n') break;
 			line1+=backup;
 		}
-    for(int i=1;i<(lastparsedsym-lastparsedline);i++){
+    for(int i=1;i<(lastparsedsym-lastparsedline);i++){ //Counter increments starting from i=1 because the carrot character has a width as well
         line2+=" ";
     }
-	cout<<line1<<endl;
-	cout<<line2<<"^"<<endl;
+    line2+="^";
 	inf.seekg (currentposition, inf.beg);
 
 }

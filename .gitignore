@@ -6,6 +6,5 @@ testnames
 logsim
 guitest
 testscanner
-test/
 testparser
 LogicSim/

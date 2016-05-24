@@ -48,9 +48,8 @@ class scanner
 
 		~scanner();
 		void getsymbol(symbol& s, name& id, int& num);
-		void getnewline(); // The aim of this is to print out the rest of the line
-		void linedisplayerror(); /*Function prints out the current input line along with a marker on the following line to show precisely where the error occured. According to the pre-agreed definition,
-              the carrot will point to the symbol prior to the one causing the error.                  */
+		void linedisplayerror(int &linenum,string &line1, string &line2); /*linenum contains the line of the error. Line 1 contains the error message.
+		Line 2 contains the marker with the carrot. By definition, carrot will point to symbol preceding current symbol.*/
 
 	private:
 		ifstream inf; //    Input file
@@ -62,6 +61,7 @@ class scanner
 		int linenumber; //This contains the current line number that the parser is operating on.
 		int lastparsedline; //This will contain the last known character position of the ifstream before the newline
         int lastparsedsym; //This will contain the last known character position of the ifstream before the next symbol.
+
 
 
 		name getname(ifstream *infp, char &curch, bool &eofile);
