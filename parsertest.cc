@@ -48,9 +48,21 @@ errorframe test8("./test/test8",1,line8l,line8c);
 vector<int> line9l={21};
 vector<int> line9c={14};
 errorframe test9("./test/test9",1,line9l,line9c);
+vector<int> line10l={24,25};
+vector<int> line10c={11,11};
+errorframe test10("./test/test10",1,line10l,line10c);
+vector<int> line11l={24};
+vector<int> line11c={11};
+errorframe test11("./test/test11",1,line11l,line11c);
+vector<int> line12l={3};
+vector<int> line12c={7};
+errorframe test12("./test/test12",1,line12l,line12c);
+vector<int> line13l={9};
+vector<int> line13c={24};
+errorframe test13("./test/test13",1,line13l,line13c);
 
-errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9};
-int testnumber=9;
+errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9,test10,test11,test12,test13};
+int testnumber=13;
 
 
 int main(int argc, char **argv)
@@ -74,6 +86,7 @@ int main(int argc, char **argv)
   cout<<"TEST CASE FAILURE: "<< filestotest[i].filename<<endl;
   cout<< "Expected:: " <<filestotest[i].expectederrors<< " Errors, got "<<newerror.gettotalerrornum()<<" errors."<<endl;
   printtable(i,newerror);
+  cout << " -------------------------"<<endl;
     }
 }
 
