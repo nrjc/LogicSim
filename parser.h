@@ -26,6 +26,7 @@ class parser {
 		name inputnametemp;
 		devlink devlinktemp; //Placeholder variable to store links to devices
 		bool okcheck;
+		bool errorsfound; //Is false when there are no compile errors, is true if there are compile errors
 
 		int curnum;
 		void devicelist(void);

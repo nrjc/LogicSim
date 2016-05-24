@@ -12,6 +12,7 @@ parser::parser(network* network_mod, devices* devices_mod, monitor* monitor_mod,
 	mmz = monitor_mod;   /* eg. to call makeconnection from the network  */
 	smz = scanner_mod;   /* class you say:                               */
 	err = error_mod;
+	errorsfound=false;
 /* netz->makeconnection(i1, i2, o1, o2, ok);   */
 	/* any other initialisation you want to do? */
 }
@@ -28,7 +29,7 @@ bool parser::readin (void){
 	}
     else{
         errorparser(0);
-        return false;
+        return !errorsfound;
     }
 	if (cursym == consym){
         connectionlist();
@@ -36,7 +37,7 @@ bool parser::readin (void){
 	}
 	else{
         errorparser(1);
-        return false;
+        return !errorsfound;
     }
     if(cursym == monsym){
         monitorlist();
@@ -44,20 +45,20 @@ bool parser::readin (void){
 	}
 	else{
         errorparser(2);
-        return false;
+        return !errorsfound;
     }
 	if (cursym==eofsym){
         netz->checknetwork(allinputsconnected);
         if (allinputsconnected==true){
-            return true;
+            return !errorsfound;
         }
         else{
             errorparser(20); //NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT
-            return false;
+            return !errorsfound;
         }
     }
     else{
-        return false;
+        return !errorsfound;
     }
 }
 
@@ -522,7 +523,7 @@ void parser::monitorlist(void){
     }
 }
 
-void parser::parmonitor(void){
+void parser::parmonitor(void){ //NEED TO ADD CHECK FOR DTYPE ERRORS. FOR EXAMPLE, DTYPE must have DTYPE.Q
 	if (cursym==namesym){
 		if (netz->finddevice(curid)!=NULL){
 			devnametemp=curid;
@@ -545,7 +546,7 @@ void parser::parmonitor(void){
 					return;
 				}
 				else{
-					errorparser(11); // INVALID OUTPUT FROM D-TYPE
+					errorparser(11,semicol); // INVALID OUTPUT FROM D-TYPE
 					return;
 				}
 			}
@@ -554,22 +555,22 @@ void parser::parmonitor(void){
 				return;
 			}
 			else{
-				errorparser(13); // EXPECTED '.' or '.'
+				errorparser(13,semicol); // EXPECTED '.' or '.'
 				return;
 			}
 		}
 		else{
-			cursym=badsym;
-			errorparser(14);
+			errorparser(14,semicol);
 			return;
 		}
 	}
 	else{
-		errorparser(12); // a devicename expected error
+		errorparser(12,semicol); // a devicename expected error
 	}
 }
 
 void parser::errorparser(int errin, symbol stop){
+    errorsfound=true;
 	err->printerror(errin);
 	if(stop!=badsym){
         while((cursym!=stop)&&(cursym!=eofsym)){
