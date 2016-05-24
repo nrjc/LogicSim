@@ -78,7 +78,6 @@ class MyFrame: public wxFrame{
   monitor *mmz;                           // pointer to monitor class
   MyMonManager *monman;			  // monitor manaker class instance.
   int cyclescompleted;                    // how many simulation cycles have been completed
-  void runnetwork(int ncycles);           // function to run the logic network
 
   // Added functions
   void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
@@ -116,6 +115,9 @@ class MyGLCanvas: public wxGLCanvas{
   int disp_h;			     // height of the displayed drawing area
   int disp_w;			     // width of the displayed drawing area
   double zoom;                       // the current zoom
+  const float maxzoom = 0.8;
+  const float minzoom = 2.5;
+
   int cyclesdisplayed;               // how many simulation cycles have been displayed
   monitor *mmz;                      // pointer to monitor class, used to extract signal traces
   names *nmz;                        // pointer to names class, used to extract signal names
@@ -123,23 +125,31 @@ class MyGLCanvas: public wxGLCanvas{
   void OnSize(wxSizeEvent& event);   // event handler for when canvas is resized
   void OnPaint(wxPaintEvent& event); // event handler for when canvas is exposed
   void OnMouse(wxMouseEvent& event); // event handler for mouse events inside canvas
-  void DrawAxes(float x_low, float x_high, float y_low, float y_high); // draw axes for the trace
-  void NameAxes(float x_low, float x_high, float y_low, float y_high); // draw axes text labels for the trace
+  void DrawAxes(float x_low, float x_spacing, int cycles, float y_low, float y_high); // draw axes for the trace
+  void NameAxes(float x_low, float x_spacing, int cycles, float y_low, float st_height, string monname); // draw axes text labels for the trace
   void FixPan(); 		// Fixes the canvas pan
+  void FixZoom(); 		// Fixes the canvas zoom
   DECLARE_EVENT_TABLE()
 };
 
 class MyMonManager{
+  // Has access to maxmonitors and maxcycles from monitor.h
+
 
  public:
   MyMonManager(names *names_mod, network *network_mod,
-                devices *devices_mod, monitor *monitor_mod, int *cyclesp);
+                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl);
 
   wxArrayString GetMonitoredList();  //Returns array of monitored output names
   wxArrayString GetUnmonitoredList();//Returns array of unmonitored output names
 
   bool AddMonitor(int m);      // Adds a monitor and removes it from the unmonitored list
   bool RemoveMonitor(int m);      // Removes a monitor and adds it to the monitored list
+
+  void RunNetwork(int ncycles);		// Runs network for ncycles
+  void ResetMonitors();			// Executes all actions involved in reseting monitors
+  void IncrementCycles(int n);		// Executes all actions involved in incrementing number of cycles on the gui
+
 
  private:
   names *nmz;                             // pointer to names class
@@ -148,6 +158,7 @@ class MyMonManager{
   monitor *mmz;                           // pointer to monitor class
 
   int *cyclescompletedp;
+  wxTextCtrl *montextctrl;
 
   vector<opProps> allops;		// Vector to store info about all outputs. Reserved for future use, eg. Clear.
   vector<opProps> unmonitored;		// Vector to store all unmonitored outputs.
