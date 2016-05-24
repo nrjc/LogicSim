@@ -11,10 +11,22 @@ bool MyApp::OnInit()
   // This function is automatically called when the application starts
 {
   if (argc != 2) { // check we have one command line argument
+#ifdef USE_GUI
+    nmz = new names();
+  netz = new network(nmz);
+  dmz = new devices(nmz, netz);
+  mmz = new monitor(nmz, netz);
+  smz = new scanner(nmz, wxString("dummycircuit.ge").mb_str());
+  err = new error(smz);
+  pmz = new parser(netz, dmz, mmz, smz,err);
+  dmz->debug(false);
+#else
+
     wcout << "Usage:      " << argv[0] << " [filename]" << endl;
     exit(1);
+#endif
   }
-
+  else{
   // Construct the six classes required by the innards of the logic simulator
   nmz = new names();
   netz = new network(nmz);
@@ -24,7 +36,7 @@ bool MyApp::OnInit()
   err = new error(smz);
   pmz = new parser(netz, dmz, mmz, smz,err);
   dmz->debug(false);
-
+  }
   if (pmz->readin ()) { // check the logic file parsed correctly
 #ifdef USE_GUI
     // glutInit cannot cope with Unicode command line arguments, so we pass
@@ -41,4 +53,5 @@ bool MyApp::OnInit()
 #endif /* USE_GUI */
   }
   return(false); // exit the application
+
 }

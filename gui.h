@@ -9,6 +9,7 @@
 #include <wx/sizer.h>
 #include <wx/event.h>
 #include <wx/checklst.h>
+#include <wx/listbox.h>
 //#include <wx/menuitem.h>
 #include "names.h"
 #include "devices.h"
@@ -33,8 +34,8 @@ enum {
 class MyGLCanvas;
 class MyMonManager;
 
-struct opProps
-{
+struct opProps{
+
   name dev;
   name op=-1;
   string devstr;// Actual name of device
@@ -97,6 +98,7 @@ class MyFrame: public wxFrame{
   //wxScrolledWindow* switchwin;
   //wxBoxSizer *switch_sizer;
   wxCheckListBox *switchwin;
+  wxListBox *devwin;
 
   names *nmz;                             // pointer to names class
   network *netz;			  // pointer to network class
@@ -109,8 +111,10 @@ class MyFrame: public wxFrame{
   //void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
   //void SetSwitchList(wxCheckListBox *switchbox);		//Add checkboxes for editing switches.
   void SetSwitchList();
+  void SetDeviceList();
   void AddSwitchMonCtrl(wxSizer *control_sizer);
   void ResetContent();
+  bool LoadNewCircuit();
 
   // Event handlers
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
@@ -166,8 +170,9 @@ class MyMonManager{
 
  public:
   MyMonManager(names *names_mod, network *network_mod,
-                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp);
+                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp, MyGLCanvas *mycanvas);
 
+  wxArrayString GetDevices();
   wxArrayString GetMonitoredList();  //Returns array of monitored output names
   wxArrayString GetUnmonitoredList();//Returns array of unmonitored output names
   wxArrayString GetSwitches();
@@ -180,12 +185,14 @@ class MyMonManager{
   void ResetMonitors();			// Executes all actions involved in reseting monitors
   void IncrementCycles(int n);		// Executes all actions involved in incrementing number of cycles on the gui
   void FlickSwitch(int n);
+  void Reset();
 
  private:
   names *nmz;                             // pointer to names class
   network *netz;			  // pointer to network class
   devices *dmz;                           // pointer to devices class
   monitor *mmz;                           // pointer to monitor class
+  MyGLCanvas *canvas;
 
   int *cyclescompletedp;
   wxTextCtrl *montextctrl;
