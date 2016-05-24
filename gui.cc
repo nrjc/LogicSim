@@ -2,6 +2,7 @@
 #include <GL/glut.h>
 #include "wx_icon.xpm"
 #include <iostream>
+#include <cstdio>
 #include <string>
 #include <algorithm> //sort
 //wxSize
@@ -16,6 +17,13 @@
 #include <wx/arrstr.h>
 //#include <wx/menuitem.h>
 #include <wx/string.h>
+
+#include "names.h"
+#include "devices.h"
+#include "monitor.h"
+#include "network.h"
+#include "parser.h"
+
 #define USE_GUI
 
 using namespace std;
@@ -277,7 +285,7 @@ void MyGLCanvas::NameAxes(float x_low, float x_spacing, int cycles, float y_low,
   string number;
   // Print monitor name
   glColor3f(0.0, 0.0, 1.0);
-  glRasterPos2f(x_low-15/zoom, y_low+1.5*st_height);
+  glRasterPos2f(x_low+(pan_x-15)/zoom, y_low+1.5*st_height);
   for (int i = 0; i < monname.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, monname[i]);
 
   // Axes text color
@@ -309,7 +317,7 @@ void MyGLCanvas::FixPan(){
   if (pan_y<h) pan_y=h;
   if (pan_y>disp_h) pan_y=disp_h;
   if (pan_x<w-disp_w) pan_x = w-disp_w;
-  if (pan_x>10) pan_x = 10;
+  if (pan_x>0) pan_x = 0;
 
 }
 
@@ -330,14 +338,17 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_BUTTON(MY_BUTTONRUN_ID, MyFrame::OnButtonRun)
   EVT_BUTTON(MY_BUTTONCONT_ID, MyFrame::OnButtonCont)
   EVT_BUTTON(MY_BUTTONSETMON_ID, MyFrame::OnButtonSetMon)
-  EVT_CHECKBOX(MY_SWITCH_ID, MyFrame::OnSwitchBox)
+  //EVT_CHECKBOX(MY_SWITCH_ID, MyFrame::OnSwitchBox)
+  EVT_CHECKLISTBOX(MY_SWITCH_ID, MyFrame::OnSwitchBox)
   EVT_SPINCTRL(MY_SPINCNTRL_ID, MyFrame::OnSpin)
   EVT_TEXT_ENTER(MY_TEXTCTRL_ID, MyFrame::OnText)
+  //EVT_SIZE(MyFrame::OnSize)
+
 END_EVENT_TABLE()
 
 MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, const wxSize& size,
 		 names *names_mod, network *network_mod, devices *devices_mod, monitor *monitor_mod, long style):
-  wxFrame(parent, wxID_ANY, title, pos, size, style){
+  wxFrame(parent, MY_FRAME_ID, title, pos, size, style){
   // Constructor - initialises pointers to names, devices and monitor classes, lays out widgets
   // using sizers
 
@@ -355,26 +366,33 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   // SUPPRESS CIRCUIT EXECUTION MESSAGES
   dmz->debug(false);
 
-  wxTextCtrl *monctrl = new wxTextCtrl(this, MY_TEXTCTRL_ID, "0", wxDefaultPosition, CommandSize, wxTE_READONLY);
-  monman = new MyMonManager(nmz, netz, dmz, mmz, &cyclescompleted, monctrl);
+  monctrl = new wxTextCtrl(this, MY_TEXTCTRL_ID, "0", wxDefaultPosition, CommandSize, wxTE_READONLY);
+  const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 50);
+  cmddisp = new wxTextCtrl(this, MY_TEXTCTRL_ID, "Message box", wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_WORDWRAP);
+  const wxSize MyMinCmdSize = wxSize(20, 50);
+  cmddisp->SetMinSize(MyMinCmdSize);
 
+  monman = new MyMonManager(nmz, netz, dmz, mmz, &cyclescompleted, monctrl, cmddisp);
+  monman->ResetMonitors();
+
+  // Set up colors
   SetBackgroundColour(BcColour);
   SetForegroundColour(*wxWHITE);
-
+  // Set up file menu
   wxMenu *fileMenu = new wxMenu;
-  //wxMenuItem* openMenu = fileMenu->Append(wxID_OPEN, "&Open");
+  wxMenuItem* openMenu = fileMenu->Append(wxID_OPEN, "&Open");
   fileMenu->Append(wxID_ABOUT, "&About");
   fileMenu->Append(wxID_EXIT, "&Quit");
   wxMenuBar *menuBar = new wxMenuBar;
   menuBar->Append(fileMenu, "&File");
   SetMenuBar(menuBar);
 
+  // Set up main controla
   wxBoxSizer *topsizer = new wxBoxSizer(wxHORIZONTAL);
   topsizer->AddSpacer(7);
 
 
-  // To resize items: will probably need to create named ones or also specify the position
-  // wxSize(int width, int height)
+  // Create control panel
   wxBoxSizer *control_sizer = new wxBoxSizer(wxVERTICAL);
 
   wxStaticBoxSizer *sim_sizer = new wxStaticBoxSizer(wxVERTICAL, this, "Simulation");
@@ -403,7 +421,7 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   control_sizer->Add(sim_sizer);
   control_sizer->Add(options_sizer);
 
-  // Add tabbed bontrol windows
+  // Add tabbed control windows
   AddSwitchMonCtrl(control_sizer);
 
 
@@ -412,20 +430,19 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   const wxSize MyCanvasSize = wxSize(size.GetWidth()-200, size.GetHeight()-150);
   canvas = new MyGLCanvas(this, wxID_ANY, monitor_mod, names_mod, wxDefaultPosition, MyCanvasSize);
 
-  /*
-  const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 30);
-  cmddisp = new wxTextCtrl(this, MY_TEXTCTRL_ID, "Message box", wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_WORDWRAP);
-  const wxSize MyMaxCmdSize = wxSize(5000, 100);
-  const wxSize MyMinCmdSize = wxSize(20, 20);
-  cmddisp->SetMaxSize(MyMaxCmdSize);
-  cmddisp->SetMinSize(MyMinCmdSize);*/
-
-  rightsizer-> Add(canvas, 1, wxEXPAND | wxALL, 10);
-  //rightsizer-> Add(cmddisp, 1,  wxEXPAND | wxALL, 10);
+  rightsizer-> Add(canvas, 1, wxEXPAND | wxALL, 5);
+  rightsizer-> Add(cmddisp, 0.3,  wxEXPAND | wxLEFT|wxRIGHT, 5);
   topsizer->Add(control_sizer, 0, wxALIGN_CENTER);
   topsizer->Add(rightsizer, 1, wxEXPAND | wxALL, 10);
   SetSizeHints(MinWinSize);
   SetSizer(topsizer);
+}
+
+void MyFrame::ResetContent(){
+  *monman = MyMonManager(nmz, netz, dmz, mmz, &cyclescompleted, monctrl, cmddisp);
+  monman->ResetMonitors();
+  SetSwitchList();
+
 }
 
 // EVENT HANDLERS //
@@ -461,18 +478,38 @@ void MyFrame::OnOpen(wxCommandEvent &event){
     if (openFileDialog.ShowModal() == wxID_CANCEL)
         return;     // the user changed idea...
 
+    wxString filepath = openFileDialog.GetPath();
     // proceed loading the file chosen by the user;
     // this can be done with e.g. wxWidgets input streams:
-    wxFileInputStream input_stream(openFileDialog.GetPath());
+    wxFileInputStream input_stream(filepath);
     if (!input_stream.IsOk())
     {
-        wxLogError("Cannot open file '%s'.", openFileDialog.GetPath());
+        wxLogError("Cannot open file '%s'.", filepath);
         return;
     }
     else
     {
       // Non-functional testing
       canvas->Render("File opened");
+
+      names *new_nmz =new names();
+      network *new_netz = new network(new_nmz);
+      devices *new_dmz = new devices(new_nmz, new_netz);
+      monitor *new_mmz = new monitor(new_nmz, new_netz);
+
+      scanner *smz = new scanner(new_nmz, filepath.mb_str());
+      error *err = new error(smz);
+      parser *pmz = new parser(new_netz, new_dmz, new_mmz, smz,err);
+
+      if (pmz->readin ()){
+        cout<<"Network built"<<endl;
+        *nmz = *new_nmz;
+        *netz = *new_netz;
+        *dmz = *new_dmz;
+        *mmz = *new_mmz;
+        ResetContent();
+      }
+
       /* Functional wireframe. Only activated when the objects are
        * actually created, hence when logsim launches the GUI. */
       #ifdef USE_GUI
@@ -519,31 +556,41 @@ void MyFrame::OnButtonSetMon(wxCommandEvent &event){
 void MyFrame::OnSwitchBox(wxCommandEvent &event){
   // Event handler for the push button
 
-  string textstring="Switch ";
-  wxCheckBox* currswitch = (wxCheckBox*)event.GetEventObject();
-  textstring += currswitch->GetLabelText();
+  //string textstring="Switch ";
+  /*wxCheckBox* currswitch = (wxCheckBox*)event.GetEventObject();
+  textstring += currswitch->GetLabelText();*/
   //string switchname =(string) currswitch->GetLabelText();
-  if(currswitch->IsChecked())
+  int n = switchwin->GetSelection();
+  //cout<<"Selection "<< n<<endl;
+  for (int i=0; i<monman->switches.size(); i++){
+    if (switchwin->IsChecked(i)!=monman->switches[i].check){
+      monman->FlickSwitch(i);
+      break;
+    }
+  }
+/*
+  if (n>-1){
+  textstring += switchwin->GetString(n);
+
+
+  if(switchwin->IsChecked(n))
     textstring+=" was checked";
   else textstring += " was unchecked";
 
   canvas->Render(textstring, cyclescompleted);
 
-  // pseudocode for when the network is accessible
-  #ifdef USE_GUI
-  namestring switchname = (namestring)currswitch->GetLabelText();
+
+  namestring switchname = (namestring)switchwin->GetString(n);
   name sid = nmz->lookup(switchname);
   asignal level;
   bool ok;
 
-  if(currswitch->IsChecked())
+  if(switchwin->IsChecked(n))
   level = high;
   else level=low;
 
   dmz->setswitch( sid, level, ok);
-
-
-  #endif
+  }*/
 
 }
 
@@ -567,31 +614,51 @@ void MyFrame::OnText(wxCommandEvent &event){
   canvas->Render(text);
 }
 
+void MyFrame::OnSize(wxSizeEvent& event){
+  Refresh();
+}
 
 // ADDED NON-INTERFACE FUNCTIONS //
 
-void MyFrame::SetSwitchList(wxWindow *parent,wxSizer* sizer)
-{
-  vector<devlink> switches = dmz->GetSwitches();
-  name nm;
+void MyFrame::SetSwitchList(){
+
+  //(wxWindow *parent,wxSizer* sizer) (switchwin, switch_sizer)
+  //switch_sizer->Clear(true);
+  //vector<devlink> switches = dmz->GetSwitches();
+  //name nm;
   asignal currswstate;
-  wxCheckBox* currbox;
+  //wxCheckBox* currbox;
   string nmstring;
+  wxArrayString tempstring = monman->GetSwitches();
+  switchwin->Clear();
+  switchwin->Append(tempstring);
   // Going backwards through the list, because the network adds new
   //devices/switches at the beginning of the device list
-  for (int i=switches.size()-1; i>-1; i--)
+  for (int i=0; i<monman->switches.size(); i++)
+  {switchwin->Check(i,monman->switches[i].check);
+
+    //nm=switches[i]->id;
+    //currswstate = switches[i]->swstate;
+    //tempstring = wxString(nmz->getnamefromtable(nm));
+    //switchwin->Append(tempstring);
+
+    //else if (currswstate == low) switchwin->SetValue(false);
+
+  }
+
+  /*for (int i=switches.size()-1; i>-1; i--)
   {
     nm=switches[i]->id;
     currswstate = switches[i]->swstate;
     nmstring = (string) nmz->getnamefromtable(nm);
-    currbox = new wxCheckBox(parent, MY_SWITCH_ID, nmstring);
+    currbox = new wxCheckBox(switchwin, MY_SWITCH_ID, nmstring);
     if (currswstate == high) currbox->SetValue(true);
     else if (currswstate == low) currbox->SetValue(false);
     else cout<< "Invalid switch state, switch id "<< nm << ", name "<< nmstring<< endl;
     cout<< "Switch id "<< nm << ", name "<< nmstring<< endl;
-    sizer->Add(currbox, MySwitchFlag);
+    switch_sizer->Add(currbox, MySwitchFlag);
 
-  }
+  }*/
 
   // for debugging
   /*devlink d = switches[0];
@@ -610,29 +677,25 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer)
   note_ctrl->SetMinSize(MinTabSize);
   note_ctrl->SetForegroundColour(*wxBLACK);
 
-  wxScrolledWindow* switchwin = new wxScrolledWindow(note_ctrl, wxID_ANY,
-                    wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxHSCROLL|wxVSCROLL);
+  switchwin = new wxCheckListBox(note_ctrl, MY_SWITCH_ID);
+  /*
+  switchwin = new wxScrolledWindow(note_ctrl, wxID_ANY,
+                    wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxHSCROLL|wxVSCROLL);*/
   switchwin->SetBackgroundColour(*wxWHITE);
+  switchwin->SetForegroundColour(*wxBLACK);
   // Later replace this with a separate function that initialises the window and all its contents uppon loading a new circuit.
-  wxBoxSizer *switch_sizer = new wxBoxSizer(wxVERTICAL);
-  #ifndef USE_GUI
-  for (int i = 0; i<15; i++)
-  {
-    string temp = "TestCheck";
-    temp+= to_string(i+1);
-    switch_sizer->Add(new wxCheckBox(switchwin, MY_SWITCH_ID, temp), MySwitchFlag);
-  }
-  #else
-  SetSwitchList(switchwin, switch_sizer);
-  #endif
+  //switch_sizer = new wxBoxSizer(wxVERTICAL);
+
+  SetSwitchList();
+
   wxScrolledWindow *monwin = new wxScrolledWindow(note_ctrl, wxID_ANY);
   monwin->SetBackgroundColour(*wxWHITE);
   wxBoxSizer *mon_sizer = new wxBoxSizer(wxVERTICAL);
   //mon_sizer->
 
   note_ctrl->AddPage(switchwin,"Switches");
-  note_ctrl->AddPage(monwin, "Monitors");
-  switchwin->SetSizer(switch_sizer);
+  note_ctrl->AddPage(monwin, "Devices");
+  //switchwin->SetSizer(switch_sizer);
 
   control_sizer->Add(note_ctrl, MyTabFlag);
   control_sizer->AddSpacer(5);
@@ -642,8 +705,8 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer)
   int h = MinTabSize.GetHeight();
   int scrollwidth = 5;
   int xstep=5, ystep=5;
-  switchwin->SetVirtualSize(w-scrollwidth, h);
-  switchwin->SetScrollRate(xstep, ystep);
+  //switchwin->SetVirtualSize(w-scrollwidth, h);
+  //switchwin->SetScrollRate(xstep, ystep);
 
   monwin->SetVirtualSize(w-scrollwidth, h-scrollwidth);
   monwin->SetScrollRate(xstep, ystep);
@@ -652,14 +715,15 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer)
 ////////////////////////////////////////////////////////////////////////
 // MYMONMANAGER: added class to make monitor point managing easier and more object-oriented
 MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devices_mod,
-                          monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl)
-{
+                          monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp){
+
   nmz = names_mod;
   netz = network_mod;
   dmz = devices_mod;
   mmz = monitor_mod;
   cyclescompletedp = cyclesp;
   montextctrl = mon_ctrl;
+  cmddisp = cmd_disp;
 
   name dev, outp;
   string devstr, opstr;
@@ -669,10 +733,11 @@ MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devi
     cout<<nmz->getnamefromtable(i)<<endl;//////////////COUT//////////////
   }*/
 
-  // find all outputs.
+  // find all outputs and all switches
   devlink d = netz->devicelist();
   outplink o;
-  cout<< "devices" <<endl;
+
+  cmddisp->AppendText("devices\n" );
   while( d != NULL){
     dev = d->id;
     devstr = nmz->getnamefromtable(dev);
@@ -686,6 +751,10 @@ MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devi
       temp = *(new opProps(dev, outp, devstr));
       // temp.opstr preset to ""
       allops.push_back(temp);
+      // Add a switch
+      if(d->kind==aswitch){
+        switches.push_back(switchitem(dev,d->swstate, devstr));
+      }
       } else {
       opstr = nmz->getnamefromtable(outp);
       temp = *(new opProps(dev, outp, devstr, opstr));
@@ -761,6 +830,15 @@ wxArrayString MyMonManager::GetUnmonitoredList(){
 
 }
 
+wxArrayString MyMonManager::GetSwitches(){
+  wxArrayString swlist = wxArrayString();
+  for(int i=0; i<switches.size(); i++)
+  {
+    swlist.Add(switches[i].devstr);
+  }
+  return swlist;
+}
+
 bool MyMonManager::AddMonitor(int m){
   if(m>unmonitored.size()|| m<0 ) return false;
   if(unmonitored.size()==maxmonitors){
@@ -794,7 +872,6 @@ bool MyMonManager::RemoveMonitor(int m){
 bool MyMonManager::RunNetwork(int ncycles){
   // Function to run the network, derived from corresponding function in userint.cc
 
-  if (*cyclescompletedp==0) return false;
   bool ok = true;
   if (*cyclescompletedp==maxcycles){
     cout<<"Error: cycles limit ("<<maxcycles<<") exceeded"<<endl;
@@ -837,6 +914,15 @@ void MyMonManager::IncrementCycles(int n){
   montextctrl->Clear();
   montextctrl->AppendText(textstr);
 
+}
+
+void MyMonManager::FlickSwitch(int n){
+  switches[n].check=!switches[n].check;
+  asignal level;
+  if(switches[n].check)level=high;
+  else level=low;
+  bool ok;
+  dmz->setswitch( switches[n].dev, level, ok);
 }
 
 
