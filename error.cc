@@ -5,8 +5,11 @@
 
 using namespace std;
 
-error::error(){
-	errorcounter=0;
+error::error(scanner* scanner_mod){
+    scnr=scanner_mod;
+	mapcounter=0;
+	totalerrorcount=0;
+	totalwarningcount=0;
 	this->writeerror("DEVICE BLOCK NOT FOUND"); //0
 	this->writeerror("CONNECTION BLOCK NOT FOUND"); //1
 	this->writeerror("MONITOR BLOCK NOT FOUND"); //2
@@ -33,25 +36,51 @@ error::error(){
 	this->writeerror("EXPECTED ';'"); //23
 	this->writeerror("CLOCK PERIOD MUST BE > 0"); //24
 	this->writeerror("EXPECTED '}' OR A VALID DEVICENAME"); //25
+	this->writeerror("UNFINISHED LINE HERE"); //26
 
 }
 
 int error::writeerror(string errordescription){
-	map.insert({errorcounter,errordescription});
-	errorcounter++;
-	return (errorcounter-1);
+	map.insert({mapcounter,errordescription});
+	mapcounter++;
+	return (mapcounter-1);
 
 }
 
 void error::printerror (int id){
+    totalerrorcount+=1;
+    int linenumber;
+    string line1;
+    string line2;
+    scnr->linedisplayerror(linenumber,line1,line2);
+    linenumvec.push_back(linenumber);
+    cout<<"ERROR ON LINE "<<linenumber<<"::";
 	auto search = map.find(id);
     if(search != map.end()) {
-        cout << "ERROR CODE "<< search->first << ": "<< search->second ;
+        cout << "ERROR CODE "<< search->first << "::"<< search->second ;
+        errorcodevec.push_back(search->first);
     }
     else {
         cout << "ERROR CODE -1: UNDEFINED ERROR HAS OCCURRED";
+        errorcodevec.push_back(-1);
+    }
+    cout<<endl;
+    cout<< line1<<endl;
+    cout<<line2<<endl;
+}
+void error::printerrornum(){
+    if (totalerrorcount>0){
+        cout << "***"<<totalerrorcount<<" ERROR(S) DETECTED"<< endl;
     }
 }
 
+int error::gettotalerrornum(){
+    return totalerrorcount;
+}
 
-
+vector<int> error::getlinenumvector(){
+    return linenumvec;
+}
+vector<int> error::geterrorcodevec(){
+    return errorcodevec;
+}

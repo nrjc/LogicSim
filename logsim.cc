@@ -21,7 +21,7 @@ bool MyApp::OnInit()
   dmz = new devices(nmz, netz);
   mmz = new monitor(nmz, netz);
   smz = new scanner(nmz, wxString(argv[1]).mb_str());
-  err = new error();
+  err = new error(smz);
   pmz = new parser(netz, dmz, mmz, smz,err);
   dmz->debug(false);
 
