@@ -115,8 +115,8 @@ class MyGLCanvas: public wxGLCanvas{
   int disp_h;			     // height of the displayed drawing area
   int disp_w;			     // width of the displayed drawing area
   double zoom;                       // the current zoom
-  const float maxzoom = 0.8;
-  const float minzoom = 2.5;
+  const float minzoom = 0.8;
+  const float maxzoom = 2.5;
 
   int cyclesdisplayed;               // how many simulation cycles have been displayed
   monitor *mmz;                      // pointer to monitor class, used to extract signal traces

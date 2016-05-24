@@ -23,7 +23,7 @@ bool MyApp::OnInit()
   smz = new scanner(nmz, wxString(argv[1]).mb_str());
   err = new error();
   pmz = new parser(netz, dmz, mmz, smz,err);
-  dmz->debug(true);
+  dmz->debug(false);
 
   if (pmz->readin ()) { // check the logic file parsed correctly
 #ifdef USE_GUI
