@@ -37,7 +37,7 @@ const wxColour BcColour(0x11350E0E);// background color
 const wxSize MinTabSize = *(new wxSize(160, 2000));// Min size for tabs
 const wxSize MinWinSize = *(new wxSize(400, 500));
 
-const wxSize RunSize = *(new wxSize(65, boxheight)); // Run button size
+const wxSize RunSize = wxSize(65, boxheight); // Run button size
 const wxSize ContSize = *(new wxSize(100, boxheight));//Continue button size
 const wxSize CyclesSize = *(new wxSize(160, boxheight));// Cycles textbox size
 const wxSize CommandSize = *(new wxSize(160, boxheight));// Command textbox size
@@ -139,6 +139,7 @@ void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange){
 
 
   // Example of how to use GLUT to draw text on the canvas
+
   glColor3f(0.5, 0.0, 0.5);
   glRasterPos2f((100-pan_x)/zoom, (-pan_y+20)/zoom);
   for (i = 0; i < example_text.Len(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, example_text[i]);
@@ -221,7 +222,7 @@ void MyGLCanvas::OnMouse(wxMouseEvent& event){
     if (pan_y<h) pan_y=h;
     if (pan_y>disp_h) pan_y=disp_h;
     */
-    zoom = zoom * (1.0 - (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
+    zoom = zoom / (1.0 - (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
     FixZoom();
     init = false;
     text.Printf("Negative mouse wheel rotation, zoom now %f", zoom);
@@ -231,7 +232,7 @@ void MyGLCanvas::OnMouse(wxMouseEvent& event){
     if (pan_y<h) pan_y=h;
     if (pan_y>disp_h) pan_y=disp_h;
     */
-    zoom = zoom / (1.0 + (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
+    zoom = zoom * (1.0 + (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
     FixZoom();
     init = false;
     text.Printf("Positive mouse wheel rotation, zoom now %f", zoom);
@@ -276,7 +277,7 @@ void MyGLCanvas::NameAxes(float x_low, float x_spacing, int cycles, float y_low,
   string number;
   // Print monitor name
   glColor3f(0.0, 0.0, 1.0);
-  glRasterPos2f(x_low-15, y_low+1.5*st_height);
+  glRasterPos2f(x_low-15/zoom, y_low+1.5*st_height);
   for (int i = 0; i < monname.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, monname[i]);
 
   // Axes text color
@@ -405,12 +406,24 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   // Add tabbed bontrol windows
   AddSwitchMonCtrl(control_sizer);
 
+
+  wxBoxSizer *rightsizer = new wxBoxSizer(wxVERTICAL);
   // Create GL canvas and add
-  const wxSize MyCanvasSize = wxSize(size.GetWidth()-200, size.GetHeight()-70);
+  const wxSize MyCanvasSize = wxSize(size.GetWidth()-200, size.GetHeight()-150);
   canvas = new MyGLCanvas(this, wxID_ANY, monitor_mod, names_mod, wxDefaultPosition, MyCanvasSize);
 
+  /*
+  const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 30);
+  cmddisp = new wxTextCtrl(this, MY_TEXTCTRL_ID, "Message box", wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_WORDWRAP);
+  const wxSize MyMaxCmdSize = wxSize(5000, 100);
+  const wxSize MyMinCmdSize = wxSize(20, 20);
+  cmddisp->SetMaxSize(MyMaxCmdSize);
+  cmddisp->SetMinSize(MyMinCmdSize);*/
+
+  rightsizer-> Add(canvas, 1, wxEXPAND | wxALL, 10);
+  //rightsizer-> Add(cmddisp, 1,  wxEXPAND | wxALL, 10);
   topsizer->Add(control_sizer, 0, wxALIGN_CENTER);
-  topsizer->Add(canvas, 1, wxEXPAND | wxALL, 10);
+  topsizer->Add(rightsizer, 1, wxEXPAND | wxALL, 10);
   SetSizeHints(MinWinSize);
   SetSizer(topsizer);
 }
@@ -426,7 +439,7 @@ void MyFrame::OnExit(wxCommandEvent &event){
 void MyFrame::OnAbout(wxCommandEvent &event){
   // Event handler for the about menu item
 
-  wxMessageDialog about(this, "Example wxWidgets GUI\nAndrew Gee\nJune 2014", "About Logsim", wxICON_INFORMATION | wxOK);
+  wxMessageDialog about(this, "Software project 2016 team 6:\n Names and Scanner classes:\n\t Nickolas Capel.\n Parser class: \n\t Yuxiang Lou,\n\t Nickolas Capel.\n GUI: \n\t Kamile Rastene.", "About Logsim", wxICON_INFORMATION | wxOK);
   about.ShowModal();
 }
 
@@ -481,8 +494,8 @@ void MyFrame::OnButtonRun(wxCommandEvent &event){
 
 void MyFrame::OnButtonCont(wxCommandEvent &event){
   // Event handler for the push button
-  monman->RunNetwork(spin->GetValue());
-  canvas->Render("Continue button pressed", cyclescompleted);
+  if (monman->RunNetwork(spin->GetValue()))
+    canvas->Render("Continue button pressed", cyclescompleted);
 }
 
 void MyFrame::OnButtonSetMon(wxCommandEvent &event){
@@ -778,13 +791,14 @@ bool MyMonManager::RemoveMonitor(int m){
   return true;
 }
 
-void MyMonManager::RunNetwork(int ncycles){
+bool MyMonManager::RunNetwork(int ncycles){
   // Function to run the network, derived from corresponding function in userint.cc
 
+  if (*cyclescompletedp==0) return false;
   bool ok = true;
   if (*cyclescompletedp==maxcycles){
     cout<<"Error: cycles limit ("<<maxcycles<<") exceeded"<<endl;
-    return;
+    return false;
   }
   if ((*cyclescompletedp+ncycles)>=maxcycles){
     cout<<"Cycles limit ("<<maxcycles<<") reached"<<endl;
@@ -801,6 +815,7 @@ void MyMonManager::RunNetwork(int ncycles){
   }
   if (ok) IncrementCycles(ncycles);
   else ResetMonitors();
+  return ok;
 }
 
 void MyMonManager::ResetMonitors(){

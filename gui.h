@@ -72,6 +72,8 @@ class MyFrame: public wxFrame{
  private:
   MyGLCanvas *canvas;                     // OpenGL drawing area widget to draw traces
   wxSpinCtrl *spin;                       // control widget to select the number of cycles
+  wxTextCtrl *cmddisp;                    // textbox that displays error and warning text. Replaces command line outputs
+
   names *nmz;                             // pointer to names class
   network *netz;			  // pointer to network class
   devices *dmz;                           // pointer to devices class
@@ -115,8 +117,8 @@ class MyGLCanvas: public wxGLCanvas{
   int disp_h;			     // height of the displayed drawing area
   int disp_w;			     // width of the displayed drawing area
   double zoom;                       // the current zoom
-  const float maxzoom = 0.8;
-  const float minzoom = 2.5;
+  const float minzoom = 0.8;
+  const float maxzoom = 2.5;
 
   int cyclesdisplayed;               // how many simulation cycles have been displayed
   monitor *mmz;                      // pointer to monitor class, used to extract signal traces
@@ -146,7 +148,7 @@ class MyMonManager{
   bool AddMonitor(int m);      // Adds a monitor and removes it from the unmonitored list
   bool RemoveMonitor(int m);      // Removes a monitor and adds it to the monitored list
 
-  void RunNetwork(int ncycles);		// Runs network for ncycles
+  bool RunNetwork(int ncycles);		// Runs network for ncycles
   void ResetMonitors();			// Executes all actions involved in reseting monitors
   void IncrementCycles(int n);		// Executes all actions involved in incrementing number of cycles on the gui
 
