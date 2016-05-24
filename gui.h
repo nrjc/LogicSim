@@ -3,8 +3,10 @@
 
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
+#include <wx/control.h>
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
+#include <wx/richtext/richtextctrl.h>
 #include <wx/wfstream.h>
 #include <wx/sizer.h>
 #include <wx/event.h>
@@ -92,7 +94,7 @@ class MyFrame: public wxFrame{
  private:
   MyGLCanvas *canvas;                     // OpenGL drawing area widget to draw traces
   wxSpinCtrl *spin;                       // control widget to select the number of cycles
-  wxTextCtrl *cmddisp;                    // textbox that displays error and warning text. Replaces command line outputs
+  wxRichTextCtrl *cmddisp;                    // textbox that displays error and warning text. Replaces command line outputs
   wxBoxSizer *rightsizer;
   wxTextCtrl *monctrl;                    // Stored as global so that it could be passed to MyMonMan uppon open.
   //wxScrolledWindow* switchwin;
@@ -115,6 +117,7 @@ class MyFrame: public wxFrame{
   void AddSwitchMonCtrl(wxSizer *control_sizer);
   void ResetContent();
   bool LoadNewCircuit();
+  void Tell(string message);  //Print message in the message box
 
   // Event handlers
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
@@ -170,7 +173,7 @@ class MyMonManager{
 
  public:
   MyMonManager(names *names_mod, network *network_mod,
-                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp, MyGLCanvas *mycanvas);
+                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxRichTextCtrl *cmd_disp, MyGLCanvas *mycanvas);
 
   wxArrayString GetDevices();
   wxArrayString GetMonitoredList();  //Returns array of monitored output names
@@ -186,6 +189,7 @@ class MyMonManager{
   void IncrementCycles(int n);		// Executes all actions involved in incrementing number of cycles on the gui
   void FlickSwitch(int n);
   void Reset();
+  void Tell(string message);  //Print message in the message box
 
  private:
   names *nmz;                             // pointer to names class
@@ -196,7 +200,7 @@ class MyMonManager{
 
   int *cyclescompletedp;
   wxTextCtrl *montextctrl;
-  wxTextCtrl *cmddisp;
+  wxRichTextCtrl *cmddisp;
 
 
   vector<opProps> allops;		// Vector to store info about all outputs. Reserved for future use, eg. Clear.

@@ -17,6 +17,7 @@
 #include <wx/arrstr.h>
 //#include <wx/menuitem.h>
 #include <wx/string.h>
+#include <wx/richtext/richtextctrl.h>
 
 #include "names.h"
 #include "devices.h"
@@ -368,7 +369,10 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
 
   monctrl = new wxTextCtrl(this, MY_TEXTCTRL_ID, "0", wxDefaultPosition, CommandSize, wxTE_READONLY);
   const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 50);
-  cmddisp = new wxTextCtrl(this, MY_TEXTCTRL_ID, "Message box", wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_WORDWRAP);
+  //cmddisp = new wxRichTextCtrl();
+  cmddisp = new wxRichTextCtrl(this, -1, wxString("Logge simulator"), wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxRE_MULTILINE);
+
+
   const wxSize MyMinCmdSize = wxSize(20, 50);
   cmddisp->SetMinSize(MyMinCmdSize);
 
@@ -548,7 +552,7 @@ bool MyFrame::LoadNewCircuit(){
       parser *pmz = new parser(new_netz, new_dmz, new_mmz, smz,err);
 
       if (pmz->readin ()){
-        cout<<"Network built"<<endl;
+        Tell("Network built");
         *nmz = *new_nmz;
         *netz = *new_netz;
         *dmz = *new_dmz;
@@ -607,10 +611,15 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer){
 
 }
 
+void MyFrame::Tell(string message){
+  cmddisp->Newline();
+  cmddisp->AppendText(message);
+}
+
 ////////////////////////////////////////////////////////////////////////
 // MYMONMANAGER: added class to make monitor point managing easier and more object-oriented
 MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devices_mod,
-                          monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp,MyGLCanvas *mycanvas){
+                          monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxRichTextCtrl *cmd_disp,MyGLCanvas *mycanvas){
 
   nmz = names_mod;
   netz = network_mod;
@@ -639,11 +648,10 @@ void MyMonManager::Reset(){
   devlink d = netz->devicelist();
   outplink o;
 
-  cmddisp->AppendText("devices\n" );
   while( d != NULL){
     dev = d->id;
     devstr = nmz->getnamefromtable(dev);
-    cout<<devstr<< " id "<< dev<<endl;//////////////COUT//////////////
+    //cout<<devstr<< " id "<< dev<<endl;//////////////COUT//////////////
 
     o = d->olist;
     while(o != NULL)
@@ -673,7 +681,7 @@ void MyMonManager::Reset(){
   // Assemble list of current monitor points
 //cout<<" Assembling monitored list "<<endl;
   for(int i=0; i<mmz->moncount();i++){
-    //cout<<"Iteration "<< i<< endl;
+
     mmz->getmonname(i, dev, outp);
     if (outp==-1){
       temp = *(new opProps(dev, outp, nmz->getnamefromtable(dev)));
@@ -686,7 +694,7 @@ void MyMonManager::Reset(){
   // Sort the monitored list
   sort(monitored.begin(), monitored.end());
 
-  cout<<" Assembling unmonitored list "<<endl;
+  //cout<<" Assembling unmonitored list "<<endl;
   // Assemble a list of unmonitored outputs. For each element of allops
   // add it to unmonitored, if it does not exist in monitored. Since the
   // number of monitors is more restricted than the number of devices,
@@ -694,11 +702,11 @@ void MyMonManager::Reset(){
   // speed up the process.
   for(int i=0; i<allops.size();i++){
     bool found=false;
-    cout<<"Entered loop "<< allops[i].fullstr<<endl;
+    //cout<<"Entered loop "<< allops[i].fullstr<<endl;
     for(int j=0; j<monitored.size(); j++){
       if (allops[i]==monitored[j]){
         found=true;
-        cout<<"found monitor "<<allops[i].fullstr<<endl;
+        //Tell("found monitor "+allops[i].fullstr);
         break;
       }
       else{
@@ -768,8 +776,8 @@ bool MyMonManager::AddMonitor(int m){
   unmonitored.erase(unmonitored.begin()+m);
 
   ResetMonitors();
-
-  canvas->Render("Canvas Cleared", 0);
+  Tell("Canvas Cleared");
+  canvas->Render("", 0);
   return true;
 }
 
@@ -783,7 +791,8 @@ bool MyMonManager::RemoveMonitor(int m){
   monitored.erase(monitored.begin()+m);
 
   ResetMonitors();
-  canvas->Render("Canvas Cleared", 0);
+  Tell("Canvas Cleared");
+  canvas->Render("", 0);
   return true;
 }
 
@@ -792,11 +801,12 @@ bool MyMonManager::RunNetwork(int ncycles){
 
   bool ok = true;
   if (*cyclescompletedp==maxcycles){
-    cout<<"Error: cycles limit ("<<maxcycles<<") exceeded"<<endl;
+    Tell("Error: cycles limit ("+to_string(maxcycles)+") exceeded");
     return false;
   }
   if ((*cyclescompletedp+ncycles)>=maxcycles){
-    cout<<"Cycles limit ("<<maxcycles<<") reached"<<endl;
+
+    Tell("Cycles limit ("+to_string(maxcycles)+") reached");
     ncycles = maxcycles - *cyclescompletedp;
   }
     int n = ncycles;
@@ -806,7 +816,7 @@ bool MyMonManager::RunNetwork(int ncycles){
       n--;
       mmz->recordsignals ();
     } else
-      cout << "Error: network is oscillating" << endl;
+      Tell("Error: network is oscillating");
   }
   if (ok) IncrementCycles(ncycles);
   else {ResetMonitors(); canvas->Render("Canvas Cleared", 0);}
@@ -824,7 +834,7 @@ void MyMonManager::ResetMonitors(){
 }
 
 void MyMonManager::IncrementCycles(int n){
-  if (n<0) cout<<"Cycles can only be incremented by a positive amount"<< endl;
+  if (n<0) Tell("Cycles can only be incremented by a positive amount");
 
   *cyclescompletedp += n;
 
@@ -843,6 +853,10 @@ void MyMonManager::FlickSwitch(int n){
   dmz->setswitch( switches[n].dev, level, ok);
 }
 
+void MyMonManager::Tell(string message){
+  cmddisp->Newline();
+  cmddisp->AppendText(message);
+}
 
 ////////////////////////////////////////////////////////////////////////
 // MYMONDIALOG class that manages the monitors. Needed to create for proper event handling.
