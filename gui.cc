@@ -369,12 +369,12 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   dmz->debug(false);
 
   monctrl = new wxTextCtrl(this, MY_TEXTCTRL_ID, "0", wxDefaultPosition, CommandSize, wxTE_READONLY);
-  const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 50);
+  const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 75);
   //cmddisp = new wxTextCtrl();
   cmddisp = new wxTextCtrl(this, -1, wxString(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY|wxTE_BESTWRAP);
   cmdOutputRedirect = new wxStreamToTextRedirector(cmddisp);
 
-  const wxSize MyMinCmdSize = wxSize(20, 50);
+  const wxSize MyMinCmdSize = wxSize(20, 75);
   cmddisp->SetMinSize(MyMinCmdSize);
 
   const wxSize MyCanvasSize = wxSize(size.GetWidth()-200, size.GetHeight()-150);
@@ -614,7 +614,7 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer){
 
 void MyFrame::Tell(string message){
   //cmddisp->Newline();
-  cmddisp->AppendText(message);
+  cmddisp->AppendText(message+"\n");
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -856,7 +856,7 @@ void MyMonManager::FlickSwitch(int n){
 
 void MyMonManager::Tell(string message){
   //cmddisp->Newline();
-  cmddisp->AppendText(message);
+  cmddisp->AppendText(message+"\n");
 }
 
 ////////////////////////////////////////////////////////////////////////
