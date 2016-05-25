@@ -6,7 +6,7 @@
 #include <wx/control.h>
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
-#include <wx/richtext/richtextctrl.h>
+//#include <wx/richtext/richtextctrl.h>
 #include <wx/wfstream.h>
 #include <wx/sizer.h>
 #include <wx/event.h>
@@ -94,7 +94,8 @@ class MyFrame: public wxFrame{
  private:
   MyGLCanvas *canvas;                     // OpenGL drawing area widget to draw traces
   wxSpinCtrl *spin;                       // control widget to select the number of cycles
-  wxRichTextCtrl *cmddisp;                    // textbox that displays error and warning text. Replaces command line outputs
+  wxTextCtrl *cmddisp;                    // textbox that displays error and warning text. Replaces command line outputs
+  wxStreamToTextRedirector *cmdOutputRedirect;
   wxBoxSizer *rightsizer;
   wxTextCtrl *monctrl;                    // Stored as global so that it could be passed to MyMonMan uppon open.
   //wxScrolledWindow* switchwin;
@@ -173,7 +174,7 @@ class MyMonManager{
 
  public:
   MyMonManager(names *names_mod, network *network_mod,
-                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxRichTextCtrl *cmd_disp, MyGLCanvas *mycanvas);
+                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp, MyGLCanvas *mycanvas);
 
   wxArrayString GetDevices();
   wxArrayString GetMonitoredList();  //Returns array of monitored output names
@@ -200,7 +201,7 @@ class MyMonManager{
 
   int *cyclescompletedp;
   wxTextCtrl *montextctrl;
-  wxRichTextCtrl *cmddisp;
+  wxTextCtrl *cmddisp;
 
 
   vector<opProps> allops;		// Vector to store info about all outputs. Reserved for future use, eg. Clear.

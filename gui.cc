@@ -369,9 +369,9 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
 
   monctrl = new wxTextCtrl(this, MY_TEXTCTRL_ID, "0", wxDefaultPosition, CommandSize, wxTE_READONLY);
   const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 50);
-  //cmddisp = new wxRichTextCtrl();
-  cmddisp = new wxRichTextCtrl(this, -1, wxString("Logge simulator"), wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxRE_MULTILINE);
-
+  //cmddisp = new wxTextCtrl();
+  cmddisp = new wxTextCtrl(this, -1, wxString(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY|wxTE_BESTWRAP);
+  cmdOutputRedirect = new wxStreamToTextRedirector(cmddisp);
 
   const wxSize MyMinCmdSize = wxSize(20, 50);
   cmddisp->SetMinSize(MyMinCmdSize);
@@ -552,7 +552,7 @@ bool MyFrame::LoadNewCircuit(){
       parser *pmz = new parser(new_netz, new_dmz, new_mmz, smz,err);
 
       if (pmz->readin ()){
-        Tell("Network built");
+        cout<<"Network built"<<endl;
         *nmz = *new_nmz;
         *netz = *new_netz;
         *dmz = *new_dmz;
@@ -612,14 +612,14 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer){
 }
 
 void MyFrame::Tell(string message){
-  cmddisp->Newline();
+  //cmddisp->Newline();
   cmddisp->AppendText(message);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // MYMONMANAGER: added class to make monitor point managing easier and more object-oriented
 MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devices_mod,
-                          monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxRichTextCtrl *cmd_disp,MyGLCanvas *mycanvas){
+                          monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp,MyGLCanvas *mycanvas){
 
   nmz = names_mod;
   netz = network_mod;
@@ -854,7 +854,7 @@ void MyMonManager::FlickSwitch(int n){
 }
 
 void MyMonManager::Tell(string message){
-  cmddisp->Newline();
+  //cmddisp->Newline();
   cmddisp->AppendText(message);
 }
 
