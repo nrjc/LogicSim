@@ -191,7 +191,8 @@ void MyGLCanvas::OnPaint(wxPaintEvent& event){
 void MyGLCanvas::OnSize(wxSizeEvent& event){
   // Event handler for when the canvas is resized
   FixPan();
-  init = false;; // this will force the viewport and projection matrices to be reconfigured on the next paint
+  init = false; // this will force the viewport and projection matrices to be reconfigured on the next paint
+  //Render("test");
 }
 
 void MyGLCanvas::OnMouse(wxMouseEvent& event){
@@ -241,7 +242,7 @@ void MyGLCanvas::OnMouse(wxMouseEvent& event){
     text.Printf("Positive mouse wheel rotation, zoom now %f", zoom);
   }
 
-  if (event.GetWheelRotation() || event.Dragging()) Render(text);
+  if (event.GetWheelRotation() || event.Dragging()||event.ButtonDown()) Render(text);
 }
 
 void MyGLCanvas::DrawAxes(float x_low, float x_spacing, int cycles, float y_low, float y_high){
