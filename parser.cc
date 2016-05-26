@@ -426,6 +426,10 @@ void parser::connectionlist(void){
 	else{
         errorparser(3,closecurly); // no opencurly error
     }
+    if (cursym!=namesym&&cursym!=closecurly){
+        errorparser(14,semicol); // device not defined
+        smz->getsymbol(cursym,curid,curnum);
+    }
     //this while loop parses connections until } is encountered
 	while (cursym==namesym){
 		connection();
@@ -445,6 +449,7 @@ void parser::connectionlist(void){
 	}
 	else{
         errorparser(25); // EXPECTED '}'
+        return;
     }
 }
 
@@ -461,17 +466,17 @@ void parser::connection(void){
                 if (cursym==stop){
                     smz->getsymbol(cursym,curid,curnum);
                     if(cursym==oq){
-                        outputnametemp=curid;// parser will tell the network class this output q
+                        outputnametemp=curid; //stores the output type for connection later
                         smz->getsymbol(cursym,curid,curnum);
                     }
                     else if (cursym==oqbar){
-                        outputnametemp=curid;// parser will tell the network class this output q
+                        outputnametemp=curid; //stores the output type for connection later
                         smz->getsymbol(cursym,curid,curnum);
                     }
                     else{
-                        errorparser(11,semicol);
+                        errorparser(11,semicol); // invalid output from dtype
                         return;
-                    }// invalid output from dtype
+                    }
                 }
                 else{
                     errorparser(21,semicol); // EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE
@@ -482,12 +487,14 @@ void parser::connection(void){
                 smz->getsymbol(cursym,curid,curnum);
             }
 			if (cursym==arrow){
+                // this boolean helps kick off the while loop
 				bool firstit=true;
 				while (cursym==comma||firstit){
 					firstit=false;
 					smz->getsymbol(cursym,curid,curnum);
 					if (cursym==namesym){
 						if (netz->finddevice(curid)!=NULL){
+                            // checks if device is a dtype as it has different outputs from other devices, the if block below is for a non-dtype device
 							if (netz->finddevice(curid)->kind!=7){
 								int noofinputs=0;
 								noofinputs=netz->getnumberofinputs(curid);
@@ -497,9 +504,11 @@ void parser::connection(void){
 									smz->getsymbol(cursym,curid,curnum);
 									if (cursym==inputsym){
                                         if (curnum<=noofinputs && curnum>=1){
+                                            // check if the input has already being connected
                                             if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
+                                                // if errors are found before this, abandon effort to establish new connections
                                                 if (!errorsfound){
-                                                    netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
+                                                    netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck); // everything ok, establish connection
                                                 }
                                                 smz->getsymbol(cursym,curid,curnum);
                                             }
@@ -519,7 +528,7 @@ void parser::connection(void){
                                     }
 								}
 								else{
-                                    errorparser(13,semicol);
+                                    errorparser(13,semicol); //EXPECTED '.'
                                     return;
                                 }
 							}
@@ -528,11 +537,6 @@ void parser::connection(void){
 								smz->getsymbol(cursym,curid,curnum);
 								if (cursym==stop){
 									smz->getsymbol(cursym,curid,curnum);
-									//cout<<"POINTER: "<<netz->finddevice(curid)->kind<<endl;
-									//cout<<"CURSYM: "<<cursym<<endl;
-									//cout<<"PREVIOUS CONNECTION: "<<netz->findinput(netz->finddevice(devnamtempinp),curid)->connect<<endl;
-                                    //cout<<"POINTER: "<<netz->findinput(netz->finddevice(devnamtempinp),curid)->connect<<endl;
-
                                     if (cursym==idata){
                                         if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
                                             if (!errorsfound){
@@ -595,12 +599,8 @@ void parser::connection(void){
                             return;
                         }
                     }
-					else if (cursym==numsym){
-                        errorparser(6,semicol); // DEVICENAME CANNOT START WITH A NUMBER
-                        return;
-					}
 					else{
-                        errorparser(7,semicol); // DEVICENAME MUST NOT CONINCIDE WITH A KEYWORD
+                        errorparser(14,semicol); // DEVICE NOT DEFINED
                         return;
                     }
 				}
@@ -620,22 +620,24 @@ void parser::connection(void){
             return;
         }
 	}
-	else if (cursym==numsym){
-        errorparser(6,semicol); //DEVICENAME CANNOT START WITH A NUMBER
-        return;
-	}
 	else {
-        errorparser(7,semicol); //DEVICENAME
+        errorparser(14,semicol); //DEVICE NOT DEFINED
         return;
     }
 }
 
+// monitorlist() parses the whole monitor block
 void parser::monitorlist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
 		smz->getsymbol(cursym,curid,curnum);
 	}
 	else errorparser(3); // no opencurly error
+    if (cursym!=namesym&&cursym!=closecurly){
+        errorparser(14,semicol);
+        smz->getsymbol(cursym,curid,curnum);
+    }
+	// this while loop continues parsing the monitors until a } is found
 	while (cursym==namesym){
 		parmonitor();
 		if (cursym==semicol) {
@@ -657,52 +659,61 @@ void parser::monitorlist(void){
     }
 }
 
-void parser::parmonitor(void){ //NEED TO ADD CHECK FOR DTYPE ERRORS. FOR EXAMPLE, DTYPE must have DTYPE.Q
+// parmonitor parses each output to monitor
+void parser::parmonitor(void){
 	if (cursym==namesym){
 		if (netz->finddevice(curid)!=NULL){
-			devnametemp=curid;
-			outputnametemp=blankname;
-			smz->getsymbol(cursym,curid,curnum);
-			if (cursym==stop){
-				smz->getsymbol(cursym,curid,curnum);
-				if (cursym==oq){
-					outputnametemp=curid;
-					// monitor output q
-					mmz->makemonitor(devnametemp,outputnametemp,okcheck);
-					smz->getsymbol(cursym,curid,curnum);
-					return;
-				}
-				else if (cursym==oqbar){
-					outputnametemp=curid;
-					mmz->makemonitor(devnametemp,outputnametemp,okcheck);
-					// monitor output qbar
-					smz->getsymbol(cursym,curid,curnum);
-					return;
-				}
-				else{
-					errorparser(11,semicol); // INVALID OUTPUT FROM D-TYPE
-					return;
-				}
-			}
-			else if (cursym==semicol){
-				mmz->makemonitor(devnametemp,outputnametemp,okcheck);
-				return;
-			}
-			else{
-				errorparser(13,semicol); // EXPECTED '.' or '.'
-				return;
-			}
-		}
-		else{
-			errorparser(14,semicol);
-			return;
-		}
-	}
-	else{
-		errorparser(12,semicol); // a devicename expected error
+            devnametemp=curid;
+            outputnametemp=blankname;
+            // checks if device is a dtype, if it is, the output (q or qbar) must be specified
+            if (netz->finddevice(curid)->kind==7){
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==stop){
+                    smz->getsymbol(cursym,curid,curnum);
+                    if (cursym==oq){
+                        outputnametemp=curid;
+                        mmz->makemonitor(devnametemp,outputnametemp,okcheck);// everything okay, make monitor
+                        smz->getsymbol(cursym,curid,curnum);
+                    }
+                    else if (cursym==oqbar){
+                        outputnametemp=curid;
+                        mmz->makemonitor(devnametemp,outputnametemp,okcheck);// everything okay, make monitor
+                        smz->getsymbol(cursym,curid,curnum);
+                    }
+                    else{
+                        errorparser(11,semicol); // INVALID OUTPUT FROM D-TYPE
+                        return;
+                    }
+                }
+                else{
+                    errorparser(21,semicol); //Expected ., need to specify DTYPE output.
+                    return;
+                }
+            }
+            else{
+                mmz->makemonitor(devnametemp,outputnametemp,okcheck); //just make monitor if not a dtype because there can be no ambiguity to the output
+                smz->getsymbol(cursym,curid,curnum);
+            }
+            if (cursym==semicol){
+                return;
+            }
+            else{
+                errorparser(23,semicol);
+                return;
+            }
+        }
+        else{
+            errorparser(14,semicol);
+            return;
+        }
+    }
+    else{
+		errorparser(14,semicol); // a devicename expected error
+		return;
 	}
 }
 
+// the errorparser function specifies a stop symbol after which parsing can begin again. It also outputs an error message
 void parser::errorparser(int errin, symbol stop){
     errorsfound=true;
 	err->printerror(errin);

@@ -1,4 +1,4 @@
-// Implementing an AND gate from NOR gates
+// Circuit for Implementing an AND gate with Nor gates
 
 DEVICES{
 SWITCH SW1:0;

@@ -1,4 +1,5 @@
-// Circuit with Nand gates
+// Circuit for Bistable Latch
+
 DEVICES{
 SWITCH SW1:0;
 SWITCH SW2:0;
