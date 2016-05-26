@@ -7,7 +7,7 @@
 using namespace std;
 
 //const int maxnames  = 200;  /* max number of distinct names */
-const int maxlength = 12;    /* max chars in a name string   */
+const int maxlength = 20;    /* max chars in a name string   */
 const int blankname = -1;   /* special name                 */
 
 typedef int name;
@@ -34,10 +34,10 @@ public:
 
   int namelength (name id);
     /* Returns length ie number of characters in given name                */
-    
+
   namestring getnamefromtable(name id);
-  /* Returns the namestring for a given mane. */
-  
+  /* Returns the namestring for a given name. */
+
   void dumptablecontents();
   /* dumps the entire contents of the table for debugging purposes */
 
