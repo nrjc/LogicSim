@@ -58,7 +58,7 @@ void error::printerror (int id){
     cout<<"ERROR ON LINE "<<linenumber<<"::";
 	auto search = map.find(id);
     if(search != map.end()) {
-        cout << "ERROR CODE "<< search->first << "::"<< search->second ;
+        cout << "ERROR CODE "<< search->first << "::"<< search->second ; //Prints string associated with error if it is found in the unordered map.
         errorcodevec.push_back(search->first);
     }
     else {

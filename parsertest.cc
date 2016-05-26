@@ -70,6 +70,7 @@ int testnumber=17;
 
 
 int main(int argc, char **argv)
+//This Script tests each of the files defined above, to check if the error lines and error codes agree with what actually happens.
 {
   for (int i=0;i<testnumber;i++){
   names Nametable;
