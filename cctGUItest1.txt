@@ -1,0 +1,38 @@
+DEVICES {
+SWITCH SW1: 1;
+SWITCH SW2: 0;
+SWITCH SW3: 0;
+
+NAND N1:2;
+NAND N2:2;
+NAND N3:2;
+NAND N4:2;
+
+AND A1:2;
+AND A2:2;
+
+XOR X1;
+
+OR O1:2;
+}
+
+CONNECTIONS {
+SW1 -> N1.I1,N1.I2;
+SW2 -> A2.I1,N2.I1,N2.I2;
+
+N1 -> A1.I1;
+N2 -> A2.I2,N3.I1, N3.I2;
+A2 -> A1.I2,X1.I1;
+N3 -> X1.I2;
+
+A1 -> N4.I1, N4.I2;
+N4 -> O1.I1;
+X1 -> O1.I2;
+}
+
+MONITORS {
+SW1;
+SW2;
+SW3;
+O1;
+}

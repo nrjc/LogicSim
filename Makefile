@@ -18,21 +18,21 @@ G_OBJECTS = guitest.o names.o network.o monitor.o devices.o gui.o
 all:    logsim guitest
 
 logsim:	$(L_OBJECTS)
-	$(CXX) -o logsim $(L_OBJECTS) `wx-config --version=3.0 --libs std,aui --gl_libs` $(OPENGL_LIBS)
+	$(CXX) -o logsim $(L_OBJECTS) `wx-config --version=3.0 --libs std,aui,richtext --gl_libs` $(OPENGL_LIBS)
 
 guitest: $(G_OBJECTS)
 	 $(CXX) -o guitest $(G_OBJECTS) `wx-config --version=3.0 --libs std,aui --gl_libs` $(OPENGL_LIBS)
 
 testnames: names.o testnames.cc
-	$(CXX) -std=c++11 -o testnames names.o testnames.cc  
+	$(CXX) -std=c++11 -o testnames names.o testnames.cc
 
 testscanner: names.o scanner.o testscanner.cc
 	$(CXX) -std=c++11 -o testscanner names.o scanner.o testscanner.cc
-	
+
 testparser: error.o names.o scanner.o network.o monitor.o devices.o parser.o parsertest.cc
 	$(CXX) -std=c++11 -o testparser names.o scanner.o network.o monitor.o devices.o parser.o error.o parsertest.cc
 
-clean: 
+clean:
 	rm -f *.o logsim guitest
 
 depend:
@@ -41,7 +41,7 @@ depend:
 # DO NOT DELETE
 
 logsim.o: logsim.h names.h devices.h network.h monitor.h parser.h userint.h error.h
-logsim.o: gui.h 
+logsim.o: gui.h
 names.o: names.h
 network.o: network.h names.h
 parser.o: parser.h names.h network.h devices.h monitor.h error.h

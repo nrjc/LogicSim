@@ -3,14 +3,21 @@
 
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
+#include <wx/control.h>
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
+//#include <wx/richtext/richtextctrl.h>
 #include <wx/wfstream.h>
+#include <wx/sizer.h>
+#include <wx/event.h>
+#include <wx/checklst.h>
+#include <wx/listbox.h>
 //#include <wx/menuitem.h>
 #include "names.h"
 #include "devices.h"
 #include "monitor.h"
 #include "network.h"
+#include "parser.h"
 
 enum {
   MY_SPINCNTRL_ID = wxID_HIGHEST + 1,
@@ -20,6 +27,7 @@ enum {
   MY_BUTTONSETMON_ID,
   MY_SWITCH_ID,
   MY_NOTEBOOK_ID,
+  MY_FRAME_ID,
 
   MY_ADDMON_ID,
   MY_REMMON_ID,
@@ -28,8 +36,8 @@ enum {
 class MyGLCanvas;
 class MyMonManager;
 
-struct opProps
-{
+struct opProps{
+
   name dev;
   name op=-1;
   string devstr;// Actual name of device
@@ -61,6 +69,20 @@ struct opProps
   }
 };
 
+struct switchitem{
+  name dev;
+  bool check;
+  string devstr;
+
+  switchitem(name devid, asignal signlev, string dstring){
+    dev=devid;
+    if(signlev==low)check=false;
+    if(signlev==high)check=true;
+    devstr=dstring;
+  }
+
+};
+
 
 class MyFrame: public wxFrame{
 
@@ -72,6 +94,15 @@ class MyFrame: public wxFrame{
  private:
   MyGLCanvas *canvas;                     // OpenGL drawing area widget to draw traces
   wxSpinCtrl *spin;                       // control widget to select the number of cycles
+  wxTextCtrl *cmddisp;                    // textbox that displays error and warning text. Replaces command line outputs
+  wxStreamToTextRedirector *cmdOutputRedirect;
+  wxBoxSizer *rightsizer;
+  wxTextCtrl *monctrl;                    // Stored as global so that it could be passed to MyMonMan uppon open.
+  //wxScrolledWindow* switchwin;
+  //wxBoxSizer *switch_sizer;
+  wxCheckListBox *switchwin;
+  wxListBox *devwin;
+
   names *nmz;                             // pointer to names class
   network *netz;			  // pointer to network class
   devices *dmz;                           // pointer to devices class
@@ -80,9 +111,14 @@ class MyFrame: public wxFrame{
   int cyclescompleted;                    // how many simulation cycles have been completed
 
   // Added functions
-  void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
-  void SetSwitchList(wxCheckListBox *switchbox);		//Add checkboxes for editing switches.
+  //void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
+  //void SetSwitchList(wxCheckListBox *switchbox);		//Add checkboxes for editing switches.
+  void SetSwitchList();
+  void SetDeviceList();
   void AddSwitchMonCtrl(wxSizer *control_sizer);
+  void ResetContent();
+  bool LoadNewCircuit();
+  void Tell(string message);  //Print message in the message box
 
   // Event handlers
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
@@ -94,7 +130,7 @@ class MyFrame: public wxFrame{
   void OnButtonSetMon(wxCommandEvent& event);   // event handler for when set monitor option is chosen.
   void OnSpin(wxSpinEvent& event);        // event handler for spin control
   void OnText(wxCommandEvent& event);     // event handler for text entry field
-
+  void OnSize(wxSizeEvent& event);   // event handler for when frame is resized
  //void SetColours(wxMenuItem* item);
   //void SetColours(wxWindow* item);
   DECLARE_EVENT_TABLE()
@@ -138,27 +174,35 @@ class MyMonManager{
 
  public:
   MyMonManager(names *names_mod, network *network_mod,
-                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl);
+                devices *devices_mod, monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp, MyGLCanvas *mycanvas);
 
+  wxArrayString GetDevices();
   wxArrayString GetMonitoredList();  //Returns array of monitored output names
   wxArrayString GetUnmonitoredList();//Returns array of unmonitored output names
+  wxArrayString GetSwitches();
+  vector<switchitem> switches;
 
   bool AddMonitor(int m);      // Adds a monitor and removes it from the unmonitored list
   bool RemoveMonitor(int m);      // Removes a monitor and adds it to the monitored list
 
-  void RunNetwork(int ncycles);		// Runs network for ncycles
+  bool RunNetwork(int ncycles);		// Runs network for ncycles
   void ResetMonitors();			// Executes all actions involved in reseting monitors
   void IncrementCycles(int n);		// Executes all actions involved in incrementing number of cycles on the gui
-
+  void FlickSwitch(int n);
+  void Reset();
+  void Tell(string message);  //Print message in the message box
 
  private:
   names *nmz;                             // pointer to names class
   network *netz;			  // pointer to network class
   devices *dmz;                           // pointer to devices class
   monitor *mmz;                           // pointer to monitor class
+  MyGLCanvas *canvas;
 
   int *cyclescompletedp;
   wxTextCtrl *montextctrl;
+  wxTextCtrl *cmddisp;
+
 
   vector<opProps> allops;		// Vector to store info about all outputs. Reserved for future use, eg. Clear.
   vector<opProps> unmonitored;		// Vector to store all unmonitored outputs.
