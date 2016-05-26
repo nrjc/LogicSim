@@ -1,4 +1,5 @@
-// This defines the logic of a 4-bit adder. 
+// This defines the logic of a 4-bit adder.
+
 DEVICES{
 SWITCH A1:0;
 SWITCH A2:0;

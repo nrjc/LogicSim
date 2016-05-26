@@ -17,20 +17,22 @@ parser::parser(network* network_mod, devices* devices_mod, monitor* monitor_mod,
 }
 
 bool parser::readin (void){
-	bool allinputsconnected=false;
+	bool allinputsconnected=false; //for checking if all inputs are connected at the end of the function
 	smz->getsymbol(cursym,curid,curnum); //get the first symbol
+	//code to parse the devices block
 	if (cursym==devsym){
-        devicelist();
+        devicelist(); // call devicelist function to parse the devices block
         if (cursym==closecurly){
-            smz->getsymbol(cursym,curid,curnum);
+            smz->getsymbol(cursym,curid,curnum); // if devices block is ended with a }, getsymbol and continuring parsing the next block
         }
         else if (cursym!=consym){
-            errorparser(26,consym);
+            errorparser(26,consym); // there is an unfinished line, prompt the user to finish this line. Parser will move on to parse the connections block
         }
 	}
     else{
-        errorparser(0,consym);
+        errorparser(0,consym); // Devices block not found, continuing parsing the connections block if there is one
     }
+    //code to parse the connections block, exact same logic as above applies here
 	if (cursym == consym){
         connectionlist();
         if (cursym==closecurly){
@@ -43,6 +45,7 @@ bool parser::readin (void){
 	else{
         errorparser(1,monsym);
     }
+    //code to parse the monitor block, exact same logic as above applies here
     if(cursym == monsym){
         monitorlist();
         if (cursym==closecurly){
@@ -62,15 +65,15 @@ bool parser::readin (void){
         }
     }
     else{
-        errorparser(27);
+        errorparser(27); //Bad SYNTAX ERROR. PLEASE READ MENU.
     }
     if (errorsfound){
-        err->printerrornum();
+        err->printerrornum(); // call function to print number of errors
     }
-    return !errorsfound;
-
+    return !errorsfound; // return false if errors are found
 }
 
+// devicelist() parses the whole device block
 void parser::devicelist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
@@ -80,8 +83,10 @@ void parser::devicelist(void){
 		errorparser(3,closecurly); // no opencurly error
         return;
 	}
+	//parses allowed devices here
 	while (cursym==sclock || cursym==sswitch || cursym==sdtype || cursym==sxor || cursym==sand || cursym==snand || cursym==sor || cursym==snor){
-        device();
+        device(); // calls device function to parse each device in the devicelist
+        // if statement to check if a statement is ended correctly with a semicol
 		if (cursym==semicol){
 			smz->getsymbol(cursym,curid,curnum);
 		}
@@ -89,12 +94,14 @@ void parser::devicelist(void){
             errorparser(23,closecurly); // EXPECTED ';'
             return;
         }
+        // checks for the end of the device list
         if (cursym==closecurly){
         return;
         }
 	}
+	// checks for the case whereby no device is defined in the device block.
     if (cursym==closecurly){
-    //Should throw a warning. device class is blank
+        cout<<"!! Warning: Devices block is blank"<<endl;
     return;
 	}
 	else{
@@ -104,20 +111,22 @@ void parser::devicelist(void){
 }
 
 // device() will parse a device specification statement and return the semicol behind
-
 void parser::device(void){
+    // each if block here checks for a certain device and parses it accordingly
 	if (cursym==sclock){
-        devtypetemp=dmz->devkind(curid);
+        devtypetemp=dmz->devkind(curid); //check the kind of device and store it in devtypetemp, this will be used for making the device in the devices class later on
 		smz->getsymbol(cursym,curid,curnum);
+		// this if statement checks if the devicename is already being used
 		if (netz->finddevice(curid)==NULL){
+            // this if statement checks if the devicename is the right syntax
             if (cursym==namesym){
                 devnametemp=curid;
-                //this is the place where you get the user defined name and parse it into the network class
                 smz->getsymbol(cursym,curid,curnum);
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum>0 && err->gettotalerrornum()==0){
+                        //checks if clock period is valid
+                        if (curnum>0){
                             dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// Initialising clock and setting its frequency to the integer specified.
                             smz->getsymbol(cursym,curid,curnum);
                             return;
@@ -156,13 +165,14 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
-                devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
+                devnametemp=curid;
                 smz->getsymbol(cursym,curid,curnum);
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
+                        // check if switch is defined to be on(1) or off(0)
                         if (curnum==0||curnum==1){
-                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);//parse 0/1 into device class
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);//everything correct, make device
                             smz->getsymbol(cursym,curid,curnum);
                             return;
                         }
@@ -200,13 +210,13 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
-                devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
+                devnametemp=curid;
                 smz->getsymbol(cursym,curid,curnum);
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum<=16 && curnum>1){
-                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                        if (curnum<=16 && curnum>=1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck); // everything okay, make and gate
                             smz->getsymbol(cursym,curid,curnum);
                             return;
                         }
@@ -240,15 +250,14 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
-                devnametemp=curid;//this is the place where you get the user defined name and parse it into the network class
+                devnametemp=curid;
                 smz->getsymbol(cursym,curid,curnum);
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum<=16 && curnum>1){
-                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                        if (curnum<=16 && curnum>=1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck); // everything okay, make nand gate
                             smz->getsymbol(cursym,curid,curnum);
-                            //parse num into network class
                             return;
                         }
                         else {
@@ -281,16 +290,14 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
-            devnametemp=curid;
-                //this is the place where you get the user defined name and parse it into the network class
+                devnametemp=curid;
                 smz->getsymbol(cursym,curid,curnum);
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum<=16 && curnum>1){
-                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                        if (curnum<=16 && curnum>=1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// everything okay, make or gate
                             smz->getsymbol(cursym,curid,curnum);
-                            //parse num into network class
                             return;
                         }
                         else{
@@ -323,16 +330,14 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
-            devnametemp=curid;
-                //this is the place where you get the user defined name and parse it into the network class
+                devnametemp=curid;
                 smz->getsymbol(cursym,curid,curnum);
                 if (cursym==colon){
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        if (curnum<=16 && curnum>1){
-                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);
+                        if (curnum<=16 && curnum>=1){
+                            dmz->makedevice(devtypetemp,devnametemp,curnum,okcheck);// everything okay, make nor gate
                             smz->getsymbol(cursym,curid,curnum);
-                            //parse num into network class#
                             return;
                         }
                         else {
@@ -365,9 +370,8 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
-                dmz->makedevice(devtypetemp,curid,curnum,okcheck);
+                dmz->makedevice(devtypetemp,curid,curnum,okcheck); // everything okay, make dtype
                 smz->getsymbol(cursym,curid,curnum);
-                //this is the place where you get the user defined name and parse it into the network class
                 return;
             }
             else if (cursym==numsym){
@@ -389,9 +393,8 @@ void parser::device(void){
 		smz->getsymbol(cursym,curid,curnum);
 		if (netz->finddevice(curid)==NULL){
             if (cursym==namesym){
-                dmz->makedevice(devtypetemp,curid,curnum,okcheck);
+                dmz->makedevice(devtypetemp,curid,curnum,okcheck);// everything okay, make xor gate
                 smz->getsymbol(cursym,curid,curnum);
-                //this is the place where you get the user defined name and parse it into the network class
                 return;
             }
             else if (cursym==numsym){
@@ -414,11 +417,16 @@ void parser::device(void){
 	}
 }
 
+// connectionlist() parses the whole connections block
 void parser::connectionlist(void){
 	smz->getsymbol(cursym,curid,curnum);
 	if (cursym==opencurly){
 		smz->getsymbol(cursym,curid,curnum);
-	}else errorparser(3,closecurly); // no opencurly error
+	}
+	else{
+        errorparser(3,closecurly); // no opencurly error
+    }
+    //this while loop parses connections until } is encountered
 	while (cursym==namesym){
 		connection();
 		if (cursym==semicol) {
@@ -432,7 +440,7 @@ void parser::connectionlist(void){
         }
 	}
     if (cursym==closecurly){
-    //Should throw a warning. monitor class is blank
+        cout<<"!! Warning: Connections block is blank"<<endl;
     return;
 	}
 	else{
@@ -440,12 +448,15 @@ void parser::connectionlist(void){
     }
 }
 
+// connection() parses each connection specified by the user
 void parser::connection(void){
 	if (cursym==namesym){
+        //check if device has been defined earlier on
 		if (netz->finddevice(curid)!=NULL){
 			devnametemp=curid;// parser will connect this device to the network class here
 			outputnametemp=blankname;
-			if (netz->finddevice(curid)->kind==7){ // check if device is a dtype
+			// check if device is a dtype because parsing logic for a dtype is different from the rest
+			if (netz->finddevice(curid)->kind==7){
                 smz->getsymbol(cursym,curid,curnum);
                 if (cursym==stop){
                     smz->getsymbol(cursym,curid,curnum);
@@ -638,7 +649,7 @@ void parser::monitorlist(void){
         }
 	}
 	if (cursym==closecurly){
-        //Should throw a warning. monitor class is blank
+        cout<<"!! Warning: Monitor block is blank"<<endl;
         return;
 	}
 	else{

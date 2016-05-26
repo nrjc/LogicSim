@@ -1,3 +1,4 @@
+// Circuit with Nand gates
 DEVICES{
 SWITCH SW1:0;
 SWITCH SW2:0;
@@ -16,3 +17,5 @@ MONITORS{
 G1;
 G2;
 }
+
+// end of code
