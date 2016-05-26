@@ -31,41 +31,46 @@ void printtable(int i,error error);
 
 vector<int> emptylines;
 vector<int> emptycodes;
-errorframe test1("./test/test1",0,emptylines,emptycodes);
-errorframe test2("./test/test2",0,emptylines,emptycodes);
-errorframe test3("./test/test3",0,emptylines,emptycodes);
-errorframe test4("./test/test4",0,emptylines,emptycodes);
-errorframe test5("./test/test5",0,emptylines,emptycodes);
-vector<int> line6l={4};
-vector<int> line6c={18};
-errorframe test6("./test/test6",1,line6l,line6c);
+errorframe test1("./test/test1.ge",0,emptylines,emptycodes);
+errorframe test2("./test/test2.ge",0,emptylines,emptycodes);
+errorframe test3("./test/test3.ge",0,emptylines,emptycodes);
+errorframe test4("./test/test4.ge",0,emptylines,emptycodes);
+errorframe test5("./test/test5.ge",0,emptylines,emptycodes);
+vector<int> line6l={4,15};
+vector<int> line6c={18,20};
+errorframe test6("./test/test6.ge",2,line6l,line6c);
 vector<int> line7l={14};
 vector<int> line7c={20};
-errorframe test7("./test/test7",1,line7l,line7c);
+errorframe test7("./test/test7.ge",1,line7l,line7c);
 vector<int> line8l={8};
 vector<int> line8c={15};
-errorframe test8("./test/test8",1,line8l,line8c);
-vector<int> line9l={21};
-vector<int> line9c={14};
-errorframe test9("./test/test9",1,line9l,line9c);
-vector<int> line10l={24,25};
-vector<int> line10c={11,11};
-errorframe test10("./test/test10",1,line10l,line10c);
-vector<int> line11l={24};
-vector<int> line11c={11};
-errorframe test11("./test/test11",1,line11l,line11c);
-vector<int> line12l={3};
-vector<int> line12c={7};
-errorframe test12("./test/test12",1,line12l,line12c);
-vector<int> line13l={9};
-vector<int> line13c={24};
-errorframe test13("./test/test13",1,line13l,line13c);
+errorframe test8("./test/test8.ge",1,line8l,line8c);
+vector<int> line9l={21,37};
+vector<int> line9c={14,20};
+errorframe test9("./test/test9.ge",2,line9l,line9c);
+vector<int> line10l={24,25,38};
+vector<int> line10c={11,11,20};
+errorframe test10("./test/test10.ge",3,line10l,line10c);
+vector<int> line11l={24,38};
+vector<int> line11c={11,20};
+errorframe test11("./test/test11.ge",2,line11l,line11c);
+vector<int> line12l={3,8,14};
+vector<int> line12c={7,25,20};
+errorframe test12("./test/test12.ge",3,line12l,line12c);
+vector<int> line13l={9,23,31,37};
+vector<int> line13c={24,14,14,20};
+errorframe test13("./test/test13.ge",4,line13l,line13c);
+errorframe sample1("./test/sample1.ge",0,emptylines,emptycodes);
+errorframe sample2("./test/sample2.ge",0,emptylines,emptycodes);
+errorframe sample3("./test/sample3.ge",0,emptylines,emptycodes);
+errorframe sample4("./test/sample4.ge",0,emptylines,emptycodes);
 
-errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9,test10,test11,test12,test13};
-int testnumber=13;
+errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9,test10,test11,test12,test13,sample1,sample2,sample3,sample4};
+int testnumber=17;
 
 
 int main(int argc, char **argv)
+//This Script tests each of the files defined above, to check if the error lines and error codes agree with what actually happens.
 {
   for (int i=0;i<testnumber;i++){
   names Nametable;
@@ -78,6 +83,7 @@ int main(int argc, char **argv)
   newdevice.debug(true);
 
   parser newparser(&newnetwork,&newdevice,&newmonitor,&newscanner,&newerror);
+  cout<<"----------------------"<<endl<<"TESTING CASE:: "<< filestotest[i].filename<<endl;
   newparser.readin();
   if(filestotest[i].errorcodes==newerror.geterrorcodevec()&&filestotest[i].errorlines==newerror.getlinenumvector()){
     cout<<"Test case:: "<< filestotest[i].filename << " conducted successfully!"<<endl;
@@ -86,7 +92,7 @@ int main(int argc, char **argv)
   cout<<"TEST CASE FAILURE: "<< filestotest[i].filename<<endl;
   cout<< "Expected:: " <<filestotest[i].expectederrors<< " Errors, got "<<newerror.gettotalerrornum()<<" errors."<<endl;
   printtable(i,newerror);
-  cout << " -------------------------"<<endl;
+  cout << "-------------------------"<<endl;
     }
 }
 

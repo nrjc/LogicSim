@@ -1,0 +1,22 @@
+// Implementing an AND gate from NOR gates
+
+DEVICES{
+SWITCH SW1:0;
+SWITCH SW2:0;
+NOR NOR1:2;
+NOR NOR2:2;
+NOR NOR3:2;
+}
+
+CONNECTIONS{
+SW1->NOR1.I1,NOR1.I2;
+SW2->NOR2.I1,NOR2.I2;
+NOR1->NOR3.I1;
+NOR2->NOR3.I2;
+}
+
+MONITORS{
+NOR3;
+} 
+
+// end of code

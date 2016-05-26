@@ -65,7 +65,6 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 				s=namesym; //not a keyword
 			}
 			else{
-				//Slap all these into names table????
 				punct=getpunct(&inf,curch, eofile);
 				switch(Namestore->cvtname(punct)){
 					case 34: s = colon; break;
@@ -112,7 +111,7 @@ int scanner::getnumber(ifstream *infp, char &curch, bool &eofile){
 void scanner::skipspaces(ifstream *infp,char &curch,bool &eofile){
   while (!eofile) {
 	if(curch=='\n'){
-        lastparsedline=(infp->tellg());//Ideally this should give the location of the line right after the error
+        lastparsedline=(infp->tellg());//Ideally this should give the location of the line right before the error
 		linenumber+=1;
 	}
     if (!isspace(curch)){
