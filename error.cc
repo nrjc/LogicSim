@@ -32,11 +32,12 @@ error::error(scanner* scanner_mod){
 	this->writeerror("UNIDENTIFIED DEVICE TYPE"); //19
 	this->writeerror("NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT"); //20
 	this->writeerror("EXPECTED '.'. NEED TO SPECIFY OUTPUT FOR DTYPE"); //21
-	this->writeerror("EXPECTED '->'"); //22
+	this->writeerror("EXPECTED '->' OR INVALID OUTPUT"); //22
 	this->writeerror("EXPECTED ';'"); //23
 	this->writeerror("CLOCK PERIOD MUST BE > 0"); //24
 	this->writeerror("EXPECTED '}' OR A VALID DEVICENAME"); //25
 	this->writeerror("UNFINISHED LINE HERE"); //26
+	this->writeerror("SYNTAX ERROR. PLEASE READ MENU."); //27
 
 }
 

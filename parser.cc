@@ -27,14 +27,10 @@ bool parser::readin (void){
         else if (cursym!=consym){
             errorparser(26,consym);
         }
-        else{
-            //cursym is consym, move on to parse the connection block
-        }
 	}
     else{
         errorparser(0,consym);
-        return !errorsfound;
-        }
+    }
 	if (cursym == consym){
         connectionlist();
         if (cursym==closecurly){
@@ -43,14 +39,10 @@ bool parser::readin (void){
         else if (cursym!=monsym){
             errorparser(26,monsym);
         }
-        else{
-            //cursym is monsym, move on to parse the monitor block
-        }
 	}
 	else{
         errorparser(1,monsym);
-        return !errorsfound;
-        }
+    }
     if(cursym == monsym){
         monitorlist();
         if (cursym==closecurly){
@@ -59,27 +51,24 @@ bool parser::readin (void){
         else if (cursym!=eofsym){
             errorparser(26,eofsym);
         }
-        else{
-            //cursym is eofsym
-        }
 	}
 	else{
         errorparser(2,eofsym);
-        return !errorsfound;
-        }
+    }
 	if (cursym==eofsym){
         netz->checknetwork(allinputsconnected);
-        if (allinputsconnected==true){
-            return !errorsfound;
-        }
-        else{
+        if (allinputsconnected==false){
             errorparser(20); //NOT ALL INPUTS ARE CONNECTED TO AN OUTPUT
-            return !errorsfound;
         }
     }
     else{
-        return !errorsfound;
+        errorparser(27);
     }
+    if (errorsfound){
+        err->printerrornum();
+    }
+    return !errorsfound;
+
 }
 
 void parser::devicelist(void){
@@ -498,7 +487,9 @@ void parser::connection(void){
 									if (cursym==inputsym){
                                         if (curnum<=noofinputs && curnum>=1){
                                             if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
-                                                netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
+                                                if (!errorsfound){
+                                                    netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);
+                                                }
                                                 smz->getsymbol(cursym,curid,curnum);
                                             }
                                             else{
@@ -533,7 +524,9 @@ void parser::connection(void){
 
                                     if (cursym==idata){
                                         if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
-                                            netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
+                                            if (!errorsfound){
+                                                netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse data input to network class
+                                            }
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
                                         else{
@@ -543,7 +536,9 @@ void parser::connection(void){
                                     }
                                     else if (cursym==iclk){
                                         if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
-                                            netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clk input to network class
+                                            if (!errorsfound){
+                                                netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clk input to network class
+                                            }
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
                                         else{
@@ -553,7 +548,9 @@ void parser::connection(void){
                                     }
                                     else if (cursym==iset){
                                         if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
-                                            netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse set input to network class
+                                            if (!errorsfound){
+                                                netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse set input to network class
+                                            }
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
                                         else{
@@ -563,7 +560,9 @@ void parser::connection(void){
                                     }
                                     else if (cursym==iclear){
                                         if (netz->findinput(netz->finddevice(devnamtempinp),curid)->connect==0){
-                                            netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
+                                            if (!errorsfound){
+                                                netz->makeconnection(devnamtempinp,curid,devnametemp,outputnametemp,okcheck);// parse clear input to network class
+                                            }
                                             smz->getsymbol(cursym,curid,curnum);
                                         }
                                         else{
@@ -597,11 +596,11 @@ void parser::connection(void){
 				if (cursym==semicol){
                     return;
 				}else{
-                    errorparser(23,semicol);// EXPECTED '->'
+                    errorparser(23,semicol);// EXPECTED ';'
                     return;
 				}
 			}else{
-                errorparser(22,semicol);//EXPECTED ';'
+                errorparser(22,semicol);//EXPECTED '->'
                 return;
 			}
 		}
