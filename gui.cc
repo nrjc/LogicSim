@@ -380,10 +380,12 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 75);
   //cmddisp = new wxTextCtrl();
   cmddisp = new wxTextCtrl(this, -1, wxString(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY|wxTE_BESTWRAP);
-  cmdOutputRedirect = new wxStreamToTextRedirector(cmddisp);
-
+  wxTextAttr myTextStyle = cmddisp->GetDefaultStyle();
+  myTextStyle.SetFontFamily(wxFONTFAMILY_TELETYPE);
+  cmddisp->SetDefaultStyle(myTextStyle);
   const wxSize MyMinCmdSize = wxSize(20, 75);
   cmddisp->SetMinSize(MyMinCmdSize);
+  cmdOutputRedirect = new wxStreamToTextRedirector(cmddisp);
 
   const wxSize MyCanvasSize = wxSize(size.GetWidth()-200, size.GetHeight()-173);
   canvas = new MyGLCanvas(this, wxID_ANY, monitor_mod, names_mod, wxDefaultPosition, MyCanvasSize);
