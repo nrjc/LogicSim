@@ -198,7 +198,7 @@ void MyGLCanvas::OnSize(wxSizeEvent& event){
 void MyGLCanvas::OnMouse(wxMouseEvent& event){
   // Event handler for mouse events inside the GL canvas
 
-  wxString text;
+  wxString text="";
   int w, h;
   static int last_x, last_y;
 
@@ -242,7 +242,7 @@ void MyGLCanvas::OnMouse(wxMouseEvent& event){
     text.Printf("Positive mouse wheel rotation, zoom now %f", zoom);
   }
 
-  if (event.GetWheelRotation() || event.Dragging()||event.ButtonDown()) Render(text);
+  if (event.GetWheelRotation() || event.Dragging()||event.ButtonDown()||event.Entering()||event.Leaving()) Render(text);
 }
 
 void MyGLCanvas::DrawAxes(float x_low, float x_spacing, int cycles, float y_low, float y_high){
@@ -250,7 +250,7 @@ void MyGLCanvas::DrawAxes(float x_low, float x_spacing, int cycles, float y_low,
 
 
   glLineWidth(1);// Set correct line width.
-  glColor3f(0.8, 0.8, 0.8);
+  glColor3f(0.9, 0.9, 0.9);
   glBegin(GL_LINE_STRIP);
   glVertex2f(x_low, y_high);
   glVertex2f(x_low+x_spacing*cycles+10, y_high);
@@ -287,9 +287,9 @@ void MyGLCanvas::NameAxes(float x_low, float x_spacing, int cycles, float y_low,
   // Axes text color
   glColor3f(0.0, 0.0, 0.0);
   // Print y values
-  glRasterPos2f((20-pan_x)/zoom, y_low+st_height);
+  glRasterPos2f((20-pan_x)/zoom, y_low+st_height+2/zoom);
   for (int i = 0; i < highstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, highstr[i]);
-  glRasterPos2f((20-pan_x)/zoom, y_low-5/zoom);
+  glRasterPos2f((20-pan_x)/zoom, y_low+1/zoom);
   for (int i = 0; i < lowstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, lowstr[i]);
 
   // Print cycle numbers (x values)
@@ -310,8 +310,8 @@ void MyGLCanvas::FixPan(){
   GetClientSize(&w, &h);
   if (disp_h<h) disp_h=h;
   if (disp_w<w) disp_w=w;
-  if (pan_y<h) pan_y=h;
   if (pan_y>disp_h) pan_y=disp_h;
+  if (pan_y<h) pan_y=h;
   if (pan_x<w-disp_w) pan_x = w-disp_w;
   if (pan_x>0) pan_x = 0;
 
@@ -326,6 +326,14 @@ void MyGLCanvas::FixZoom(){
   pan_y=pan_y*zoom/prevzoom;
   pan_x=pan_x*zoom/prevzoom;
   prevzoom=zoom;
+}
+
+void MyGLCanvas::Reset(int cycles){
+  pan_y=0;
+  pan_x=0;
+  FixPan();
+  init=false;
+  Render("",cycles);
 }
 
 // MyFrame ///////////////////////////////////////////////////////////////////////////////////////
@@ -377,7 +385,7 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   const wxSize MyMinCmdSize = wxSize(20, 75);
   cmddisp->SetMinSize(MyMinCmdSize);
 
-  const wxSize MyCanvasSize = wxSize(size.GetWidth()-200, size.GetHeight()-150);
+  const wxSize MyCanvasSize = wxSize(size.GetWidth()-200, size.GetHeight()-173);
   canvas = new MyGLCanvas(this, wxID_ANY, monitor_mod, names_mod, wxDefaultPosition, MyCanvasSize);
 
   monman = new MyMonManager(nmz, netz, dmz, mmz, &cyclescompleted, monctrl, cmddisp, canvas);
@@ -442,8 +450,10 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
 }
 
 void MyFrame::ResetContent(){
+  cmddisp->Clear();
   monman->Reset();
-  canvas->Render("Canvas Cleared", 0);
+  canvas->Reset(0);
+  Tell("Plot area reset");
   SetSwitchList();
   SetDeviceList();
 
@@ -460,7 +470,7 @@ void MyFrame::OnExit(wxCommandEvent &event){
 void MyFrame::OnAbout(wxCommandEvent &event){
   // Event handler for the about menu item
 
-  wxMessageDialog about(this, "Software project 2016 team 6:\n Names and Scanner classes:\n\t Nickolas Capel.\n Parser class: \n\t Yu Xiang Lou,\n\t Nicholas Capel.\n GUI: \n\t Kamile Rastene.", "About Logsim", wxICON_INFORMATION | wxOK);
+  wxMessageDialog about(this, "Software project 2016 team 6:\n Names and Scanner classes:\n\t Nicholas Capel.\n Parser class: \n\t Yu Xiang Lou,\n\t Nicholas Capel.\n GUI: \n\t Kamile Rastene.", "About Logsim", wxICON_INFORMATION | wxOK);
   about.ShowModal();
 }
 
@@ -473,14 +483,18 @@ void MyFrame::OnOpen(wxCommandEvent &event){
 void MyFrame::OnButtonRun(wxCommandEvent &event){
   // Event handler for the push button
   monman->ResetMonitors();
+  Tell("Running simulation for "+to_string(spin->GetValue())+" cycles");
   monman->RunNetwork(spin->GetValue());
-  canvas->Render("Run button pressed", cyclescompleted);
+  canvas->Reset(cyclescompleted);
 }
 
 void MyFrame::OnButtonCont(wxCommandEvent &event){
   // Event handler for the push button
-  if (monman->RunNetwork(spin->GetValue()))
-    canvas->Render("Continue button pressed", cyclescompleted);
+  int c = spin->GetValue();
+  Tell("Continuing simulation for "+to_string(c)+" cycles");
+  if (monman->RunNetwork(spin->GetValue())){
+    canvas->Render("",cyclescompleted);
+  }
 }
 
 void MyFrame::OnButtonSetMon(wxCommandEvent &event){
@@ -630,7 +644,6 @@ MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devi
   montextctrl = mon_ctrl;
   cmddisp = cmd_disp;
   canvas = mycanvas;
-
   Reset();
 
 }
@@ -652,7 +665,6 @@ void MyMonManager::Reset(){
   while( d != NULL){
     dev = d->id;
     devstr = nmz->getnamefromtable(dev);
-    //cout<<devstr<< " id "<< dev<<endl;//////////////COUT//////////////
 
     o = d->olist;
     while(o != NULL)
@@ -676,8 +688,9 @@ void MyMonManager::Reset(){
     }
     d=d->next;
   }
-  // Sort the allops list
+  // Sort the allops and switches lists
   sort(allops.begin(), allops.end());
+  sort(switches.begin(), switches.end());
 
   // Assemble list of current monitor points
 //cout<<" Assembling monitored list "<<endl;
@@ -703,11 +716,9 @@ void MyMonManager::Reset(){
   // speed up the process.
   for(int i=0; i<allops.size();i++){
     bool found=false;
-    //cout<<"Entered loop "<< allops[i].fullstr<<endl;
     for(int j=0; j<monitored.size(); j++){
       if (allops[i]==monitored[j]){
         found=true;
-        //Tell("found monitor "+allops[i].fullstr);
         break;
       }
       else{
@@ -719,6 +730,7 @@ void MyMonManager::Reset(){
   sort(unmonitored.begin(), unmonitored.end());
 
   ResetMonitors();
+  
 }
 
 wxArrayString MyMonManager::GetDevices(){
@@ -777,8 +789,8 @@ bool MyMonManager::AddMonitor(int m){
   unmonitored.erase(unmonitored.begin()+m);
 
   ResetMonitors();
-  Tell("Canvas Cleared");
-  canvas->Render("", 0);
+  Tell("Plot area Cleared");
+  canvas->Reset();
   return true;
 }
 
@@ -792,8 +804,8 @@ bool MyMonManager::RemoveMonitor(int m){
   monitored.erase(monitored.begin()+m);
 
   ResetMonitors();
-  Tell("Canvas Cleared");
-  canvas->Render("", 0);
+  Tell("Drawing area Cleared");
+  canvas->Reset(0);
   return true;
 }
 
@@ -802,6 +814,7 @@ bool MyMonManager::RunNetwork(int ncycles){
 
   bool ok = true;
   if (*cyclescompletedp==maxcycles){
+  //for (int i=0; i<20; i++)
     Tell("Error: cycles limit ("+to_string(maxcycles)+") exceeded");
     return false;
   }
@@ -820,7 +833,7 @@ bool MyMonManager::RunNetwork(int ncycles){
       Tell("Error: network is oscillating");
   }
   if (ok) IncrementCycles(ncycles);
-  else {ResetMonitors(); canvas->Render("Canvas Cleared", 0);}
+  else {ResetMonitors(); Tell("Plot area cleared"); canvas->Reset(0);}
   return ok;
 }
 

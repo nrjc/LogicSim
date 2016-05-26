@@ -52,7 +52,7 @@ struct opProps{
     if (opstr !="") fullstr+="."+opstr;
   }
   // from http://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
-  bool operator > (const opProps& pr) const{
+  /*bool operator > (const opProps& pr) const{
     if (dev==pr.dev)
         return(op>pr.op);
     else
@@ -66,7 +66,29 @@ struct opProps{
   }
   bool operator == (const opProps& pr) const{
     return(dev==pr.dev&&op==pr.op);
+  }*/
+  bool operator > (const opProps& pr) const{
+    if (fullstr !=""&&pr.fullstr!="") return (fullstr>pr.fullstr);
+    else
+    if (dev==pr.dev)
+        return(op>pr.op);
+    else
+        return (dev > pr.dev);
   }
+  bool operator < (const opProps& pr) const{
+    if (fullstr !=""&&pr.fullstr!="") return (fullstr<pr.fullstr);
+    else
+    if (dev==pr.dev)
+      return(op<pr.op);
+    else
+      return (dev < pr.dev);
+  }
+  bool operator == (const opProps& pr) const{
+    if (fullstr !=""&&pr.fullstr!="") return (fullstr==pr.fullstr);
+    else
+    return(dev==pr.dev&&op==pr.op);
+  }
+
 };
 
 struct switchitem{
@@ -80,9 +102,16 @@ struct switchitem{
     if(signlev==high)check=true;
     devstr=dstring;
   }
-
+  bool operator > (const switchitem& pr) const{
+    return (devstr>pr.devstr);
+  }
+  bool operator < (const switchitem& pr) const{
+    return (devstr<pr.devstr);
+  }
+  bool operator == (const switchitem& pr) const{
+    return (devstr==pr.devstr);
+  }
 };
-
 
 class MyFrame: public wxFrame{
 
@@ -143,6 +172,7 @@ class MyGLCanvas: public wxGLCanvas{
 	     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0,
 	     const wxString& name = "MyGLCanvas", const wxPalette &palette=wxNullPalette); // constructor
   void Render(wxString example_text = "", int cycles = -1, bool spinchange = false); // function to draw canvas contents
+  void Reset(int cycles=-1);		// Called on resetting moitors
  private:
   wxGLContext *context;              // OpenGL rendering context
   bool init;                         // has the OpenGL context been initialised?
