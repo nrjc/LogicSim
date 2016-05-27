@@ -37,7 +37,8 @@ opencurly, // { 24
 closecurly, // } 25
 arrow,  //  -> 26
 badsym, // symbol cannot be identified 27
-eofsym // End of file symbol 28
+eofsym, // End of file symbol 28
+siggensym //Signal Generator Symbol 29
 } symbol;
 
 class scanner
