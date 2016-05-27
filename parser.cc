@@ -225,6 +225,10 @@ void parser::device(void){
                             return;
                         }
                     }
+                    else{
+                        errorparser(28,semicol);
+                        return;
+                    }
                 }
                 else{
                      errorparser(5,semicol);// no colon error
@@ -264,6 +268,10 @@ void parser::device(void){
                             errorparser(9,semicol); // number of inputs must be smaller than 17 and greater than 0 error
                             return;
                         }
+                    }
+                    else{
+                        errorparser(28,semicol);
+                        return;
                     }
                 }
                 else{
@@ -305,6 +313,10 @@ void parser::device(void){
                             return;
                         }
                     }
+                    else{
+                        errorparser(28,semicol);
+                        return;
+                    }
                 }
                 else{
                     errorparser(5,semicol); // no colon error
@@ -344,6 +356,10 @@ void parser::device(void){
                             errorparser(9,semicol); // number of inputs must be smaller than 17 and greater than 0 error
                             return;
                         }
+                    }
+                    else{
+                        errorparser(28,semicol);
+                        return;
                     }
                 }
                 else{
@@ -518,7 +534,7 @@ void parser::connection(void){
                                                 }// PREEXISTING CONNECTION FOUND. CANNOT CONNECT 2 OUTPUTS TO THE SAME INPUT
                                             }
                                         else{
-                                            errorparser(15,semicol); // current number exceeded 16 or is smaller than 1 error
+                                            errorparser(15,semicol); // too many input
                                             return;
                                         }
 									}
