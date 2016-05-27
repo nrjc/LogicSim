@@ -37,7 +37,8 @@ error::error(scanner* scanner_mod){
 	this->writeerror("CLOCK PERIOD MUST BE > 0"); //24
 	this->writeerror("EXPECTED '}' OR A VALID DEVICENAME"); //25
 	this->writeerror("UNFINISHED LINE HERE"); //26
-	this->writeerror("SYNTAX ERROR. PLEASE READ MENU."); //27
+	this->writeerror("SYNTAX ERROR. PLEASE READ USER MANUAL."); //27
+	this->writeerror("NUMBER OF INPUT MUST BE I1 TO I16"); //28
 
 }
 

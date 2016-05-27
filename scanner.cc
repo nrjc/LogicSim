@@ -62,6 +62,7 @@ void scanner::getsymbol(symbol& s, name& id, int& num)
 				if(id==31) s=iclear; else
 				if(id==32) s=oq; else
 				if(id==33) s=oqbar; else
+				if(id==42) s=siggensym; else
 				s=namesym; //not a keyword
 			}
 			else{
@@ -143,6 +144,7 @@ void scanner::skipcomment(ifstream *infp,char &curch,bool &eofile){
 			return;
 		}
 	}
+	cout << "WARNING:: UNCLOSED COMMENT BLOCK DETECTED!" <<endl;
 	return;
 }
 
