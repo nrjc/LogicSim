@@ -86,23 +86,48 @@ outplink network::findoutput (devlink dev, name id)
 void network::adddevice (devicekind dkind, name did, devlink& dev)
 {
   dev = new devicerec;
+  devlink d;
+  devlink prev=NULL;
   dev->id = did;
   dev->kind = dkind;
   dev->ilist = NULL;
   dev->olist = NULL;
-  if (dkind != aclock||dkind!=siggen) {        // device goes at head of list
-    if (lastdev == NULL)
+  if (dkind == dtype) {        // dtypes should be at the head of the list
+    if (lastdev == NULL){
 	lastdev = dev;
+	}
     dev->next = firstdev;
     firstdev = dev;
-  } else {                      // aclock and siggen devices must go last
+  }
+  else if (dkind==aclock||dkind==siggen) {        // aclock and siggen devices must go last
     dev->next = NULL;
     if (lastdev == NULL) {
       firstdev = dev;
       lastdev = dev;
-    } else {
+    }
+    else {
       lastdev->next = dev;
       lastdev = dev;
+    }
+  }
+  else{
+    if (lastdev == NULL) {
+      firstdev = dev;
+      lastdev = dev;
+      dev->next=NULL;
+    }
+    else {
+        for(d=firstdev;(d!=NULL&&d->kind==dtype);d=d->next){
+            prev=d; //NOT SURE WHAT HAPPENS ON EDGE CASE??
+        }
+        if(prev!=NULL){
+            prev->next = dev;
+            dev->next = d;
+        }else{
+            dev->next = firstdev;
+            firstdev = dev;
+        }
+
     }
   }
 }
