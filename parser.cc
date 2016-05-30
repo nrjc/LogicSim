@@ -84,7 +84,7 @@ void parser::devicelist(void){
         return;
 	}
 	//parses allowed devices here
-	while (cursym==sclock || cursym==sswitch || cursym==sdtype || cursym==sxor || cursym==sand || cursym==snand || cursym==sor || cursym==snor){
+	while (cursym==sclock || cursym==sswitch || cursym==sdtype || cursym==sxor || cursym==sand || cursym==snand || cursym==sor || cursym==snor ||cursym==siggensym){
         device(); // calls device function to parse each device in the devicelist
         // if statement to check if a statement is ended correctly with a semicol
 		if (cursym==semicol){
@@ -426,6 +426,69 @@ void parser::device(void){
             errorparser(18,semicol); // DEVICENAME IS ALREADY BEING USED
             return;
         }
+	}
+	else if (cursym==siggensym){
+        devtypetemp=dmz->devkind(curid); //check the kind of device and store it in devtypetemp, this will be used for making the device in the devices class later on
+		smz->getsymbol(cursym,curid,curnum);
+		// this if statement checks if the devicename is already being used
+		if (netz->finddevice(curid)==NULL){
+            // this if statement checks if the devicename is the right syntax
+            if (cursym==namesym){
+                devnametemp=curid;
+                smz->getsymbol(cursym,curid,curnum);
+                if (cursym==colon){
+                    sigsequence signalsequenceinput;
+                    smz->getsymbol(cursym,curid,curnum);
+                    if (cursym==numsym){
+                        //checks if clock period is valid
+                        if (curnum==0||curnum==1){
+                            signalsequenceinput.push_back(curnum);
+                            smz->getsymbol(cursym,curid,curnum);
+                            while (cursym==comma){
+                                smz->getsymbol(cursym,curid,curnum);
+                                if (cursym==numsym && (curnum==0||curnum==1)){
+                                    signalsequenceinput.push_back(curnum);
+                                }else{
+                                    errorparser(-1,semicol);// EXPECTED 0 or 1
+                                    return;
+                                }
+                                smz->getsymbol(cursym,curid,curnum);
+                            }
+                            dmz->makesiggen(devnametemp,signalsequenceinput);
+                            return;
+
+                        }
+                        else{
+                            errorparser(-1,semicol);// THE CLOCK CAN ONLY THROW A SEQUENCE OF ONES AND ZEROS.
+                            return;
+                        }
+                    }
+                    else {
+                        errorparser(4,semicol); // num expected error
+                        return;
+                    }
+                }
+                else{
+                    errorparser(5,semicol);// no colon error
+                    return;
+                }
+            }
+            else if (cursym==numsym){
+                errorparser(6,semicol); // devicename must not start with a number error
+                return;
+            }
+            else {
+                errorparser(7,semicol); // devicename must coincide with a keyword error
+                return;
+            }
+		}
+		else{
+            errorparser(18,semicol); // DEVICENAME IS ALREADY BEING USED
+            return;
+        }
+
+
+
 	}
 	else {
 		errorparser(19,semicol); // UNIDENTIFIED DEVICE TYPE
