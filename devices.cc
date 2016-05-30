@@ -156,6 +156,8 @@ void devices::makedtype (name id)
   netz->addinput (d, clrpin);
   netz->addoutput (d, qpin);
   netz->addoutput (d, qbarpin);
+  d->counter=0;
+  d->hold=false;
   d->memory = low;
 }
 
@@ -320,12 +322,27 @@ void devices::execdtype (devlink d)
   i = netz->findinput (d, setpin);  setinput  = i->connect->sig;
   qout = netz->findoutput (d, qpin);
   qbarout = netz->findoutput (d, qbarpin);
-  if (clkinput == rising){
+  if (clkinput == rising && d->hold==false){
     if (datainput==high||datainput==falling){
         d->memory=high;
     }
     else if(datainput==low||datainput==rising){
         d->memory=low;
+    }
+    d->swstate=datainput;
+    d->hold=true;
+    (d->counter)++;
+  }
+  else if (d->hold==true){
+    if (datainput!=d->swstate){
+    d->memory=(rand()%2 ? high : low);
+    cout<<"Indeterminate case"<<endl;
+    }
+    d->swstate=datainput;
+    (d->counter)++;
+    if (d->counter>=3){
+    d->hold=false;
+    d->counter=0;
     }
   }
   if (setinput == high)
