@@ -328,7 +328,7 @@ void devices::execdtype (devlink d)
     if (datainput==high||datainput==falling){
         d->memory=high;
     }
-    else{
+    else if(datainput==low||datainput==rising){
         d->memory=low;
     }
   }
