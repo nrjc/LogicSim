@@ -10,6 +10,7 @@
 #include "network.h"
 #include "parser.h"
 #include "gui.h"
+#include "guiCanvas.h"
 #include "gui_constants.h"
 
 
@@ -115,7 +116,7 @@ class MyMonManager{
   void IncrementCycles(int n);		// Executes all actions involved in incrementing number of cycles on the gui
   void FlickSwitch(int n);
   void Reset();
-  void Tell(string message);  //Print message in the message box
+  void Tell(wxString message);  //Print message in the message box
 
  private:
   names *nmz;                             // pointer to names class

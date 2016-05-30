@@ -29,300 +29,7 @@
 
 using namespace std;
 
-
-// MyGLCanvas ////////////////////////////////////////////////////////////////////////////////////
-
-BEGIN_EVENT_TABLE(MyGLCanvas, wxGLCanvas)
-  EVT_SIZE(MyGLCanvas::OnSize)
-  EVT_PAINT(MyGLCanvas::OnPaint)
-  EVT_MOUSE_EVENTS(MyGLCanvas::OnMouse)
-END_EVENT_TABLE()
-
-int wxglcanvas_attrib_list[5] = {WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE, 16, 0};
-
-MyGLCanvas::MyGLCanvas(wxWindow *parent, wxWindowID id, monitor* monitor_mod, names* names_mod, const wxPoint& pos,
-		       const wxSize& size, long style, const wxString& name, const wxPalette& palette):
-  wxGLCanvas(parent, id, wxglcanvas_attrib_list, pos, size, style, name, palette){
-  // Constructor - initialises private variables
-
-  context = new wxGLContext(this);
-  mmz = monitor_mod;
-  nmz = names_mod;
-  init = false;
-  pan_x = 0;
-  pan_y = size.GetHeight();
-  disp_h = pan_y;
-  disp_w = size.GetWidth();
-  zoom = 1.0;
-  cyclesdisplayed = -1;
-}
-
-void MyGLCanvas::Render(wxString example_text, int cycles, bool spinchange){
-  // Draws canvas contents - the following example writes the string "example text" onto the canvas
-  // and draws a signal trace. The trace is artificial if the simulator has not yet been run.
-  // When the simulator is run, the number of cycles is passed as a parameter and the first monitor
-  // trace is displayed.
-
-  float y, st_width = 30, st_height = 30, low_y = 10, high_y = low_y+st_height;
-  static float start_x;
-  if (pan_x>-50/zoom) start_x=50/zoom;
-  float plt_height = high_y*2, curr_y;
-
-  unsigned int i, n=0;
-  asignal s;
-
-  int w, h;
-
-  GetClientSize(&w, &h);
-
-  if (cycles >= 0) cyclesdisplayed = cycles;
-
-  SetCurrent(*context);
-  if (!init ) {
-    InitGL();
-    init = true;
-  }
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  int mcount = mmz->moncount();
-
-  if ((cyclesdisplayed >= 0) && (mcount > 0)) { // draw the first monitor signal, get trace from monitor class
-
-    string monname;
-    name dev, outp;
-
-    for (n=0; n<mcount; n++){
-      // retrieve monitor name
-      mmz->getmonname(n, dev, outp);
-      monname = (string) nmz->getnamefromtable(dev);
-      if (outp!=-1) {monname+="."; monname+=(string) nmz->getnamefromtable(outp);}
-
-      curr_y = (-1.0)*(n+1)*plt_height;
-
-      // DRAW AXES
-      DrawAxes(start_x,  st_width,cyclesdisplayed, curr_y+low_y, curr_y+high_y);
-
-      glColor3f(0.0, 0.7, 0.0);
-      glLineWidth(2);
-      glBegin(GL_LINE_STRIP);
-      for (i=0; i<cyclesdisplayed; i++) {
-        if (mmz->getsignaltrace(n, i, s)) {
-
-          if (s==low) y = curr_y +low_y;
-          if (s==high) y = curr_y+high_y;
-          glVertex2f(start_x+st_width*(i), y);
-          glVertex2f(start_x+st_width*(i+1), y);
-        }
-      }
-      glEnd();
-      // Draw all text associated with the axes
-      NameAxes(start_x, st_width,cyclesdisplayed, curr_y+low_y, st_height, monname);
-    }
-
-    disp_h = (-curr_y+10)*zoom;
-    disp_w = (start_x+cyclesdisplayed*st_width+50)*zoom;
-    // if disp_w or disp_h have values lesser than canvas dimensions,
-    // they will be fixed with FixPan()
-    }
-  FixPan();
-
-  // Example of how to use GLUT to draw text on the canvas
-  /* disable canvas messages
-  glColor3f(0.5, 0.0, 0.5);
-  glRasterPos2f((100-pan_x)/zoom, (-pan_y+20)/zoom);
-  for (i = 0; i < example_text.Len(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, example_text[i]);
-  */
-  // We've been drawing to the back buffer, flush the graphics pipeline and swap the back buffer to the front
-  glFlush();
-  SwapBuffers();
-}
-
-void MyGLCanvas::InitGL(){
-  // Function to initialise the GL context
-
-  int w, h;
-
-  GetClientSize(&w, &h);
-  if (pan_y<h) pan_y=h;
-  if (pan_y>disp_h) pan_y=disp_h;
-  SetCurrent(*context);
-  glDrawBuffer(GL_BACK);
-
-  glClearColor(0.98, 0.98, 0.98, 0.0);
-
-  glViewport(0, 0, (GLint) w, (GLint) h);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0, w, 0, h, -1, 1);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glTranslated(pan_x, pan_y, 0.0);
-  glScaled(zoom, zoom, zoom);
-
-}
-
-void MyGLCanvas::OnPaint(wxPaintEvent& event){
-  // Event handler for when the canvas is exposed
-
-  int w, h;
-  wxString text;
-
-  wxPaintDC dc(this); // required for correct refreshing under MS windows
-  GetClientSize(&w, &h);
-  text.Printf("Canvas redrawn by OnPaint event handler, canvas size is %d by %d", w, h);
-  Render(text);
-}
-
-void MyGLCanvas::OnSize(wxSizeEvent& event){
-  // Event handler for when the canvas is resized
-  FixPan();
-  init = false; // this will force the viewport and projection matrices to be reconfigured on the next paint
-  //Render("test");
-}
-
-void MyGLCanvas::OnMouse(wxMouseEvent& event){
-  // Event handler for mouse events inside the GL canvas
-
-  wxString text="";
-  int w, h;
-  static int last_x, last_y;
-
-  GetClientSize(&w, &h);
-  if (event.ButtonDown()) {
-    // Required for dragging to work correctly.
-    last_x = event.m_x;
-    last_y = event.m_y;
-    text.Printf("Mouse button %d pressed at %d %d", event.GetButton(), event.m_x, h-event.m_y);
-  }
-
-  if (event.Dragging()) {
-    pan_x += event.m_x - last_x;
-    pan_y -= event.m_y - last_y;
-    FixPan();
-
-    last_x = event.m_x;
-    last_y = event.m_y;
-    init = false;
-    text.Printf("Mouse dragged to %d %d, pan now %d %d", event.m_x, h-event.m_y, pan_x, pan_y);
-  }
-
-  if (event.GetWheelRotation() < 0) {
-    /*pan_y -= (int)10*event.GetWheelRotation()/(event.GetWheelDelta());
-    if (pan_y<h) pan_y=h;
-    if (pan_y>disp_h) pan_y=disp_h;
-    */
-    zoom = zoom / (1.0 - (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
-    FixZoom();
-    init = false;
-    text.Printf("Negative mouse wheel rotation, zoom now %f", zoom);
-  }
-  if (event.GetWheelRotation() > 0) {
-    /*pan_y -= (int)10*event.GetWheelRotation()/(event.GetWheelDelta());
-    if (pan_y<h) pan_y=h;
-    if (pan_y>disp_h) pan_y=disp_h;
-    */
-    zoom = zoom * (1.0 + (double)event.GetWheelRotation()/(20*event.GetWheelDelta()));
-    FixZoom();
-    init = false;
-    text.Printf("Positive mouse wheel rotation, zoom now %f", zoom);
-  }
-
-  if (event.GetWheelRotation() || event.Dragging()||event.ButtonDown()||event.Entering()||event.Leaving()) Render(text);
-}
-
-void MyGLCanvas::DrawAxes(float x_low, float x_spacing, int cycles, float y_low, float y_high){
-// Draw axes for the trace givent the plot dimmensions
-
-
-  glLineWidth(1);// Set correct line width.
-  glColor3f(0.9, 0.9, 0.9);
-  glBegin(GL_LINE_STRIP);
-  glVertex2f(x_low, y_high);
-  glVertex2f(x_low+x_spacing*cycles+10, y_high);
-  glEnd();
-
-  // Draw vertical lines to mark cycle nyumbers
-  for (int i=1; i<cycles+1; i++)
-  {
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(x_low+x_spacing*i, y_high);
-    glVertex2f(x_low+x_spacing*i, y_low-1);
-    glEnd();
-  }
-
-  glColor3f(0.0, 0.0, 0.0);
-  //glColor3f(1.0, 1.0, 1.0);
-  glBegin(GL_LINE_STRIP);
-  glVertex2f(x_low, y_high+5);
-  glVertex2f(x_low, y_low-1);
-  glVertex2f(x_low+x_spacing*cycles+10, y_low-1);
-  glEnd();
-
-}
-
-void MyGLCanvas::NameAxes(float x_low, float x_spacing, int cycles, float y_low, float st_height, string monname){
-  // Put text labels on axes, given the plot dimensions
-  string lowstr = "low", highstr = "high";
-  string number;
-  // Print monitor name
-  glColor3f(0.0, 0.0, 1.0);
-  glRasterPos2f((30-pan_x)/zoom, y_low+1.5*st_height);
-  for (int i = 0; i < monname.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, monname[i]);
-
-  // Axes text color
-  glColor3f(0.0, 0.0, 0.0);
-  // Print y values
-  glRasterPos2f((20-pan_x)/zoom, y_low+st_height+2/zoom);
-  for (int i = 0; i < highstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, highstr[i]);
-  glRasterPos2f((20-pan_x)/zoom, y_low+1/zoom);
-  for (int i = 0; i < lowstr.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, lowstr[i]);
-
-  // Print cycle numbers (x values)
-  for (int n = 0; n<=cycles; n++)
-  {
-    number = to_string(n);
-    glRasterPos2f(x_low+x_spacing*n-3/zoom, y_low-15/zoom);
-  for (int i = 0; i < number.length(); i++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, number[i]);
-
-
-  }
-
-}
-
-void MyGLCanvas::FixPan(){
-  // Fixes the pan after a mouse/size event or after drawing.
-  int w, h;
-  GetClientSize(&w, &h);
-  if (disp_h<h) disp_h=h;
-  if (disp_w<w) disp_w=w;
-  if (pan_y>disp_h) pan_y=disp_h;
-  if (pan_y<h) pan_y=h;
-  if (pan_x<w-disp_w) pan_x = w-disp_w;
-  if (pan_x>0) pan_x = 0;
-
-}
-
-void MyGLCanvas::FixZoom(){
-  // Fixes the pan after a mouse/size event or after drawing.
-  static double prevzoom=1;
-  int w, h;
-  if (zoom<minzoom) zoom = minzoom;
-  if (zoom>maxzoom) zoom = maxzoom;
-  pan_y=pan_y*zoom/prevzoom;
-  pan_x=pan_x*zoom/prevzoom;
-  prevzoom=zoom;
-}
-
-void MyGLCanvas::Reset(int cycles){
-  pan_y=0;
-  pan_x=0;
-  FixPan();
-  init=false;
-  Render("",cycles);
-}
-
 // MyFrame ///////////////////////////////////////////////////////////////////////////////////////
-
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(wxID_EXIT, MyFrame::OnExit)
@@ -355,11 +62,12 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
 
 
   if (nmz == NULL || netz==NULL || dmz == NULL || mmz == NULL) {
-    cout<<"Cannot run without names, network, devices and monitor classes"<<endl;
+    cout<<_("Cannot run without names, network, devices and monitor classes")<<endl;
     exit(1);
   }
   // SUPPRESS CIRCUIT EXECUTION MESSAGES
   dmz->debug(false);
+
 
   monctrl = new wxTextCtrl(this, MY_TEXTCTRL_ID, "0", wxDefaultPosition, CommandSize, wxTE_READONLY);
   const wxSize MyCmdSize = wxSize(size.GetWidth()-200, 75);
@@ -372,6 +80,8 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   cmddisp->SetMinSize(MyMinCmdSize);
   cmdOutputRedirect = new wxStreamToTextRedirector(cmddisp);
 
+  SetupLanguage();
+
   const wxSize MyCanvasSize = wxSize(size.GetWidth()-200, size.GetHeight()-173);
   canvas = new MyGLCanvas(this, wxID_ANY, monitor_mod, names_mod, wxDefaultPosition, MyCanvasSize);
 
@@ -382,11 +92,11 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   SetForegroundColour(*wxWHITE);
   // Set up file menu
   wxMenu *fileMenu = new wxMenu;
-  wxMenuItem* openMenu = fileMenu->Append(wxID_OPEN, "&Open");
-  fileMenu->Append(wxID_ABOUT, "&About");
-  fileMenu->Append(wxID_EXIT, "&Quit");
+  wxMenuItem* openMenu = fileMenu->Append(wxID_OPEN, _("&Open"));
+  fileMenu->Append(wxID_ABOUT, _("&About"));
+  fileMenu->Append(wxID_EXIT, _("&Quit"));
   wxMenuBar *menuBar = new wxMenuBar;
-  menuBar->Append(fileMenu, "&File");
+  menuBar->Append(fileMenu, _("&File"));
   SetMenuBar(menuBar);
 
   // Set up main controla
@@ -397,26 +107,26 @@ MyFrame::MyFrame(wxWindow *parent, const wxString& title, const wxPoint& pos, co
   // Create control panel
   wxBoxSizer *control_sizer = new wxBoxSizer(wxVERTICAL);
 
-  wxStaticBoxSizer *sim_sizer = new wxStaticBoxSizer(wxVERTICAL, this, "Simulation");
+  wxStaticBoxSizer *sim_sizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Simulation"));
   // Sizer to horizontally align  Run and Continue buttons.
   wxBoxSizer *button_sizer = new wxBoxSizer(wxHORIZONTAL);
-  button_sizer->Add(new wxButton(this, MY_BUTTONRUN_ID, "Run", wxDefaultPosition, RunSize), MyStdFlag);
-  button_sizer->Add(new wxButton(this, MY_BUTTONCONT_ID, "Continue", wxDefaultPosition, ContSize), MyStdFlag);
+  button_sizer->Add(new wxButton(this, MY_BUTTONRUN_ID, _("Run"), wxDefaultPosition, RunSize), MyStdFlag);
+  button_sizer->Add(new wxButton(this, MY_BUTTONCONT_ID, _("Continue"), wxDefaultPosition, ContSize), MyStdFlag);
   sim_sizer->Add(button_sizer);
 
-  sim_sizer->Add(new wxStaticText(this, wxID_ANY, "Cycles"), 0, wxTOP|wxLEFT|wxRIGHT, 5);
+  sim_sizer->Add(new wxStaticText(this, wxID_ANY, _("Cycles")), 0, wxTOP|wxLEFT|wxRIGHT, 5);
   spin = new wxSpinCtrl(this, MY_SPINCNTRL_ID, wxString("10"), wxDefaultPosition, wxDefaultSize);
   spin->SetForegroundColour(*wxBLACK);
   spin->SetRange(1, 500);
   sim_sizer->Add(spin, MyStdFlag);
 
   // Text command box to display number of cycles completed
-  sim_sizer->Add(new wxStaticText(this, wxID_ANY, "Cycles completed"), 0, wxTOP|wxLEFT|wxRIGHT, 5);
+  sim_sizer->Add(new wxStaticText(this, wxID_ANY, _("Cycles completed")), 0, wxTOP|wxLEFT|wxRIGHT, 5);
   sim_sizer->Add(monctrl, MyStdFlag);
 
   // Set up buttons dirrecting to item selection
-  wxStaticBoxSizer *options_sizer = new wxStaticBoxSizer(wxVERTICAL, this, "Configure simulation");
-  options_sizer->Add(new wxButton(this, MY_BUTTONSETMON_ID, "Add/remove monitors"), MyStdFlag);
+  wxStaticBoxSizer *options_sizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Configure simulation"));
+  options_sizer->Add(new wxButton(this, MY_BUTTONSETMON_ID, _("Add/remove monitors")), MyStdFlag);
 
   control_sizer->Add(sim_sizer);
   control_sizer->Add(options_sizer);
@@ -440,7 +150,7 @@ void MyFrame::ResetContent(){
   cmddisp->Clear();
   monman->Reset();
   canvas->Reset(0);
-  Tell("Plot area reset");
+  Tell(_("Plot area reset"));
   SetSwitchList();
   SetDeviceList();
 
@@ -457,7 +167,7 @@ void MyFrame::OnExit(wxCommandEvent &event){
 void MyFrame::OnAbout(wxCommandEvent &event){
   // Event handler for the about menu item
 
-  wxMessageDialog about(this, "Software project 2016 team 6:\n Names and Scanner classes:\n\t Nicholas Capel.\n Parser class: \n\t Yu Xiang Lou,\n\t Nicholas Capel.\n GUI: \n\t Kamile Rastene.", "About Logsim", wxICON_INFORMATION | wxOK);
+  wxMessageDialog about(this, _("Software project 2016 team 6:\n Names and Scanner classes:\n\t Nicholas 仁杰 Capel.\n Parser class: \n\t 娄宇翔 (Yǔ Xiǎng Lóu),\n\t Nicholas 仁杰 Capel.\n GUI: \n\t Kamilė Rastenė."), _("About Logsim"), wxICON_INFORMATION | wxOK);
   about.ShowModal();
 }
 
@@ -478,7 +188,7 @@ void MyFrame::OnButtonRun(wxCommandEvent &event){
 void MyFrame::OnButtonCont(wxCommandEvent &event){
   // Event handler for the push button
   int c = spin->GetValue();
-  Tell("Continuing simulation for "+to_string(c)+" cycles");
+  Tell(_("Continuing simulation for ")+to_string(c)+_(" cycles"));
   if (monman->RunNetwork(spin->GetValue())){
     canvas->Render("",cyclescompleted);
   }
@@ -486,7 +196,7 @@ void MyFrame::OnButtonCont(wxCommandEvent &event){
 
 void MyFrame::OnButtonSetMon(wxCommandEvent &event){
   const wxSize mon_size = *(new wxSize(400, 400));
-  MyMonDialog* mymon = new MyMonDialog(this, wxID_ANY,"Add or set Monitor", monman, wxDefaultPosition, mon_size);
+  MyMonDialog* mymon = new MyMonDialog(this, wxID_ANY,_("Add or set Monitor"), monman, wxDefaultPosition, mon_size);
   mymon->Centre();
   mymon->ShowModal();
 
@@ -525,6 +235,33 @@ void MyFrame::OnSize(wxSizeEvent& event){
 
 // ADDED NON-INTERFACE FUNCTIONS //
 
+void MyFrame::SetupLanguage(){
+  int default_language = wxLANGUAGE_ENGLISH;
+  int supported_lang = wxLANGUAGE_LITHUANIAN;
+  wxLocale* locale = new wxLocale(default_language);
+  int systLang = locale->GetSystemLanguage();
+
+  // If the system language matches the program language, display a message and do nothing.
+  if (systLang==default_language){
+    cout<<"Application started English."<<endl;
+    return;
+  }
+
+  if (locale->IsAvailable(systLang)){
+    locale = new wxLocale(systLang);
+    locale->AddCatalogLookupPathPrefix(_("."));
+    if(locale->AddCatalog(_("guitext")))
+        std::cerr << "AddCatalog succeeded\n";
+      else
+        std::cerr << "AddCatalog failed\n";
+
+      if(! locale->IsOk() )
+        std::cerr << "selected language is wrong" << std::endl;
+  }
+  else cout<<"The selected language is not supported. The applination will default to English."<< endl;
+
+}
+
 bool MyFrame::LoadNewCircuit(){
 
     wxFileDialog openFileDialog(this, _("Please open logge file"), "", "",
@@ -554,7 +291,7 @@ bool MyFrame::LoadNewCircuit(){
       parser *pmz = new parser(new_netz, new_dmz, new_mmz, smz,err);
 
       if (pmz->readin ()){
-        cout<<"Network built"<<endl;
+        cout<<_("Network built")<<endl;
         *nmz = *new_nmz;
         *netz = *new_netz;
         *dmz = *new_dmz;
@@ -604,8 +341,8 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer){
 
   SetDeviceList();
 
-  note_ctrl->AddPage(switchwin,"Switches");
-  note_ctrl->AddPage(devwin, "Devices");
+  note_ctrl->AddPage(switchwin,_("Switches"));
+  note_ctrl->AddPage(devwin, _("Devices"));
 
   control_sizer->Add(note_ctrl, MyTabFlag);
   control_sizer->AddSpacer(5);
@@ -613,7 +350,7 @@ void MyFrame::AddSwitchMonCtrl(wxSizer *control_sizer){
 
 }
 
-void MyFrame::Tell(string message){
+void MyFrame::Tell(wxString message){
   //cmddisp->Newline();
   cmddisp->AppendText(message+"\n");
 }

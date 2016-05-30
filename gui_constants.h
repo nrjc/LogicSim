@@ -55,4 +55,7 @@ const wxSizerFlags MySwitchFlag = wxSizerFlags().Expand().Border(wxALL, 5);
 const wxSizerFlags MyStdFlag = wxSizerFlags().Expand().Border(wxALL, 5); // Same as 0, wxALL, 5
 const wxSizerFlags MyTabFlag = wxSizerFlags().Proportion(1).Expand().Border(wxALL, 5);// Same as 1, wxALL, 5
 
+
+
+
 #endif

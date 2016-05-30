@@ -166,7 +166,7 @@ bool MyMonManager::AddMonitor(int m){
   if(m>unmonitored.size()|| m<0 ) return false;
 
   if(unmonitored.size()==maxmonitors){
-    cout<<"Monitor count limit ("<<maxmonitors<<") exceeded"<< endl;
+    Tell(_("Monitor count limit (")+to_string(maxmonitors)+_(") exceeded"));
     return false;
   }
 
@@ -179,7 +179,7 @@ bool MyMonManager::AddMonitor(int m){
   unmonitored.erase(unmonitored.begin()+m);
 
   ResetMonitors();
-  Tell("Plot area Cleared");
+  Tell(_("Plot area Cleared"));
   canvas->Reset();
   return true;
 }
@@ -194,7 +194,7 @@ bool MyMonManager::RemoveMonitor(int m){
   monitored.erase(monitored.begin()+m);
 
   ResetMonitors();
-  Tell("Drawing area Cleared");
+  Tell(_("Plot area Cleared"));
   canvas->Reset(0);
   return true;
 }
@@ -203,14 +203,13 @@ bool MyMonManager::RunNetwork(int ncycles){
   // Function to run the network, derived from corresponding function in userint.cc
 
   bool ok = true;
+  wxString m1, m2;
   if (*cyclescompletedp==maxcycles){
-  //for (int i=0; i<20; i++)
-    Tell("Error: cycles limit ("+to_string(maxcycles)+") exceeded");
+    Tell(_("Error: cycles limit (") +to_string(maxcycles)+_(") exceeded"));
     return false;
   }
   if ((*cyclescompletedp+ncycles)>=maxcycles){
-
-    Tell("Cycles limit ("+to_string(maxcycles)+") reached");
+    Tell(_("Error: cycles limit (") +to_string(maxcycles)+_(") reached"));
     ncycles = maxcycles - *cyclescompletedp;
   }
     int n = ncycles;
@@ -220,10 +219,10 @@ bool MyMonManager::RunNetwork(int ncycles){
       n--;
       mmz->recordsignals ();
     } else
-      Tell("Error: network is oscillating");
+      Tell(_("Error: network is oscillating"));
   }
   if (ok) IncrementCycles(ncycles);
-  else {ResetMonitors(); Tell("Plot area cleared"); canvas->Reset(0);}
+  else {ResetMonitors(); Tell(_("Plot area cleared")); canvas->Reset(0);}
   return ok;
 }
 
@@ -238,7 +237,7 @@ void MyMonManager::ResetMonitors(){
 }
 
 void MyMonManager::IncrementCycles(int n){
-  if (n<0) Tell("Cycles can only be incremented by a positive amount");
+  if (n<0) Tell(_("Cycles can only be incremented by a positive amount"));
 
   *cyclescompletedp += n;
 
@@ -257,7 +256,7 @@ void MyMonManager::FlickSwitch(int n){
   dmz->setswitch( switches[n].dev, level, ok);
 }
 
-void MyMonManager::Tell(string message){
+void MyMonManager::Tell(wxString message){
   //cmddisp->Newline();
   cmddisp->AppendText(message+"\n");
 }
@@ -296,8 +295,8 @@ MyMonDialog::MyMonDialog(wxWindow *parent, wxWindowID id, const wxString &title,
   monsizer->Add(monListBox, MyTabFlag);
   monsizer->AddSpacer(vsp);
 
-  optsizer->Add(new wxButton(this, MY_ADDMON_ID, "Add", wxDefaultPosition, ContSize), MyStdFlag);
-  monsizer->Add(new wxButton(this, MY_REMMON_ID, "Remove", wxDefaultPosition, ContSize), MyStdFlag);
+  optsizer->Add(new wxButton(this, MY_ADDMON_ID, _("Add"), wxDefaultPosition, ContSize), MyStdFlag);
+  monsizer->Add(new wxButton(this, MY_REMMON_ID, _("Remove"), wxDefaultPosition, ContSize), MyStdFlag);
 
   listsizer->Add(optsizer, MyTabFlag);
   listsizer->Add(monsizer, MyTabFlag);
