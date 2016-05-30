@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   network newnetwork(&Nametable);
   devices newdevice(&Nametable,&newnetwork);
   monitor newmonitor(&Nametable,&newnetwork);
-  /* Testing the MADNESS OF THE SIGGEN CLASS */
+  /* Testing the MADNESS OF THE SIGGEN  */
   newdevice.makesiggen(Nametable.lookup("SIGGEN1"),signalin);
     //Nametable.dumptablecontents();
   cout << newnetwork.devicelist()->kind <<endl;
