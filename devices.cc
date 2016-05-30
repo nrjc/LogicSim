@@ -162,6 +162,27 @@ void devices::makedtype (name id)
 
 /***********************************************************************
  *
+ * Used to make new Signal Generator devices.
+ * Takes as input a series of ones and zeros, or the signal to be generated.
+ * Outputs: One.
+ * Called by makedevice.
+ *
+ */
+void devices::makesiggen(name id, int inputclock)
+{
+    devlink d;
+    netz->adddevice(siggen,id,d);
+    netz->addoutput(d,blankname);
+
+
+
+
+}
+
+
+
+/***********************************************************************
+ *
  * Adds a device to the network of the specified kind and name.  The
  * variant is used with such things as gates where it specifies the
  * number of inputs. 'ok' returns true if operation succeeds.
@@ -188,6 +209,9 @@ void devices::makedevice (devicekind dkind, name did, int variant, bool& ok)
       break;
     case dtype:
       makedtype(did);
+      break;
+    case siggen:
+      makesiggen(did,variant);
       break;
   }
 }
@@ -300,10 +324,14 @@ void devices::execdtype (devlink d)
   i = netz->findinput (d, setpin);  setinput  = i->connect->sig;
   qout = netz->findoutput (d, qpin);
   qbarout = netz->findoutput (d, qbarpin);
-  if ((clkinput == rising) && ((datainput == high) || (datainput == falling)))
-    d->memory = high;
-  if ((clkinput == rising) && ((datainput == low) || (datainput == rising)))
-    d->memory = low;
+  if (clkinput == rising){
+    if (datainput==high||datainput==falling){
+        d->memory=high;
+    }
+    else{
+        d->memory=low;
+    }
+  }
   if (setinput == high)
     d->memory = high;
   if (clrinput == high)
@@ -386,6 +414,7 @@ void devices::executedevices (bool& ok)
             case nandgate: execgate (d, high, low);  break;
             case xorgate:  execxorgate (d);          break;
             case dtype:    execdtype (d);            break;
+            //Insert siggen logic here.
       }
           if (debugging){
             showdevice (d);}
@@ -429,8 +458,8 @@ devicekind devices::devkind (name id)
 
 /***********************************************************************
  *
- * Returns a vector with name id's of all devices that are of  
- * devicekind aswitch.    
+ * Returns a vector with name id's of all devices that are of
+ * devicekind aswitch.
  *
  */
 vector<devlink> devices::GetSwitches(void)
