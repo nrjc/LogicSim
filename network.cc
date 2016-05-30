@@ -10,7 +10,7 @@ using namespace std;
  */
 devlink network::devicelist (void)
 {
-  return devs;
+  return firstdev;
 }
 
 
@@ -25,7 +25,7 @@ devlink network::finddevice (name id)
   devlink d;
   bool found;
   found = false;
-  d = devs;
+  d = firstdev;
   while ((d != NULL) && (! found)) {
     found = (d->id == id);
     if (! found)
@@ -90,15 +90,15 @@ void network::adddevice (devicekind dkind, name did, devlink& dev)
   dev->kind = dkind;
   dev->ilist = NULL;
   dev->olist = NULL;
-  if (dkind != aclock) {        // device goes at head of list
+  if (dkind != aclock||dkind!=siggen) {        // device goes at head of list
     if (lastdev == NULL)
 	lastdev = dev;
-    dev->next = devs;
-    devs = dev;
-  } else {                      // aclock devices must go last
+    dev->next = firstdev;
+    firstdev = dev;
+  } else {                      // aclock and siggen devices must go last
     dev->next = NULL;
     if (lastdev == NULL) {
-      devs = dev;
+      firstdev = dev;
       lastdev = dev;
     } else {
       lastdev->next = dev;
@@ -175,7 +175,7 @@ void network::checknetwork (bool& ok)
   devlink d;
   inplink i;
   ok = true;
-  for (d = devs; d != NULL; d = d->next)
+  for (d = firstdev; d != NULL; d = d->next)
     for (i = d->ilist; i != NULL; i = i->next)
       if (i->connect == NULL) {
 	cout << "Unconnected Input : ";
@@ -218,6 +218,6 @@ int network::getnumberofinputs (name id)
 network::network (names* names_mod)
 {
   nmz = names_mod;
-  devs = NULL;
+  firstdev = NULL;
   lastdev = NULL;
 }

@@ -39,6 +39,7 @@ error::error(scanner* scanner_mod){
 	this->writeerror("UNFINISHED LINE HERE"); //26
 	this->writeerror("SYNTAX ERROR. PLEASE READ USER MANUAL."); //27
 	this->writeerror("NUMBER OF INPUT MUST BE I1 TO I16"); //28
+	this->writeerror("EXPECTED 0 OR 1"); //29
 
 }
 
