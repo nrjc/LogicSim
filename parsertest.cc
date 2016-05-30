@@ -64,9 +64,12 @@ errorframe sample1("./test/sample1.ge",0,emptylines,emptycodes);
 errorframe sample2("./test/sample2.ge",0,emptylines,emptycodes);
 errorframe sample3("./test/sample3.ge",0,emptylines,emptycodes);
 errorframe sample4("./test/sample4.ge",0,emptylines,emptycodes);
+errorframe test14("./test/test14.ge",0,emptylines,emptycodes);
+errorframe test15("./test/test15.ge",0,emptylines,emptycodes);
+errorframe test16("./test/test16.ge",0,emptylines,emptycodes);
 
-errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9,test10,test11,test12,test13,sample1,sample2,sample3,sample4};
-int testnumber=17;
+errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9,test10,test11,test12,test13,sample1,sample2,sample3,sample4,test14,test15,test16};
+int testnumber=20;
 
 
 int main(int argc, char **argv)

@@ -1,0 +1,13 @@
+// This defines the logic of a 4-bit adder. 
+DEVICES{
+SWITCH A1:0;
+NAND N1:1;
+}
+
+CONNECTIONS{
+A1->N1.I1;
+}
+
+MONITORS{
+N1;
+}

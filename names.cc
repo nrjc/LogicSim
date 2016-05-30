@@ -13,7 +13,7 @@ names::names(void)  /* the constructor */
 {
 	counter=-1;
 	//Populating the names class with reserved names and punctuation.
-	this->lookup("blankname"); //-1 Reserved for the blank name
+	this->lookup(" "); //-1 Reserved for the blank name
 	this->lookup(";"); //0
 	this->lookup("DEVICES"); //1
 	this->lookup("CONNECTIONS"); //2

@@ -440,26 +440,26 @@ void parser::device(void){
                     sigsequence signalsequenceinput;
                     smz->getsymbol(cursym,curid,curnum);
                     if (cursym==numsym){
-                        //checks if clock period is valid
+                        //checks if the siggen output is valid
                         if (curnum==0||curnum==1){
                             signalsequenceinput.push_back(curnum);
                             smz->getsymbol(cursym,curid,curnum);
                             while (cursym==comma){
                                 smz->getsymbol(cursym,curid,curnum);
-                                if (cursym==numsym && (curnum==0||curnum==1)){
+                                if (cursym==numsym && (curnum==0||curnum==1)){ //Check if the siggen output is valid
                                     signalsequenceinput.push_back(curnum);
                                 }else{
-                                    errorparser(-1,semicol);// EXPECTED 0 or 1
+                                    errorparser(29,semicol);// EXPECTED 0 or 1
                                     return;
                                 }
                                 smz->getsymbol(cursym,curid,curnum);
                             }
-                            dmz->makesiggen(devnametemp,signalsequenceinput);
+                            dmz->makesiggen(devnametemp,signalsequenceinput); //creates the siggen device.
                             return;
 
                         }
                         else{
-                            errorparser(-1,semicol);// THE CLOCK CAN ONLY THROW A SEQUENCE OF ONES AND ZEROS.
+                            errorparser(29,semicol);// EXPECTED 0 or 1
                             return;
                         }
                     }
