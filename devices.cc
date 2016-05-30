@@ -165,18 +165,17 @@ void devices::makedtype (name id)
  * Used to make new Signal Generator devices.
  * Takes as input a series of ones and zeros, or the signal to be generated.
  * Outputs: One.
- * Called by makedevice.
+ * This is called directly by the parser so as to throw in a sequence of the clock inputs.
  *
  */
-void devices::makesiggen(name id, int inputclock)
+void devices::makesiggen(name id, sigsequence inputclock)
 {
     devlink d;
     netz->adddevice(siggen,id,d);
     netz->addoutput(d,blankname);
-
-
-
-
+    d->kind=siggen;
+    d->counter = 0;
+    d->signalsequence = inputclock;
 }
 
 
@@ -209,9 +208,6 @@ void devices::makedevice (devicekind dkind, name did, int variant, bool& ok)
       break;
     case dtype:
       makedtype(did);
-      break;
-    case siggen:
-      makesiggen(did,variant);
       break;
   }
 }
@@ -379,6 +375,33 @@ void devices::updateclocks (void)
       }
       (d->counter)++;
     }
+    else if(d->kind==siggen){
+        int length =d->signalsequence.size();
+        //cout << length<<endl;
+        //cout << "LENGTH " <<length <<endl;
+        //cout << "COUNTER: "<< d->counter <<endl;
+        if (d->signalsequence[d->counter]==0){
+            if(d->olist->sig==high){
+                d->olist->sig = falling;
+            }
+            else{
+                d->olist->sig = low;
+            }
+        }
+        else if(d->signalsequence[d->counter]==1){
+            if(d->olist->sig==low){
+                d->olist->sig = rising;
+            }
+            else{
+                d->olist->sig=high;
+            }
+        }
+        if(d->counter==(length-1)){
+            d->counter=0;
+            return;
+        }
+        (d->counter)++;
+    }
   }
 }
 
@@ -398,6 +421,7 @@ void devices::executedevices (bool& ok)
   if (debugging)
     cout << "Start of execution cycle" << endl;
   updateclocks ();
+  //updatesiggen();
   machinecycle = 0;
   do {
     machinecycle++;
@@ -407,6 +431,7 @@ void devices::executedevices (bool& ok)
     for (d = netz->devicelist (); d != NULL; d = d->next) {
         switch (d->kind) {
             case aswitch:  execswitch (d);           break;
+            case siggen:
             case aclock:   execclock (d);            break;
             case orgate:   execgate (d, low, low);   break;
             case norgate:  execgate (d, low, high);  break;
@@ -504,6 +529,7 @@ devices::devices (names* names_mod, network* net_mod)
   dtab[norgate]   =  nmz->lookup("NOR");
   dtab[xorgate]   =  nmz->lookup("XOR");
   dtab[dtype]     =  nmz->lookup("DTYPE");
+  dtab[siggen]    =  nmz->lookup("SIGGEN");
   dtab[baddevice] =  blankname;
   debugging = false;
   datapin = nmz->lookup("DATA");

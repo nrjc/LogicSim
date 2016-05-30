@@ -16,12 +16,10 @@ class devices{
   name        clrpin, qpin, qbarpin;     /* Input and Output Pin names */
   bool        debugging;
 
-  void showdevice (devlink d);
   void makeswitch (name id, int setting, bool& ok);
   void makeclock (name id, int frequency);
   void makegate (devicekind dkind, name did, int ninputs, bool& ok);
   void makedtype (name id);
-  void makesiggen(name id, int inputclock);
   void signalupdate (asignal target, asignal& sig);
   asignal inv (asignal s);
   void execswitch (devlink d);
@@ -31,8 +29,10 @@ class devices{
   void execclock(devlink d);
   void updateclocks (void);
   void outsig (asignal s);
+  void showdevice (devlink d);
 
 public:
+
   void makedevice (devicekind dkind, name did, int variant, bool& ok);
     /* Adds a device to the network of the specified kind and name.  The   */
     /* variant is used with such things as gates where it specifies the    */
@@ -59,6 +59,9 @@ public:
 
   void debug (bool on);
     /* Used to set debugging switch.                                       */
+
+  void makesiggen(name id, sigsequence inputclock);
+    /* Used to directly initialise a siggen device*/
 
   devices (names* names_mod, network* net_mod);
     /* Called to initialise module.                                        */
