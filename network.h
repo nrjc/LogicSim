@@ -80,8 +80,12 @@ class network {
   void checknetwork (bool& ok);
     /* Checks that all inputs are connected to an output.                  */
 
+    void resetallcounters();
+    /* Resets the counter of all devices. Called when pressing run */
+
   network (names* names_mod);
   /* Called on system initialisation.                                      */
+
 
  private:
   devlink firstdev;          // the list of devices
