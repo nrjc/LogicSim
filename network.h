@@ -83,6 +83,11 @@ class network {
   network (names* names_mod);
   /* Called on system initialisation.                                      */
 
+  void randdevices();
+  /*Randomize devicelist for every execution of executedevices() so that
+  order of declaration by user does not matter.
+  Clock is still at the bottom of the list.                            */
+
  private:
   devlink firstdev;          // the list of devices
   devlink lastdev;       // last device in list of devices

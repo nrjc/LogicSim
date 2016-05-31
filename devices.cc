@@ -34,7 +34,7 @@ void devices::showdevice (devlink d)
   nmz->writename (d->id);
   cout << "  Kind: ";
   writedevice (d->kind);
-  cout << endl;
+  cout << endl;/*
   cout << "   Inputs:" << endl;
   for (i = d->ilist; i != NULL; i = i->next) {
     cout << "      ";
@@ -50,7 +50,7 @@ void devices::showdevice (devlink d)
     cout << " ";
     outsig (o->sig);
     cout << endl;
-  }
+  }*/
   cout << endl;
 }
 
@@ -445,6 +445,7 @@ void devices::executedevices (bool& ok)
     if (debugging)
       cout << "machine cycle # " << machinecycle << endl;
     steadystate = true;
+    netz->randdevices(); //Call randdevices() to randomise devicelist so that order of declaration does not matter
     for (d = netz->devicelist (); d != NULL; d = d->next) {
         switch (d->kind) {
             case aswitch:  execswitch (d);           break;
