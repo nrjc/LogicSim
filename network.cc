@@ -261,3 +261,30 @@ network::network (names* names_mod)
   firstdev = NULL;
   lastdev = NULL;
 }
+
+/***********************************************************************
+ *
+ * Randomize devicelist for every execution of executedevices() so that
+ * order of declaration by user does not matter.
+ * Clock is still at the bottom of the list.
+ *
+ */
+
+
+ void network::randdevices ()
+ {
+    int randomiser=0;
+    devlink d;
+    vector<devlink> newdevicelist;
+    for (d = devicelist (); d != NULL && d->kind != aclock && d->kind!=siggen; d = d->next) {
+        newdevicelist.push_back(d);
+    }
+    firstdev=d;
+    int i=0;
+    while (newdevicelist.size()>0){
+        randomiser=rand() % newdevicelist.size();
+        newdevicelist[randomiser]->next = firstdev;
+        firstdev = newdevicelist[randomiser];
+        newdevicelist.erase(newdevicelist.begin()+randomiser);
+    }
+ }
