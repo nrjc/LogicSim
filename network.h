@@ -80,6 +80,9 @@ class network {
   void checknetwork (bool& ok);
     /* Checks that all inputs are connected to an output.                  */
 
+    void resetallcounters();
+    /* Resets the counter of all devices. Called when pressing run */
+
   network (names* names_mod);
   /* Called on system initialisation.                                      */
 
@@ -87,6 +90,7 @@ class network {
   /*Randomize devicelist for every execution of executedevices() so that
   order of declaration by user does not matter.
   Clock is still at the bottom of the list.                            */
+
 
  private:
   devlink firstdev;          // the list of devices

@@ -231,6 +231,21 @@ int network::getnumberofinputs (name id)
     }
     return counter;
 }
+/***********************************************************************
+ *
+ * Resets the counter of all devices. Called when pressing run
+ *
+ *
+ *
+ *
+ */
+void network::resetallcounters()
+{
+  devlink d;
+    for (d=firstdev; d != NULL; d = d->next){
+        d->counter=0;
+    }
+}
 
 /***********************************************************************
  *
