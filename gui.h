@@ -39,45 +39,50 @@ class MyFrame: public wxFrame{
   MyGLCanvas *canvas;                     // OpenGL drawing area widget to draw traces
   wxSpinCtrl *spin;                       // control widget to select the number of cycles
   wxTextCtrl *cmddisp;                    // textbox that displays error and warning text. Replaces command line outputs
-  wxStreamToTextRedirector *cmdOutputRedirect;
-  wxBoxSizer *rightsizer;
-  wxTextCtrl *monctrl;                    // Stored as global so that it could be passed to MyMonMan uppon open.
-  //wxScrolledWindow* switchwin;
-  //wxBoxSizer *switch_sizer;
-  wxCheckListBox *switchwin;
-  wxListBox *devwin;
+  wxStreamToTextRedirector *cmdOutputRedirect;// object that performs redirecting of comand line outputs to cmddisp
+  wxBoxSizer *rightsizer;                 // Sizer that contains the canvas and cmddisp
+  wxTextCtrl *monctrl;                    // Text control box that displays the number of cycles completed and displayed on the canvas
+
+
+  wxCheckListBox *switchwin;              // Check list window that contains the switches interface
+  wxListBox *devwin;                      // List window that contains a list of devices
 
   names *nmz;                             // pointer to names class
   network *netz;			  // pointer to network class
   devices *dmz;                           // pointer to devices class
   monitor *mmz;                           // pointer to monitor class
-  MyMonManager *monman;			  // monitor manaker class instance.
-  int cyclescompleted;                    // how many simulation cycles have been completed
+  MyMonManager *monman;			  // monitor manager class instance.
+  int cyclescompleted;                    // how many simulation cycles have been completed so far. Also displayed in monctrl
 
-  // Added functions
-  //void SetSwitchList(wxWindow *parent, wxSizer* sizer);		//Add checkboxes for editing switches.
-  //void SetSwitchList(wxCheckListBox *switchbox);		//Add checkboxes for editing switches.
-  void SetupLanguage();     // Set the program language depending on the request.
-  void SetSwitchList();
-  void SetDeviceList();
-  void AddSwitchMonCtrl(wxSizer *control_sizer);
-  void ResetContent();
-  bool LoadNewCircuit();
-  void Tell(wxString message);  //Print message in the message box
+  // Locale and application language properties
+  // (don't have to be global, reserved for future extensibility)
+  wxLocale* locale;			// Store system locale 
+  vector<int> default_language;		// Store list of default language enums 
+  vector<int> supported_lang;		// Store supported language enums
 
-  // Event handlers
+  void SetupLanguage();           	// Set the program language
+  
+  void AddSwitchMonCtrl(wxSizer *control_sizer); // Function that sets up the tabbed window containing the switch and devices lists
+  void SetSwitchList(); 	        // Set the switch list in switchwin
+  void SetDeviceList();         	// Set the device list in devwin
+  
+  bool LoadNewCircuit(wxString filepath); // Builds a new network from the circuit definition file given
+  void ResetContent();            	// Resets all circuit-related parameters. Called after a new circuit is successfully constructed
+  
+  void Tell(wxString message);    	// Print a message dirrectly into the cmddisp.
+
+  // EVENT HANDLERS
+  // Menu events
   void OnExit(wxCommandEvent& event);     // event handler for exit menu item
   void OnAbout(wxCommandEvent& event);    // event handler for about menu item
   void OnOpen(wxCommandEvent& event);	  // event handler for open menu item
+  // Button events
   void OnButtonRun(wxCommandEvent& event);   // event handler for Run button
   void OnButtonCont(wxCommandEvent& event);   // event handler for Continue button
-  void OnSwitchBox(wxCommandEvent& event);
   void OnButtonSetMon(wxCommandEvent& event);   // event handler for when set monitor option is chosen.
-  void OnSpin(wxSpinEvent& event);        // event handler for spin control
-  void OnText(wxCommandEvent& event);     // event handler for text entry field
-  void OnSize(wxSizeEvent& event);   // event handler for when frame is resized
- //void SetColours(wxMenuItem* item);
-  //void SetColours(wxWindow* item);
+  // Switch checkbox events
+  void OnSwitchBox(wxCommandEvent& event);    // event handler for ticking/unticking a box in the switch list
+  
   DECLARE_EVENT_TABLE()
 };
 

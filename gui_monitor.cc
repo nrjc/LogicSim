@@ -25,7 +25,10 @@ using namespace std;
 // MYMONMANAGER: added class to make monitor point managing easier and more object-oriented
 MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devices_mod,
                           monitor *monitor_mod, int *cyclesp, wxTextCtrl *mon_ctrl, wxTextCtrl *cmd_disp,MyGLCanvas *mycanvas){
-
+  /* MyMonManager constructor.
+   * Initialise the global variables and pointers passed by MyFrame and
+   * Call Reset() to initialise all other variables.
+   */
   nmz = names_mod;
   netz = network_mod;
   dmz = devices_mod;
@@ -39,10 +42,15 @@ MyMonManager::MyMonManager(names *names_mod, network *network_mod, devices *devi
 }
 
 void MyMonManager::Reset(){
+  /* Reset all content not given in the constructor.
+   * This involves calling various functions in the network and names
+   * classes
+   */
   name dev, outp;
   string devstr, opstr;
   opProps temp;
 
+  // clear all vectors
   allops.clear();
   unmonitored.clear();
   monitored.clear();
@@ -55,7 +63,7 @@ void MyMonManager::Reset(){
   while( d != NULL){
     dev = d->id;
     devstr = nmz->getnamefromtable(dev);
-
+  
     o = d->olist;
     while(o != NULL)
     {
@@ -83,7 +91,6 @@ void MyMonManager::Reset(){
   sort(switches.begin(), switches.end());
 
   // Assemble list of current monitor points
-//cout<<" Assembling monitored list "<<endl;
   for(int i=0; i<mmz->moncount();i++){
 
     mmz->getmonname(i, dev, outp);
@@ -96,7 +103,8 @@ void MyMonManager::Reset(){
       }
   }
   // Sort the monitored list
-  sort(monitored.begin(), monitored.end());
+  // EDIT: removed to make the list be in the same order as the traces on canvas. 
+  //sort(monitored.begin(), monitored.end());
 
   //cout<<" Assembling unmonitored list "<<endl;
   // Assemble a list of unmonitored outputs. For each element of allops
@@ -123,7 +131,20 @@ void MyMonManager::Reset(){
 
 }
 
+wxArrayString MyMonManager::GetSwitches(){
+  /* Assembles a list of Switches for MyFrame::SetSwitchList()
+   */
+  wxArrayString swlist = wxArrayString();
+  for(int i=0; i<switches.size(); i++)
+  {
+    swlist.Add(switches[i].devstr);
+  }
+  return swlist;
+}
+
 wxArrayString MyMonManager::GetDevices(){
+  /* Assembles a list of devices for MyFrame::SetDeviceList()
+   */
   wxArrayString oplist = *(new wxArrayString);
   oplist.Add(allops[0].devstr);
   for(int i=1; i<allops.size(); i++)
@@ -135,6 +156,8 @@ wxArrayString MyMonManager::GetDevices(){
 }
 
 wxArrayString MyMonManager::GetMonitoredList(){
+  /* Assembles a list of monitorerd outputs for MyMonDialog;
+   */
   wxArrayString monlist = *(new wxArrayString);
   for(int i=0; i<monitored.size(); i++)
   {
@@ -144,6 +167,8 @@ wxArrayString MyMonManager::GetMonitoredList(){
 }
 
 wxArrayString MyMonManager::GetUnmonitoredList(){
+  /* Assembles a list of unmonitorerd outputs for MyMonDialog;
+   */
   wxArrayString unmonlist = *(new wxArrayString);
   for(int i=0; i<unmonitored.size(); i++)
   {
@@ -153,16 +178,11 @@ wxArrayString MyMonManager::GetUnmonitoredList(){
 
 }
 
-wxArrayString MyMonManager::GetSwitches(){
-  wxArrayString swlist = wxArrayString();
-  for(int i=0; i<switches.size(); i++)
-  {
-    swlist.Add(switches[i].devstr);
-  }
-  return swlist;
-}
-
 bool MyMonManager::AddMonitor(int m){
+  /* GUI Back-end for adding a monitor point.
+   * Updates local lists and calls the monitor class to update.
+   * Resets canvas to prompt the user of the changes
+   */
   if(m>unmonitored.size()|| m<0 ) return false;
 
   if(unmonitored.size()==maxmonitors){
@@ -171,8 +191,9 @@ bool MyMonManager::AddMonitor(int m){
   }
 
   monitored.push_back(unmonitored[m]);
-  // Sort the monitored list
-  sort(monitored.begin(), monitored.end());
+  // Sort the monitored list 
+  // EDIT: removed to make the list be in the same order as the traces on canvas. 
+  //sort(monitored.begin(), monitored.end());
 
   bool ok;
   mmz->makemonitor(unmonitored[m].dev, unmonitored[m].op, ok);
@@ -180,11 +201,15 @@ bool MyMonManager::AddMonitor(int m){
 
   ResetMonitors();
   Tell(_("Plot area Cleared"));
-  canvas->Reset();
+  canvas->Reset(0);
   return true;
 }
 
 bool MyMonManager::RemoveMonitor(int m){
+  /* GUI Back-end for removing a monitor point.
+   * Updates local lists and calls the monitor class to update.
+   * Resets canvas to prompt the user of the changes
+   */
   if(m>monitored.size()|| m<0) return false;
   unmonitored.push_back(monitored[m]);
   // Sort the monitored list
@@ -200,8 +225,11 @@ bool MyMonManager::RemoveMonitor(int m){
 }
 
 bool MyMonManager::RunNetwork(int ncycles){
-  // Function to run the network, derived from corresponding function in userint.cc
-
+  /* GUI Back-end for running the network.
+   * Checks the number of cycles completed and prompts the user if it
+   * has been reached/exeded.
+   * Derived from the corresponding function in userint.cc
+   */
   bool ok = true;
   wxString m1, m2;
   if (*cyclescompletedp==maxcycles){
@@ -227,20 +255,30 @@ bool MyMonManager::RunNetwork(int ncycles){
 }
 
 void MyMonManager::ResetMonitors(){
-  // Reset monitors to work around monitor class inconsistencies
+  /* Resets the monitor recordings, called by several functions within this class.
+   * Reseting is rewquired every time the monitor list is changed, because 
+   * the monitor class does not support continuing recordings after the 
+   * list of monitors is changed.
+   */
   *cyclescompletedp = 0;
   mmz->resetmonitor();
   const wxString textstr = "0";
+  // Refresh display of cycles completed count.
   montextctrl->Clear();
   montextctrl->AppendText(textstr);
 
 }
 
 void MyMonManager::IncrementCycles(int n){
+  /* Handle all actions associeated with incrementing cycle count.
+   */
+  // Print error in case some changes in code resulted in negative increment
   if (n<0) Tell(_("Cycles can only be incremented by a positive amount"));
-
+  
+  // Update cycle count
   *cyclescompletedp += n;
-
+  
+  // Update "Cycles completed" textvox
   const wxString textstr = to_string(*cyclescompletedp);
   montextctrl->Clear();
   montextctrl->AppendText(textstr);
@@ -248,6 +286,10 @@ void MyMonManager::IncrementCycles(int n){
 }
 
 void MyMonManager::FlickSwitch(int n){
+  /* Reverse the state of the given switch (switch at the given index
+   * of the switches vector.
+   * This function is used in SetSwitcList on MyFrame.
+   */
   switches[n].check=!switches[n].check;
   asignal level;
   if(switches[n].check)level=high;
@@ -257,14 +299,20 @@ void MyMonManager::FlickSwitch(int n){
 }
 
 void MyMonManager::Tell(wxString message){
-  //cmddisp->Newline();
+  /* Print a message on the command window.
+   * This function is used for most messages that are translated, because
+   * it works better non-ASCII characters than cout.
+   * Same as the Tell function on the frame
+   */
   cmddisp->AppendText(message+"\n");
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////
-// MYMONDIALOG class that manages the monitors. Needed to create for proper event handling.
+// MYMONDIALOG class that manages the monitors.
+// Created for proper event handling in the monitor management dialog box.
+//
 BEGIN_EVENT_TABLE(MyMonDialog, wxDialog)
   EVT_BUTTON(MY_REMMON_ID, MyMonDialog::OnBtnRemMon)
   EVT_BUTTON(MY_ADDMON_ID, MyMonDialog::OnBtnAddMon)
@@ -272,19 +320,21 @@ END_EVENT_TABLE()
 MyMonDialog::MyMonDialog(wxWindow *parent, wxWindowID id, const wxString &title,MyMonManager *mon_man,
           const wxPoint &pos, const wxSize &size,
           long style, const wxString &name):wxDialog(parent, id, title, pos, size, style, name){
-
+/* MyMonDialog constructor.
+ * Sets up all the items within the dialog box, calling MyMonManager monman
+ * to acquire the lists.
+ */
   monman=mon_man;
 
   int vsp = 3;
   // Set opListBox and monListBox
   const wxSize mylistsize = *(new wxSize(180, 250));
+  
+  optListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition,  mylistsize);
+  monListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition,  mylistsize);
+  RefreshLists();
 
-  wxArrayString monlist = monman->GetMonitoredList();
-  wxArrayString oplist = monman->GetUnmonitoredList();
-
-  optListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition,  mylistsize, oplist);
-  monListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition,  mylistsize, monlist);
-
+  // Set up the sizers for neat display
   wxBoxSizer *tsizer = new wxBoxSizer(wxVERTICAL);
   wxBoxSizer *listsizer = new wxBoxSizer(wxHORIZONTAL);
   wxBoxSizer *optsizer = new wxBoxSizer(wxVERTICAL);
@@ -309,7 +359,9 @@ MyMonDialog::MyMonDialog(wxWindow *parent, wxWindowID id, const wxString &title,
 }
 
 void MyMonDialog::RefreshLists(){
-
+ /* Call MyMonManager monman to get the listd of monitored and unmonitored
+  * outputs and fill in the list boxes
+  */
   wxArrayString monlist = monman->GetMonitoredList();
   wxArrayString optlist = monman->GetUnmonitoredList();
 
@@ -320,8 +372,10 @@ void MyMonDialog::RefreshLists(){
 
 // EVENTS
 void MyMonDialog::OnBtnRemMon(wxCommandEvent &event){
+  /* When "Remove" button is clicked, remove the selected output from
+   * the monitored devices list.
+   */
   int sel = monListBox->GetSelection();
-  //cout<<"Remove Clicked, selection "<<sel<<endl;
   if(sel!=-1){
     monman->RemoveMonitor(sel);
     RefreshLists();
@@ -329,8 +383,10 @@ void MyMonDialog::OnBtnRemMon(wxCommandEvent &event){
 }
 
 void MyMonDialog::OnBtnAddMon(wxCommandEvent &event){
+  /* When "Add" button is clicked, add the selected output to
+   * the monitored devices list.
+   */
   int sel = optListBox->GetSelection();
-  //cout<<"Add Clicked, selection "<<sel<<endl;
   if(sel!=-1){
     monman->AddMonitor(sel);
     RefreshLists();

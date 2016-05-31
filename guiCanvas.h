@@ -12,8 +12,6 @@
 #include "gui.h"
 #include "gui_constants.h"
 
-
-
 class MyFrame;
 
 class MyGLCanvas: public wxGLCanvas{
@@ -29,13 +27,13 @@ class MyGLCanvas: public wxGLCanvas{
   bool init;                         // has the OpenGL context been initialised?
   int pan_x;                         // the current x pan
   int pan_y;                         // the current y pan
-  int disp_h;			     // height of the displayed drawing area
-  int disp_w;			     // width of the displayed drawing area
+  int disp_h;	              		     // height of the displayed drawing area
+  int disp_w;			                   // width of the displayed drawing area
   double zoom;                       // the current zoom
   const float minzoom = 0.8;
   const float maxzoom = 2.5;
 
-  int cyclesdisplayed;               // how many simulation cycles have been displayed
+  int cyclesdisplayed;               // how many simulation cycles have been completed
   monitor *mmz;                      // pointer to monitor class, used to extract signal traces
   names *nmz;                        // pointer to names class, used to extract signal names
   void InitGL();                     // function to initialise OpenGL context
@@ -44,7 +42,7 @@ class MyGLCanvas: public wxGLCanvas{
   void OnMouse(wxMouseEvent& event); // event handler for mouse events inside canvas
   void DrawAxes(float x_low, float x_spacing, int cycles, float y_low, float y_high); // draw axes for the trace
   void NameAxes(float x_low, float x_spacing, int cycles, float y_low, float st_height, string monname); // draw axes text labels for the trace
-  void FixPan(); 		// Fixes the canvas pan
+  void FixPan(); 		  // Fixes the canvas pan
   void FixZoom(); 		// Fixes the canvas zoom
   DECLARE_EVENT_TABLE()
 };

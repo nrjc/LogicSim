@@ -25,17 +25,22 @@
 
 
 enum {
-  MY_SPINCNTRL_ID = wxID_HIGHEST + 1,
-  MY_TEXTCTRL_ID,
-  MY_BUTTONRUN_ID,
+// Frame events
+  MY_BUTTONRUN_ID=wxID_HIGHEST + 1,
   MY_BUTTONCONT_ID,
   MY_BUTTONSETMON_ID,
   MY_SWITCH_ID,
   MY_NOTEBOOK_ID,
   MY_FRAME_ID,
 
+// Monitor dialog box events
   MY_ADDMON_ID,
   MY_REMMON_ID,
+
+// Language menu events
+  //MY_LANG_ID,
+  //MY_EN_LANG_ID,
+  //MY_LT_LANG_ID,
 }; // widget identifiers
 
 
