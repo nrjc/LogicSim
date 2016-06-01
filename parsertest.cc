@@ -60,13 +60,15 @@ errorframe test12("./test/test12.ge",3,line12l,line12c);
 vector<int> line13l={9,23,31,37};
 vector<int> line13c={24,14,14,20};
 errorframe test13("./test/test13.ge",4,line13l,line13c);
+errorframe test14("./test/test14.ge",0,emptylines,emptycodes);
+errorframe test15("./test/test15.ge",0,emptylines,emptycodes);
 errorframe sample1("./test/sample1.ge",0,emptylines,emptycodes);
 errorframe sample2("./test/sample2.ge",0,emptylines,emptycodes);
 errorframe sample3("./test/sample3.ge",0,emptylines,emptycodes);
 errorframe sample4("./test/sample4.ge",0,emptylines,emptycodes);
-errorframe test14("./test/test14.ge",0,emptylines,emptycodes);
-errorframe test15("./test/test15.ge",0,emptylines,emptycodes);
-errorframe test16("./test/test16.ge",0,emptylines,emptycodes);
+vector<int> line16l={3,4,5,10,14,15,17};
+vector<int> line16c={29,29,23,14,14,14,14};
+errorframe test16("./test/test16.ge",7,line16l,line16c);
 
 errorframe filestotest[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9,test10,test11,test12,test13,sample1,sample2,sample3,sample4,test14,test15,test16};
 int testnumber=20;
@@ -89,13 +91,13 @@ int main(int argc, char **argv)
   cout<<"----------------------"<<endl<<"TESTING CASE:: "<< filestotest[i].filename<<endl;
   newparser.readin();
   if(filestotest[i].errorcodes==newerror.geterrorcodevec()&&filestotest[i].errorlines==newerror.getlinenumvector()){
-    cout<<"Test case:: "<< filestotest[i].filename << " conducted successfully!"<<endl;
+    cout<<"Test case:: "<< filestotest[i].filename << " conducted successfully!"<<endl; //Testing Case is conducted successfully if the vector of errorcodes and errorlines agrees with what was defined earlier.
   }
   else{
-  cout<<"TEST CASE FAILURE: "<< filestotest[i].filename<<endl;
-  cout<< "Expected:: " <<filestotest[i].expectederrors<< " Errors, got "<<newerror.gettotalerrornum()<<" errors."<<endl;
-  printtable(i,newerror);
-  cout << "-------------------------"<<endl;
+      cout<<"TEST CASE FAILURE: "<< filestotest[i].filename<<endl;
+      cout<< "Expected:: " <<filestotest[i].expectederrors<< " Errors, got "<<newerror.gettotalerrornum()<<" errors."<<endl; //Otherwise, print a failure together with a table of errors
+      printtable(i,newerror);
+      cout << "-------------------------"<<endl;
     }
 }
 

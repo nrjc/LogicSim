@@ -392,24 +392,23 @@ void devices::updateclocks (void)
       }
       (d->counter)++;
     }
-    else if(d->kind==siggen){
+    else if(d->kind==siggen){ //Updates were made to add siggen as a type of clock to be incremented on each clock cycle.
         int length =d->signalsequence.size();
-        //cout << length<<endl;
-        //cout << "LENGTH " <<length <<endl;
-        //cout << "COUNTER: "<< d->counter <<endl;
         if (d->signalsequence[d->counter]==0){
+        //d->olist->sig can either be high or it can be low. In the next cycle, it is supposed to be low.If it is high, it is supposed to fall. Otherwise, it remains low.
             if(d->olist->sig==high){
                 d->olist->sig = falling;
             }
-            else{
+            else if(d->olist->sig==low){
                 d->olist->sig = low;
             }
         }
         else if(d->signalsequence[d->counter]==1){
+                //d->olist->sig can either be high or it can be low. If it is high, it is supposed to fall. Otherwise, it remains low.
             if(d->olist->sig==low){
                 d->olist->sig = rising;
             }
-            else{
+            else if(d->olist->sig==high){
                 d->olist->sig=high;
             }
         }
@@ -438,7 +437,6 @@ void devices::executedevices (bool& ok)
   if (debugging)
     cout << "Start of execution cycle" << endl;
   updateclocks ();
-  //updatesiggen();
   machinecycle = 0;
   do {
     machinecycle++;
@@ -449,7 +447,7 @@ void devices::executedevices (bool& ok)
     for (d = netz->devicelist (); d != NULL; d = d->next) {
         switch (d->kind) {
             case aswitch:  execswitch (d);           break;
-            case siggen:
+            case siggen:  //the case of siggen implements execclock.
             case aclock:   execclock (d);            break;
             case orgate:   execgate (d, low, low);   break;
             case norgate:  execgate (d, low, high);  break;
@@ -457,7 +455,6 @@ void devices::executedevices (bool& ok)
             case nandgate: execgate (d, high, low);  break;
             case xorgate:  execxorgate (d);          break;
             case dtype:    execdtype (d);            break;
-            //Insert siggen logic here.
       }
           if (debugging){
             showdevice (d);}

@@ -70,7 +70,7 @@ name names::lookup (namestring str)
 		//truncates name if larger than maxlength.
 		if (str.length() > maxlength){
 			str = str.substr(0,maxlength);
-			cout << "Warning: name `"<<str<<"' was truncated." <<endl;
+			cout << "WARNING: NAME`"<<str<<"' WAS TRUNCATED." <<endl;
 		}
 		map.insert({str,counter});
 		counter++;

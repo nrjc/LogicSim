@@ -234,7 +234,8 @@ int network::getnumberofinputs (name id)
 /***********************************************************************
  *
  * Resets the counter of all devices. Called when pressing run
- *
+ * This is called by resetmonitors, and ensures that the signal generator
+ * Produces the same, deterministic output whenever the run button is pressed.
  *
  *
  *
