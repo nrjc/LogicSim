@@ -1,0 +1,46 @@
+/* This circuits tests if the finite hold time is implemented
+and if output is independent of order of definition 
+
+1. To test if a finite hold time is being implemented, we first
+suppress the function randdevices() which randomises the devicelist.
+Then use this exact circuit definition file. Since AND3 is defined
+last, it will be run first followed by AND2 and AND1. There will be
+3 machine cycle delays which is 1 machine cycle longer than the
+hold time. This will then cause a determinate output as shown in
+figure 8. This proves that we have managed to set a finite hold
+time.
+
+2. To test if a random output is indeed generated. All we have to
+do is the change the sequence in which the AND gates are defined.
+This will cause the change to propagate faster than the original
+sequence of definition such that data input will change during the
+hold time. This will cause an indeterminate output as shown in
+figure 9.
+
+3. To test if output is independent of order of definition, we 
+use the exact circuit definition file below but enable the
+randdevices() function. This should cause an indeterminate output
+as shown in figure 10.
+*/
+DEVICES{
+SWITCH SW1:0;
+DTYPE DTYPE1;
+CLOCK CLK1:1;
+AND AND1:1;
+AND AND2:1;
+AND AND3:1;
+}
+CONNECTIONS{
+SW1->DTYPE1.SET,DTYPE1.CLEAR;
+CLK1->DTYPE1.CLK,AND1.I1;
+AND1->AND2.I1;
+AND2->AND3.I1;
+AND3->DTYPE1.DATA;
+}
+MONITORS{
+CLK1;
+AND1;
+AND2;
+AND3;
+DTYPE1.Q;
+}

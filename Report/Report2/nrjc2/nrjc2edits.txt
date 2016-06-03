@@ -1,0 +1,453 @@
+commit c6b1f79bbd668afddcb16e54e3d41d1b3db944a6
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Thu May 26 18:08:24 2016 +0100
+
+    Added comments to make files more readable
+
+commit 09d7068a2e31505b09a95d0cc7069c796e7c8f7d
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Thu May 26 16:35:53 2016 +0100
+
+    Added samples from report
+
+commit 7301065cc8b59b0bb0e1b01c95d49d7985f323bc
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Thu May 26 16:34:11 2016 +0100
+
+    Made some changes to the parser tester
+
+commit 9a05c5e0542fc74f39b5c9a6ac93eb8ee1e5c0e9
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Thu May 26 13:54:56 2016 +0100
+
+    Renamed test files
+
+commit a08aaa288cc131335f118c114f40e57dcbb61c85
+Merge: 8a8c244 cf2caf7
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 24 12:59:21 2016 +0100
+
+    Merging the GUI classes and the parser / names classes
+    Merge branch 'parser' of /homes/nrjc2/GF2_shared/nrjc2/../Common/SoftEngProj
+
+commit 8a8c244ae75f4ddc577c2744531aef07467bb91e
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 24 12:59:16 2016 +0100
+
+    Corrected some GUI errors
+
+commit cf2caf734c1c24cfe454aa93462e9419954800fe
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 24 12:14:56 2016 +0100
+
+    Completed First Draft of Error Recovery for the whole parser
+
+commit 5f5ac930006d059a083298cc37d3d581d2cb7b9c
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 24 12:01:49 2016 +0100
+
+    Attempted to add error recovery to CONNECTIONS block
+
+commit 23ffe6b4507bd486a89909e217485358ad48c1ff
+Merge: 435feda b5fa9f9
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 24 11:13:41 2016 +0100
+
+    Resolved conflicts
+
+commit 435feda9a8a77b4904facb49c0c1a2a6c0a13b5d
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 24 11:07:08 2016 +0100
+
+    Added error recovery for MONITOR part of the parser class
+
+commit 5bbc8b2575561a08c936cf95d802eae17bb2d8f8
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 24 09:09:27 2016 +0100
+
+    Added last three test cases for semantic errors. Will add in test cases for multiple errors next.
+
+commit aeffdec4e3bab4ad6f3750c40f577fadd35eedc4
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 21:20:24 2016 +0100
+
+    Added error recovery option to the error recovery function, which takes in an optional symbol
+
+commit e52e08fc9c8c6810f391053360d43cc7088b391f
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 15:55:08 2016 +0100
+
+    Removed bug in parsertest definition
+
+commit 0c2a34ace5862eeac9fbb5c92467de5c1c81ff31
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 15:49:12 2016 +0100
+
+    Added even more test definitions
+
+commit cd289df0af83e2339bf18b87b6c51688455141b0
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 15:42:13 2016 +0100
+
+    Added three more test cases
+
+commit 1ed54273a249a0d6d4cfb3c68649ece672b55ca6
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 15:08:29 2016 +0100
+
+    Added a table output to the command line when the test case errors do not match the provided values
+
+commit a90d18432dc8676ae673536f568f0268fee443e5
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 11:24:17 2016 +0100
+
+    some syntax error changes
+
+commit aac81ba3cecd31f31e9cbff642956b651b841b57
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 11:01:57 2016 +0100
+
+    Refactored code such that all error handling and output is done in the error class
+
+commit ac6bb763afa8b50afe4f1e83e7545bb65d130dcb
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 10:50:08 2016 +0100
+
+    Made some changes to comment message
+
+commit 9c1f7b6e82c8f07435ea771ed852ea1922d692cb
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 10:07:23 2016 +0100
+
+    Added new test files that test that all devices are properly connected
+
+commit 3aa68855ae285c3d36d90de14312705260ce10a7
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 23 09:40:42 2016 +0100
+
+    Removed previous, outdated, print error function. Created new function to print the number of errors, to be called at the end of the parser if errors are found.
+
+commit 9b3521df2606b7625866d175b96d0565aa0b66e2
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sun May 22 19:10:58 2016 +0100
+
+    Edited linedisplayerror() function to fit the parser requirements. Carrot now points to prior symbol
+
+commit de92483151183e3308afc665c8b8dcda53386fcf
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sun May 22 18:29:22 2016 +0100
+
+    errors now display the line number as well
+
+commit aa315b7e53de88fd12ada5746d659e429e42545b
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sun May 22 16:14:13 2016 +0100
+
+    Removed one character spacing error
+
+commit 3dd82fd4dee6cc7da97b0d68637119b86ae7826b
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sun May 22 16:03:00 2016 +0100
+
+    Changed Error Message to something more readable
+
+commit 60be67bfa6f244663266f226ecc63d430d06651c
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sun May 22 15:53:14 2016 +0100
+
+    Removed error that caused end of line symbol to be printed instead at the start of the line
+
+commit ec4d0f394b5d04582b167036ec1ebd4f5561393d
+Merge: 6fda377 fe536c8
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sun May 22 15:42:24 2016 +0100
+
+    Merge branch 'parser' of /homes/nrjc2/GF2_shared/nrjc2/../Common/SoftEngProj into parser
+
+commit 6fda377f6bc0731196d57521229c8f212cc533ba
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sun May 22 15:42:19 2016 +0100
+
+    Added function to scanner class to print out current input with marker
+
+commit 5e434226229502a3088b9a67c2fabf9f9231d1f8
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 22:18:07 2016 +0100
+
+    Removed Error in test case
+
+commit 24e55dfb7665925e07c5a1347f6321124f6e150d
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 22:12:44 2016 +0100
+
+    Added getnumberofinputs function to network class
+
+commit ab3f66157c79a87fa69853e2d5cba52e25ef60eb
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 20:38:49 2016 +0100
+
+    changed blink string to blankname
+
+commit eb0265d50e7f6c729f650e5c2bcdc77f7023eba3
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 20:31:14 2016 +0100
+
+    Added blankname to possibilities to be found in the names table
+
+commit 8bc91e647469a59f2c2499f9c946a94c77078b24
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 20:02:52 2016 +0100
+
+    Revert changes to executedevices
+
+commit fe4c839e72d7384cdeab9fa15e14378e83d3e0b1
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 19:54:09 2016 +0100
+
+    Removed device comments
+
+commit a2863b57d925d744d18ce0d65b1869cff63ec338
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 19:31:32 2016 +0100
+
+    Set up first draft of monitor parser section
+
+commit b4d44378756185f40338ea3dc97706e00c0736df
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 18:30:54 2016 +0100
+
+    Finally fixed bug and got the Connection block to work
+
+commit 5bc1548ae8dccc496c9db011933c1626680ef8a2
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 17:41:38 2016 +0100
+
+    Changed Device.cc displaying class to have a more sensible output. Tested the parser's ability to parse the DEVICES block.
+
+commit a036863f9bc47c055a9530795377472b2540700f
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 16:30:01 2016 +0100
+
+    Edited Logsim to be compatible with the new error class, first attempt at getting devices to be created
+
+commit 03f3d7502b3485e6207c910100e5c6c92209e2af
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 14:59:08 2016 +0100
+
+    added implementations of networks devices and monitor class to the testing suite
+
+commit 2935d2995714971fc3d471efce2860152de445d1
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sat May 21 14:08:48 2016 +0100
+
+    Fixed some minor bugs in the parser
+
+commit 965c079be811b975a767217517e079e436f1b932
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Fri May 20 15:59:27 2016 +0100
+
+    Created new error class to handle errors, updated some error codes to display correct messages
+
+commit 714159d608252c8f2942b41b73214071ab0579b5
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Fri May 20 14:18:20 2016 +0100
+
+    Finished complete working first draft of parser
+
+commit 393ea63d3dc528d56a91b1b7ca5148eae61a0b98
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Fri May 20 14:07:12 2016 +0100
+
+    Got parser to work till the end of the CONNECTION block
+
+commit 6f6883a4864cb75d3039c3abef482fcfd6106564
+Merge: 1f68f33 5bdd235
+Author: Nicholas Capel <theworm11@gmail.com>
+Date:   Fri May 20 12:11:00 2016 +0100
+
+    Merge pull request #2 from nrjc/master
+    
+    Adding Updated Scanner class and GUI to the parser
+
+commit 5bdd235ea76d8cbee3ff02f9fcc8472c47da1a2f
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Fri May 20 12:05:07 2016 +0100
+
+    Realised that getnewline function was not especially useful for debugging. Created new getnewline function that now instead returns the rest of the line, starting from the current position of curch
+
+commit 53844a95c3b6459b3822f898c0f3151e32f7a074
+Merge: 66b9b21 1f68f33
+Author: Nicholas Capel <theworm11@gmail.com>
+Date:   Fri May 20 11:07:34 2016 +0100
+
+    Merge pull request #1 from nrjc/parser
+    
+    Parser
+
+commit 1f68f33772b479179c7f35d7e031aeaaa7c9aeab
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Thu May 19 16:54:17 2016 +0100
+
+    Added functionality to print line and tested it. Bug is found in that getnewline() enters an infinite loop at the end of a file
+
+commit 0302043cbaf1b4ab82bc342c4447b989aebd4edb
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Thu May 19 11:58:28 2016 +0100
+
+    Added file to test parser on. Parser is error-prone
+
+commit 648aa8e0094009118513c9f96bdf215a3c4524cf
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 18:52:38 2016 +0100
+
+    Corrected errors to create a parser that compiles
+
+commit 1b4c504ae0337f55ea16f3292c999c8721b593bb
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 14:14:28 2016 +0100
+
+    Added dumping function to names table for debugging purposes
+
+commit 39fa24ba792198f3ee94981320feae69e8786dd5
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 14:06:53 2016 +0100
+
+    Added useful comments for the scanner header
+
+commit a7973f32e631aa191830baf0136260ac2162184e
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 13:55:45 2016 +0100
+
+    Redefined enum for symbols to include all possible reserved words and punctuation. Changed code to consider this. Code not uses inputsym to implement I1-I16, passing out the integer associated with the code to &num. Tested said changes.
+
+commit 57a54a99203d81322d5755c82c5fffa0948e851a
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 11:55:33 2016 +0100
+
+    Removed some comments
+
+commit fbc50693905222280eda845a12179369d9b55afe
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 11:43:52 2016 +0100
+
+    Added testnames and scanner suite
+
+commit 9d071563e6836c5d04c764588e2340672af1c379
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 11:36:03 2016 +0100
+
+    Added first draft of skip comments on line function@
+
+commit fa1e8065707eacbfd8cded58b89193d757d8adc2
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 11:20:27 2016 +0100
+
+    Adding line comment as a reserved symbol to the name table, adding testnames to gitignore
+
+commit b087408515c7f1c59f2d52fd7966ec3c4b24a435
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 11:03:06 2016 +0100
+
+    Removed ugly goto to replace with elegant recursive call
+
+commit d0be70bc227675d7791ae7cb2d183e82364ba8af
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Tue May 17 10:57:11 2016 +0100
+
+    Removed a bug with the comment detection in the scanner, implemented testscanner methods
+
+commit 0bea300a41d8946bd1bc37390038ba701a57c9b8
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 21:47:06 2016 +0100
+
+    Removed some bugs from scanner class
+
+commit 04b740c1207700493d21dd4e302ecd1e92ab355d
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 21:05:32 2016 +0100
+
+    Wrote test for the names class
+
+commit d23cde742283782863b74bfee63ecd73d6c804bd
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 19:37:47 2016 +0100
+
+    Made modifications to getname to conform to EBNF grammar
+
+commit 2dca6a322dbacf2d3c19d75b29b77bb8db0ffc51
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 19:29:53 2016 +0100
+
+    Comment change
+
+commit a0ac6610fab8c18bbb02b571cfd6f9728e3e2edf
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 19:18:59 2016 +0100
+
+    Remarks for future chanes in getname
+
+commit 6d5927382aad040b64b2b891f0958ba055ae3c6e
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 19:13:15 2016 +0100
+
+    Debugged skipcomment
+
+commit bd2d56515d20c788ca7ffb1d05cbe0c8a40ca0c9
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 19:02:23 2016 +0100
+
+    Added logic to implement comment skipping
+
+commit a1c9054aa603b0f3a25921e1d87c1b0a94d9a749
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 17:36:09 2016 +0100
+
+    Changed some comments
+
+commit d6582f8bea8277fdea4a757fbce8e10ba808ea41
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 17:31:30 2016 +0100
+
+    Added some things to do
+
+commit 36da8e57c9afbcb68b273f5406a83e6f55d60bd1
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 16:25:10 2016 +0100
+
+    Changed most of the get definitions to not include passing a type, but instead taking a return
+
+commit e0240f0feca4fa441bc693189f6fc5025efb04df
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 16:23:50 2016 +0100
+
+    Added check on the maximum length of names to names.cc
+
+commit 2dbaf3addab65be411c244a3d5bcf16b9637b438
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 15:48:12 2016 +0100
+
+    Added get punctuation function to scanner
+
+commit 82ae0ca363ba9c7facd6e57b48a50a9411db772a
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Mon May 16 11:41:44 2016 +0100
+
+    Made some changes to name and symbol definitions.
+
+commit c67fe9b583c275026aa02d93bdb4f84e93024676
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Sun May 15 10:29:24 2016 +0100
+
+    Created new subroutine, getnamesfromtable, that can be reused in other methods in the lookup table.
+
+commit 8f33cf56d4e7c6774c53d86ae9552788cf2ab43c
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Fri May 13 15:27:43 2016 +0100
+
+    Did preliminary porting over of functions into names.cc
+
+commit 9167003ca9bd761a148c24fd1b8af9bb931e94d6
+Author: Nicholas Capel <nrjc2@cam.ac.uk>
+Date:   Fri May 13 12:49:38 2016 +0100
+
+    Added skeleton of scanner.cc and scanner.h as defined in the handout

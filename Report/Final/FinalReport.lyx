@@ -1,0 +1,2563 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 3cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+GF2: Final Report
+\end_layout
+
+\begin_layout Author
+Nicholas Capel (nrjc2), Queens', Team 6
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Software Description 
+\end_layout
+
+\begin_layout Standard
+The Software enables the simulation of both combinatorial and clocked logic
+ circuits on a computer.
+ The simulated logic circuit can be composed of the following devices: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Devices
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="7cm">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Device Type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clocks
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Can output a regular waveform that changes every N cycles, where N > 0.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Switches
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+User is able to set switch outputs to 1 or 0.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Gates
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Can simulate NAND / OR / NOR / AND gates from 1 to 16 inputs.
+ XOR gates with 2 inputs can be simulated as well.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D-Type Flip-flops
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D-Type contains a clock, a data, and a set and clear input.
+ Transfers data input into the output on the rising edge of the clock cycle.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Signal Generators
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Can output any arbitrary, periodic binary waveform that changes at most
+ once every cycle.
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The simulator reads the circuit definition from a file (in plain text, with
+ the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{.ge}
+\end_layout
+
+\end_inset
+
+ extension), where the devices, the connections between them, the generators
+ needed for inputs, and the signals outputs to monitor are specified.
+ 
+\end_layout
+
+\begin_layout Standard
+A detailed description of the circuit definition syntax can be found in
+ Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:EBNF-Logic"
+
+\end_inset
+
+, with example circuits in Appendix A.
+ A one-page user guide can be found in Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Single-page-user-guide"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The user is able to specify a maximum of 30 points in the circuit to monitor,
+ and can simulate a maximum of 500 cycles.
+ the device names have a maximum length of 20 characters.
+ 
+\end_layout
+
+\begin_layout Section
+Software Structure
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Major Software Components
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="9cm">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Class
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Brief Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Names
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains a bimap that matches 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{namestrings}
+\end_layout
+
+\end_inset
+
+ with 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{nameids}
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Scanner
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reads the definition file and produces a stream of symbols, their corresponding
+ name ids, and the value (if applicable).
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parser
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Calls on the scanner.
+ Evaluates the stream of symbols from the scanner according to the EBNF
+ file rules.
+ Proceeds to create devices, connections and monitors from the definition
+ file.
+ Identifies syntax and semantic errors, and passes them to the error class.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Errors
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Called by the parser class, keeps tracks of the number of errors, the error
+ types, and prints them to the console.
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Devices
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains the definitions of all devices, as well as methods to construct,
+ execute, and debug these devices.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Network
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains the internal representation of the circuit, as well as methods
+ to construct device inputs, outputs, and connections.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Monitor
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Allows the monitoring of outputs from devices in the circuit.
+ Contains functions to add, remove, and display outputs.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+GUI
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Constructs a GUI using 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{wxWidgets}
+\end_layout
+
+\end_inset
+
+.
+ Split into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{guimonitor}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{guiCanvas}
+\end_layout
+
+\end_inset
+
+, and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{gui}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The main program file is located in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{logsim.cc}
+\end_layout
+
+\end_inset
+
+.
+ Prior to the implementation of the GUI, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{userint.cc}
+\end_layout
+
+\end_inset
+
+ was used, but has since been abandoned.
+ The scripts used for testing will be discussed in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Testing"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Section
+Commentary on Teamwork
+\end_layout
+
+\begin_layout Standard
+At the beginning of the project, a timeline of implementation was developed,
+ summarized by the Gantt Chart in Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Gantt-Chart"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{git} 
+\end_layout
+
+\end_inset
+
+was used for version control, with more than 150 commits made over the whole
+ project lifecycle.
+ Using 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{git}
+\end_layout
+
+\end_inset
+
+ eliminated the need to worry about version control.
+ Originally, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{parser}
+\end_layout
+
+\end_inset
+
+, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{scanner}
+\end_layout
+
+\end_inset
+
+ and the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{GUI}
+\end_layout
+
+\end_inset
+
+ existed on different branches of the repo.
+ However, when the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{scanner}
+\end_layout
+
+\end_inset
+
+ was completed, it was merged onto the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{parser}
+\end_layout
+
+\end_inset
+
+ branch, and in the integration phase, these were further merged onto the
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{master}
+\end_layout
+
+\end_inset
+
+ branch.
+ This allowed the three members to work separately, and easily combine their
+ work when necessary.
+ 
+\end_layout
+
+\begin_layout Standard
+Initially, Nicholas was underloaded, due to the fact that the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{scanner}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{names}
+\end_layout
+
+\end_inset
+
+ classes are slightly easier to implement than the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{parser}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{GUI}
+\end_layout
+
+\end_inset
+
+ class.
+ However, once he was finished with the implementation of the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{scanner}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{names}
+\end_layout
+
+\end_inset
+
+ class, he then proceeded to help with the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{parser}
+\end_layout
+
+\end_inset
+
+ class.
+ 
+\end_layout
+
+\begin_layout Standard
+There was good separation of the workload, with close cooperation between
+ the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{scanner}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{parser}
+\end_layout
+
+\end_inset
+
+.
+ The 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{GUI}
+\end_layout
+
+\end_inset
+
+ class could and was handled nearly independently from the other classes
+ due to the modularity of the design.
+ We held daily scrum sessions in the DPO, with all team members sitting
+ close together for easy communication and consultation.
+ 
+\end_layout
+
+\begin_layout Standard
+In the final maintenance phase, the work was split into three separate tasks.
+\end_layout
+
+\begin_layout Standard
+\align left
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Table of Maintenance Responsibilities
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Task
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Individual Responsible
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Finite D-Type Hold Times
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Lou Yuxiang
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Implementation of Signal Generator
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nicholas Capel
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Support for multiple languages
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Kamile Rastene
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Overall, planning and execution went well, with all features being delivered
+ on-time and on-task.
+ 
+\end_layout
+
+\begin_layout Section
+Major Contributions
+\end_layout
+
+\begin_layout Subsection
+Names Class
+\end_layout
+
+\begin_layout Standard
+The names class stores a list of all the words used within a definition
+ file.
+ It is initialised with both reserved words and punctuation, and is populated
+ by the scanner as the definition file is read.
+ The initial implementation as suggested in the handout suggested the usage
+ of a vector-type data structure.
+ However, the main problem with this data structure is the fact that lookup
+ operations require searching through the whole structure, which is a O(n)
+ operation.
+ Instead, the final implementation uses a variation of an unordered map
+ (the bimap), which possesses a constant lookup time.
+ The bimap is chosen over its cousin, the unordered map, because it allows
+ for indexing of the structure by both the namestring and the nameid simultaneou
+sly.
+ When the names table is short, using a bimap might lead to longer computational
+ times, as the time spent computing the hash function might be longer than
+ the time taken to search the entire vector.
+ However, the decision was still made to use the bimap, as in larger circuits,
+ the savings from the O(1) asymptotic bound will become significant.
+ 
+\end_layout
+
+\begin_layout Subsection
+Scanner Class
+\end_layout
+
+\begin_layout Standard
+The scanner reads through the definition files, and outputs a stream of
+ symbols, their corresponding ids, and the value (if applicable).
+ The scanner works by skipping all blank spaces, then looking at the next
+ character.
+ If it is a number, the scanner parses till the next non-number, and returns
+ the entire number as an integer.
+ Otherwise, if it is an alphabet, the scanner gets characters until a non-alphan
+umeric character is reached, adds that namestring to the names table, and
+ returns the nameid to the parser.
+ If it is neither, the character must be a punctuation character, and the
+ scanner gets all subsequent punctuation characters and returns that to
+ the parser class.
+ Comments are defined in a C-like fashion, with // used to comment the entire
+ line, and /* */ used to comment entire blocks.
+ 
+\end_layout
+
+\begin_layout Subsection
+Parser Class
+\end_layout
+
+\begin_layout Standard
+The parser calls on the scanner, and evaluates the stream of symbols from
+ the scanner according to the rules of the EBNF file.
+ It then creates the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{DEVICES}
+\end_layout
+
+\end_inset
+
+, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{CONNECTIONS}
+\end_layout
+
+\end_inset
+
+ and the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{MONITORS}
+\end_layout
+
+\end_inset
+
+.
+ In the parser class, I was mainly responsible for writing the code that
+ created the connections and devices.
+ In addition, I separated the error handling into a separate class called
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{errors}
+\end_layout
+
+\end_inset
+
+.
+ This decision was made for the sake of modularity.
+ We want the implementation of the parser to be separate from the handling
+ of the errors.
+ 
+\end_layout
+
+\begin_layout Subsection
+Maintenance
+\end_layout
+
+\begin_layout Standard
+During the maintenance phase, I was responsible for implementing the signal
+ generator.
+ This required modifications to the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{network}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{device}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{scanner}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{names}
+\end_layout
+
+\end_inset
+
+ and the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{parser}
+\end_layout
+
+\end_inset
+
+ class, as well as the EBNF file.
+ 
+\end_layout
+
+\begin_layout Standard
+The function 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{makesiggen()} 
+\end_layout
+
+\end_inset
+
+was added to the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{device}
+\end_layout
+
+\end_inset
+
+ class to allow for the direct adding of the siggen device from the parser.
+ This is in contrast to all other device types, which are added via 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{makedevices()}
+\end_layout
+
+\end_inset
+
+.
+ This is because the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{makedevices()}
+\end_layout
+
+\end_inset
+
+ method does not allow for the passing in of the desired clock signal into
+ the signal generator.
+ Additionally, as the signal generator is fundamentally very similar to
+ a clock, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{executedevices()}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{updateclocks()}
+\end_layout
+
+\end_inset
+
+ methods were also re-purposed to allow for the correct functioning of the
+ signal generator.
+\end_layout
+
+\begin_layout Standard
+When that was done, I helped in the implementation of the non-zero hold
+ time for the D-types.
+ 
+\end_layout
+
+\begin_layout Section
+Testing
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Testing"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Names and Scanner
+\end_layout
+
+\begin_layout Standard
+The names class was rather small and simple, with most of the functions
+ being a rearrangement of functions already written and tested earlier in
+ the GF2 handout.
+ Hence, a simple test script was created, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{testnames.cc}
+\end_layout
+
+\end_inset
+
+, that tests only the major cases.
+ 
+\end_layout
+
+\begin_layout Standard
+For the scanner class, given that the class was only going to be written
+ once and then never modified again, it was decided to not create a comprehensiv
+e testing suite for the scanner class either.
+ Instead, a few sample files were loaded into the test scanning script,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{testscanner.cc}
+\end_layout
+
+\end_inset
+
+.
+ The testscanner would then output a list of the symbols received, the namestrin
+gs associated with the nameid in the names table, and the value (if applicable).
+ These were then checked manually for correctness.
+ 
+\end_layout
+
+\begin_layout Subsection
+Parser
+\end_layout
+
+\begin_layout Standard
+For the parser class, a more advanced testing suite was created, implemented
+ in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{testparser.cc}
+\end_layout
+
+\end_inset
+
+, in conjunction with 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{errors.cc}
+\end_layout
+
+\end_inset
+
+.
+ When errors are detected in parsing, the error codes and lines are pushed
+ onto the end of a vector in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{errors.cc}
+\end_layout
+
+\end_inset
+
+.
+ The automated testing suite contains a list of definition files to be tested
+ and vectors of their expected error codes and lines.
+ On running 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{testparser}
+\end_layout
+
+\end_inset
+
+, all the test cases are run sequentially, and if their codes and lines
+ do not agree with what is expected, the system outputs a table displaying
+ the difference between the errors expected and the errors obtained.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sample output from testparser
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename testparser.png
+	width 9cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Thus, this formed the basis of our continuous integration test.
+ Every time a change was made to the software, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{testparser}
+\end_layout
+
+\end_inset
+
+ was called to ensure that the change did not break the functioning of our
+ program.
+ 
+\end_layout
+
+\begin_layout Subsection
+Signal Generator
+\end_layout
+
+\begin_layout Standard
+The testing task was split into two subtasks.
+ The first task is to ensure that the signal generator does, indeed, function
+ as designed.
+ The first stage of testing was done using 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{testsig.cc}
+\end_layout
+
+\end_inset
+
+, observing the output of the signal generator as the signal waveform sequence
+ was varied.
+ 
+\end_layout
+
+\begin_layout Standard
+Once the function of the signal generator was tested and found to be satisfactor
+y, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{parser} 
+\end_layout
+
+\end_inset
+
+class was modified to allow for the signal generator to be created using
+ the definition test files.
+ These were rigorously tested by creating extra definition files, some with
+ errors and some without errors, and using the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{testparser}
+\end_layout
+
+\end_inset
+
+ to test the functionality.
+ 
+\end_layout
+
+\begin_layout Section
+Recommendations
+\end_layout
+
+\begin_layout Standard
+I believe that all the requirements set out by the client have been fulfilled.
+ However, I believe that several extra improvements could be made, and features
+ added.
+\end_layout
+
+\begin_layout Enumerate
+Better error recovery: Currently, error recovery uses only a single stopping
+ symbol.
+ In hindsight, we should have used a set of stopping symbols to allow greater
+ flexibility.
+ Each analysis function can then pass its stopping symbol to any function
+ it calls.
+ 
+\end_layout
+
+\begin_layout Enumerate
+More efficient scanner class: Currently, the getsymbol method uses multiple
+ if statements to check for a symbol type, given the name id.
+ Instead, an alternative implementation is to use the name id to index an
+ array containing the symbol types.
+ This leads to neater code and shorter run-times.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Creation of devices via the GUI: Currently, the user needs to create circuits
+ using the definition files.
+ It would be much better to allow the user to create the circuit definitions
+ within the GUI itself.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Improved handling of warnings: Currently, warnings are thrown natively within
+ the parser, while errors are displayed by calling on the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{errors} 
+\end_layout
+
+\end_inset
+
+class.
+ Ideally, the code should be modified such that all warnings are handled
+ by the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{errors}
+\end_layout
+
+\end_inset
+
+ class as well.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Saving plots as images: The GUI should be improved to include functionality
+ that allows it to save plot images.
+\end_layout
+
+\begin_layout Enumerate
+Improved simulation of gate propagation: The software can be improved to
+ include a proper gate-by-gate simulation of the propagation of signals
+ on each machine execution cycle.
+ 
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Standard
+In conclusion, although there are some areas of improvement, team 6 has
+ met all the client's requirements.
+ The software was delivered on time and on target.
+ Our lack of hiccups can be attributed to good prior planning, proper allocation
+ of responsibilities, and a reliance on 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{git}
+\end_layout
+
+\end_inset
+
+ for version control.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+\noindent
+Test Definition Files
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Test-Definition-Files"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Bistable Latch
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bistable Latch
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename sample1.png
+	width 7cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Test Results for Bistable Latch
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename sample1test.png
+	width 7cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "sample1.ge"
+lstparams "frame=single"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+NAND Gate Implementation
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NAND gate implementation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename sample2.png
+	width 7cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Test Results for NAND gate implementation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename sample2test.png
+	width 7cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "sample2.ge"
+lstparams "breaklines=true,captionpos=t,frame=single"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+4-bit Adder
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+4-bit Adder
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename sample4.png
+	height 50pheight%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Test Results for 4-bit adder
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename sample4test.png
+	width 7cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "sample4.ge"
+lstparams "breaklines=true,captionpos=t,frame=single"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+DTYPE With Signal Generator
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+DTYPE Clocked by Signal Generator
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename sample5.png
+	width 7cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Test Results for DTYPE with signal generator
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename sample5test.png
+	width 7cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "sample5.ge"
+lstparams "breaklines=true,captionpos=t,frame=single"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+DTYPE With Implemented Delay
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+DTYPE with delay implemented using AND gates
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Sample6.png
+	width 7cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Test Results for DTYPE with implemented delay
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Hold time > lag
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename dtypetest_holdtimelongerthanlag.jpg
+	width 5cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Hold time < lag
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename dtypetest_holdtimeshorterthanlag.jpg
+	width 5cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Random device list
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename dtypetest_randomdevicelist.jpg
+	width 5cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "sample6.ge"
+lstparams "breaklines=true,captionpos=t,frame=single"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+EBNF Logic
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:EBNF-Logic"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "EBNFspec.txt"
+lstparams "breaklines=true,captionpos=t,frame=single"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Single-page user guide
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Single-page-user-guide"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Opening the Logic Simulator and Definition Files
+\end_layout
+
+\begin_layout Standard
+The program can be run by browsing into the main directory and typing 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{./logsim}
+\end_layout
+
+\end_inset
+
+ followed by the return key.
+ To open and load a definition file, click 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{File}
+\end_layout
+
+\end_inset
+
+, then 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{Open}
+\end_layout
+
+\end_inset
+
+.
+ Only 
+\shape italic
+.ge
+\shape default
+ and 
+\shape italic
+.txt
+\shape default
+ files can be loaded.
+ If there are any errors, they will be displayed in the console display
+ along with their corresponding error codes.
+ In order to open the software in Lithuanian, type '
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{LC
+\backslash
+_ALL=lt
+\backslash
+_LT ./logsim}
+\end_layout
+
+\end_inset
+
+' into the terminal.
+ 
+\end_layout
+
+\begin_layout Subsection
+Navigation
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename userguide.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Description of Final Team Directory
+\end_layout
+
+\begin_layout Standard
+\align left
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+File
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Logsim
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Main Executable, double click to run
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+test
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains various test files
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains language files
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+dummycircuit.ge
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description of default circuit that is loaded by logsim
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Gantt Chart 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Gantt-Chart"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename gantt.jpg
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
